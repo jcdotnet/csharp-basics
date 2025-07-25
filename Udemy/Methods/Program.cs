@@ -1,6 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Methods;
 
+Console.WriteLine("-- Optional Parameters ---");
+
+Add(10, 20);
+Add(10);
+Add2(12, 15.2F);
+Add2(y:15.2F);
+
 Console.WriteLine("-- Callback Methods ---");
 
 Sum(12, 15, ShowResult); // using ShowResult as a callback
@@ -60,7 +67,16 @@ void ShowResult(int result)
     Console.WriteLine($"Result is {result}");
 }
 
-void Add(int x, int y) 
+/*
+void Add(int x, int y = 0)
+{
+    Console.WriteLine($"{x} + {y} = {x + y}");
+}*/
+
+// Changed add to a expression bodied method
+void Add(int x, int y = 0) => Console.WriteLine($"{x} + {y} = {x + y}");
+
+void Add2(int x=0, float y = 0)
 {
     Console.WriteLine($"{x} + {y} = {x + y}");
 }

@@ -139,23 +139,46 @@ foreach (var name in @for)
 // feat: index/hat operator
 Console.WriteLine("---  Hat Operator---");
 var cities = new string[] {
-            "New York", // 0 - 5
-            "Vienna",   // 1 - 4
-            "Madrid",   // 2 - 3
-            "London",   // 3 - 2
-            "Cairo"     // 4 - 1
-            };
+    "New York", // 0 - 5
+    "Vienna",   // 1 - 4
+    "Madrid",   // 2 - 3
+    "London",   // 3 - 2
+    "Cairo"     // 4 - 1
+};
 
 Console.WriteLine(cities[cities.Length - 1]);
 Console.WriteLine(cities[^2]);
 
-List<int> numberslist = new List<int>();
-numberslist.Add(0);
-numberslist.Add(1);
-numberslist.Add(4);
-numberslist.Add(5);
+List<int> numbersList = new List<int>();
+numbersList.Add(0);
+numbersList.Add(1);
+numbersList.Add(4);
+numbersList.Add(5);
 
-Console.WriteLine(numbers[^2]);
+Console.WriteLine(numbersList[^2]);
+
+// feat: range operator
+//var copyCities = cities[0..3];
+//var copyCities = cities[^2..^1];
+//var copyCities = cities[..];
+//var copyCities = cities[..3];
+var copyCities = cities[0..];
+
+foreach (var city in copyCities)
+{
+    Console.WriteLine(city);
+}
+
+Range cityRange = 0..6;
+Console.WriteLine(cityRange.Start);
+Console.WriteLine(cityRange.End);
+
+var newCities = cities[cityRange];
+foreach (var city in newCities)
+{
+    Console.WriteLine(city);
+}
+
 #endregion
 
 #region static
