@@ -137,7 +137,7 @@ foreach (var name in @for)
 }
 
 // feat: index/hat operator
-Console.WriteLine("---  Hat Operator---");
+Console.WriteLine("---  Hat Operator ---");
 var cities = new string[] {
     "New York", // 0 - 5
     "Vienna",   // 1 - 4
@@ -169,7 +169,7 @@ foreach (var city in copyCities)
     Console.WriteLine(city);
 }
 
-Range cityRange = 0..6;
+Range cityRange = 0..4;
 Console.WriteLine(cityRange.Start);
 Console.WriteLine(cityRange.End);
 
@@ -180,6 +180,52 @@ foreach (var city in newCities)
 }
 
 #endregion
+
+#region C#12 features
+
+Console.WriteLine("--- C#12 features ---");
+Console.ReadLine();
+
+// feat: primary constructors
+Student student = new Student("John Doe", 20); // see primary constructor in the Student class
+Console.WriteLine(student);
+
+// feat: collection enhacements
+List<int> list1 = new List<int>() { 1, 3, 3, 5, 7};
+// inline initilization
+List<int> list2 = new List<int> { 1, 3, 3, 5, 7 };
+List<int> list3 = [ 1, 3, 3, 5, 7 ];
+
+foreach (int number in list3) { Console.WriteLine(number); }
+
+// feat: ref readonly parameters // prevent accidental modifications of the data passed
+// used when you need to access data passed by ref but you don't inted to modify it within the method
+var PrintNumber = (ref int number) =>
+{
+    Console.WriteLine(number);
+    number++; // Compile error if readonly ref
+};
+int myNumber = 32;
+PrintNumber(ref myNumber);
+PrintNumber(ref myNumber);
+
+//feat: default lambda parameters 
+var IncrementBy = (int source, int increment = 1) =>
+{
+    return source + increment;
+};
+Console.WriteLine(IncrementBy(10)); // 11
+Console.WriteLine(IncrementBy(10, 20)); // 30
+
+var IncrementByWithOffset = (int source, int increment = 1, int offset = 100) =>
+{
+    return source + increment + offset;
+};
+Console.WriteLine(IncrementByWithOffset(10)); // 111
+Console.WriteLine(IncrementByWithOffset(10, 20)); // 130
+
+#endregion
+
 
 #region static
 
