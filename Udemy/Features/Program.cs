@@ -1,6 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using Features;
 
+#region C#7 features
+
 Character c = new Character(Features.Type.Elf);
 c.Name = "My Character";
 Console.WriteLine(c.Armor);
@@ -27,6 +29,27 @@ Console.WriteLine($"X: {xx}, Y:{yy}");
 string digit = "10";
 int.TryParse(digit, out int d); // out variables are commonly used in TryDoSomething scenarios
 Console.WriteLine($"Parsed Digit: {d}");
+
+// feat: property pattern
+// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns#property-pattern
+Console.WriteLine("--- Property Pattern ---");
+
+DateTime date = new DateTime(2020, 5, 20);
+Console.WriteLine(date is { Year: 2020, Month: 5, Day: 19 or 20 or 21 } ? "It's conference day" : "It's NOT conference day");
+
+Student student0 = new Student("David", 20);
+if (student0 != null && student0.Age > 18 && student0.Name.Length >3)
+{
+    Console.WriteLine($"Send Email to {student0.Name}");
+}
+if (student0 is { Age: > 18, Name.Length: > 3})
+{
+    Console.WriteLine($"Send Email to {student0.Name}");
+}
+
+Console.ReadLine();
+
+#endregion
 
 #region C#8 features
 
