@@ -30,28 +30,26 @@ string digit = "10";
 int.TryParse(digit, out int d); // out variables are commonly used in TryDoSomething scenarios
 Console.WriteLine($"Parsed Digit: {d}");
 
-// feat: property pattern
-// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns#property-pattern
-Console.WriteLine("--- Property Pattern ---");
-
-DateTime date = new DateTime(2020, 5, 20);
-Console.WriteLine(date is { Year: 2020, Month: 5, Day: 19 or 20 or 21 } ? "It's conference day" : "It's NOT conference day");
-
-Student student0 = new Student("David", 20);
-if (student0 != null && student0.Age > 18 && student0.Name.Length >3)
+// feat: pattern matching // type pattern and constant pattern
+object obj = "hello";
+if (obj is string s)
 {
-    Console.WriteLine($"Send Email to {student0.Name}");
-}
-if (student0 is { Age: > 18, Name.Length: > 3})
-{
-    Console.WriteLine($"Send Email to {student0.Name}");
+    Console.WriteLine($"String length: {s.Length}");
 }
 
-Console.ReadLine();
+int num = 5;
+if (num is 5)
+{
+    Console.WriteLine("Number is five.");
+}
+
 
 #endregion
 
 #region C#8 features
+
+Console.WriteLine("--- C#8 features ---");
+Console.ReadLine();
 
 // feat: default Interface methods // see ICar interface
 ICar f1 = new Ferrari();
@@ -77,12 +75,57 @@ using (var car = new Car())
     Console.WriteLine("My car is very cool");
 }
 
-// feat: switch expressions
+// feat: pattern matching // switch expressions
+Console.WriteLine("--- Switch Expressions ---");
+string role = "admin";
+string access;
+
+// classic switch
+switch (role)
+{
+    case "admin":
+        access = "Full Access";
+        break;
+    case "user": access = "Limited Access";
+        break;
+    case "guest":
+        access = "Read Only";
+        break;
+    default: access = "No Access"; break;
+}
+
+// switch expressions
+access = role switch
+{
+    "admin" => "Full Access",
+    "user" => "Limited Access",
+    "guest" => "Read Only",
+    _ => "No Access"
+};
+
+Console.WriteLine($"Access: {access}");
+
 Months month = Months.March;
 Console.WriteLine(CheckMonthOldWay(month));
 Console.WriteLine(CheckMonth(month));
 
-// feat: property patterns
+// feat: pattern matching // property pattern
+// https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns#property-pattern
+Console.WriteLine("--- Property Pattern ---");
+
+DateTime date = new DateTime(2020, 5, 20);
+Console.WriteLine(date is { Year: 2020, Month: 5, Day: 19 or 20 or 21 } ? "It's conference day" : "It's NOT conference day");
+
+Student student0 = new Student("David", 20);
+if (student0 != null && student0.Age > 18 && student0.Name.Length > 3)
+{
+    Console.WriteLine($"Send Email to {student0.Name}");
+}
+if (student0 is { Age: > 18, Name.Length: > 3 })
+{
+    Console.WriteLine($"Send Email to {student0.Name}");
+}
+
 City viennaAus = new City(Cities.Vienna, "Austria");
 City parisFr = new City(Cities.Paris, "France");
 City parisUS = new City(Cities.Paris, "USA");
@@ -90,7 +133,7 @@ City parisUS = new City(Cities.Paris, "USA");
 Console.WriteLine(CheckPrices(viennaAus));
 Console.WriteLine(CheckPrices(parisUS));
 
-// feat: tuple patterns
+// feat: pattern matching // tuple patterns
 Console.WriteLine(CheckPrices2("Vienna", "Austria"));
 Console.WriteLine(CheckPrices2("Paris", "France"));
 Console.WriteLine(CheckPrices2("Paris", "US"));
@@ -98,7 +141,7 @@ Console.WriteLine(CheckPrices2("Paris", "US"));
 Console.WriteLine(CheckPrices3("Vienna", "Austria", "German"));
 Console.WriteLine(CheckPrices3("Paris", "FR", "FR"));
 
-// feat: positional patterns
+// feat: pattern matching // positional patterns
 Point startPoint = new Point()
 {
     X = 0,
@@ -112,12 +155,13 @@ Point point = new Point()
 };
 Console.WriteLine(DisplayPosition(point));
 
+Console.ReadLine();
+
 // feat: readonly members
 Coord coord = new Coord();
 coord.X = 2;
 coord.Y = 4;
 Console.WriteLine(coord.DisplayPosition());
-
 
 // feat: static local functions
 LocalFunctions();
