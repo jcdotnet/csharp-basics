@@ -1,12 +1,12 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Methods;
+﻿using Methods;
 
+Console.WriteLine("Methods");
 Console.WriteLine("-- Optional Parameters ---");
 
 Add(10, 20);
 Add(10);
 Add2(12, 15.2F);
-Add2(y:15.2F);
+Add2(y: 15.2F);
 
 Console.WriteLine("-- Callback Methods ---");
 
@@ -60,7 +60,7 @@ circleDelegate.Invoke(15);
 circleDelegate -= circle.Area;
 circleDelegate?.Invoke(16);
 
-#region
+#region methods
 
 void ShowResult(int result)
 {
@@ -76,7 +76,7 @@ void Add(int x, int y = 0)
 // Changed add to a expression bodied method
 void Add(int x, int y = 0) => Console.WriteLine($"{x} + {y} = {x + y}");
 
-void Add2(int x=0, float y = 0)
+void Add2(int x = 0, float y = 0)
 {
     Console.WriteLine($"{x} + {y} = {x + y}");
 }
@@ -87,7 +87,7 @@ void Sum(int x, int y, Action<int> showResult) // the third parameter is a callb
     showResult(result);
 }
 
-void Subtract(int x, int y, Action<int> showResult) 
+void Subtract(int x, int y, Action<int> showResult)
 {
     var result = x - y;
     showResult(result);
@@ -101,3 +101,4 @@ void Multiply(int x, int y)
 #endregion
 
 public delegate void Calculate(int x, int y);
+

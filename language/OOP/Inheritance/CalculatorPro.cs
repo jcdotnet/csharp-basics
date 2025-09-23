@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ClassLibrary;
 
 namespace Inheritance
 {
-    internal class CalculatorPro : Calculator
+    // internal: accessible only within files in the same assembly
+    internal class CalculatorPro : Calculator 
     {
-       /* int firstNumber;
-        int secondNumber;*/
+        /* 
+         * int firstNumber;
+         * int secondNumber;
+        */
         public CalculatorPro(int firstNumber, int secondNumber)
-            :base() //new Calculator()
-            //:base(firstNumber, secondNumber)
+            :base() //:base(firstNumber, secondNumber)
         {
            
             this.firstNumber = firstNumber;

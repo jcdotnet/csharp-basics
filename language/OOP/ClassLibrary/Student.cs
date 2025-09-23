@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OOP
+namespace ClassLibrary
 {
     public class Student // PascalCase
     {
@@ -29,13 +29,14 @@ namespace OOP
             get { return department; }
             set { if (!string.IsNullOrEmpty(value)) department = value; }
         }
-        public double Score { get; set; } // automatic property
+        public double Score { get; set; } // automatic property (C#3)
         public bool IsRegistered { get; } // read-only property 
         // public bool IsGraduated { set { } } // write-only property
         public bool IsGraduated { private get; set; } // we can read the value inside the class
 
         // constructor // PascalCase
-        public Student() {
+        public Student()
+        {
             IsRegistered = true;
             IsGraduated = false;
         }
@@ -56,11 +57,11 @@ namespace OOP
         //    // in order to set the value here we can add private set to the property
         //    //IsRegistered = true; 
         //}
-        public string ShowInfo ()
+        public string ShowInfo()
         {
             return $"{name} is at grade {grade} in the {department} department with score {Score}. Graduated: {IsGraduated}";
-        } 
-
+        }
 
     }
 }
+
