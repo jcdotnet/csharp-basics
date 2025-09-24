@@ -75,39 +75,7 @@ using (var car = new Car())
     Console.WriteLine("My car is very cool");
 }
 
-// feat: pattern matching // switch expressions
-Console.WriteLine("--- Switch Expressions ---");
-string role = "admin";
-string access;
 
-// classic switch
-switch (role)
-{
-    case "admin":
-        access = "Full Access";
-        break;
-    case "user": access = "Limited Access";
-        break;
-    case "guest":
-        access = "Read Only";
-        break;
-    default: access = "No Access"; break;
-}
-
-// switch expressions
-access = role switch
-{
-    "admin" => "Full Access",
-    "user" => "Limited Access",
-    "guest" => "Read Only",
-    _ => "No Access"
-};
-
-Console.WriteLine($"Access: {access}");
-
-Months month = Months.March;
-Console.WriteLine(CheckMonthOldWay(month));
-Console.WriteLine(CheckMonth(month));
 
 // feat: pattern matching // property pattern
 // https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/operators/patterns#property-pattern
@@ -384,51 +352,6 @@ static string CheckPrices(City city) => city switch
     { CityName: Cities.Paris } => $"{city.CityName}, {city.CountryName} is high",
     _ => "City is not covered"
 };
-
-static string CheckMonth(Months month) => month switch
-{
-    Months.January => "Winter",
-    Months.February => "Winter",
-    Months.March => "Winter",
-    Months.April => "Spring",
-    Months.May => "Spring",
-    Months.June => "Spring",
-    Months.July => "Summer",
-    Months.August => "Summer",
-    Months.September => "Summer",
-    Months.October => "Autumn",
-    Months.November => "Autumn",
-    Months.December => "Winter",
-    _ => "Invalid Input"
-};
-static string CheckMonthOldWay(Months month)
-{
-    switch (month)
-    {
-        case Months.December:
-        case Months.January:
-        case Months.February:
-        case Months.March:
-            return "Winter";
-
-        case Months.April:
-        case Months.May:
-        case Months.June:
-            return "Spring";
-
-        case Months.July:
-        case Months.August:
-        case Months.September:
-            return "Summer";
-
-        case Months.October:
-        case Months.November:
-            return "Autumn";
-
-        default:
-            return "Invalid input";
-    }
-}
 
 static string CapitalizeJob(Employee employee) => employee.Job?.ToUpper() ?? String.Empty; // C#8: working with nulls
 

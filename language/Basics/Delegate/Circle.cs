@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Methods
+namespace Delegate
 {
-    internal class Circle
+    public class Circle
     {
-        public delegate void CircleDelegate(double radius);
-
         public void Area(double radius)
         {
             Console.WriteLine($"Circle area is {radius * radius * Math.PI}");
@@ -24,6 +22,5 @@ namespace Methods
         {
             Console.WriteLine($"Circle radius is {radius}");
         }
-
     }
 }

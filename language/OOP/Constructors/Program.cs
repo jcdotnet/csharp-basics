@@ -35,3 +35,15 @@ Console.WriteLine(student3.ShowInfo());
 
 Car car = new Car(); // default constructor
 Console.WriteLine(car[0]); // get accesor of the indexer
+
+
+BankAccount bankAccount = new BankAccount(150.0F);
+// also: var BankAccount = new BankAccount(150.0F); 
+// also: BankAccount bankAccount = new(150.0F);
+Console.WriteLine($"Bank account balance is: {bankAccount.Balance}");
+bankAccount.Deposit(100);
+Console.WriteLine($"Bank account balance is: {bankAccount.Balance}");
+bankAccount.Withdraw(50);
+Console.WriteLine($"Bank account balance is: {bankAccount.Balance}");
+bankAccount.Withdraw(300);
+Console.WriteLine($"Bank account balance is: {bankAccount.Balance}");

@@ -1,7 +1,4 @@
-﻿using Methods;
-
-Console.WriteLine("Methods");
-Console.WriteLine("-- Optional Parameters ---");
+﻿Console.WriteLine("-- Optional Parameters ---");
 
 Add(10, 20);
 Add(10);
@@ -29,56 +26,19 @@ Subtract(10, 20, show);
 
 show(50);
 
-Console.WriteLine("-- Delegates ---");
-
-var calcMul = new Calculate(Multiply);
-
-calcMul(12, 12);
-calcMul(13, 13);
-calcMul.Invoke(14, 14);
-
-var calcAdd = new Calculate(Add);
-
-calcAdd(12, 12);
-calcAdd(13, 13);
-calcAdd(14, 14);
-
-Console.WriteLine("-- Delegate Multicasting ---");
-
-var multiCalc = new Calculate(Add);
-multiCalc += Multiply;
-
-multiCalc(14, 14);
-
-var circle = new Circle();
-var circleDelegate = new Circle.CircleDelegate(circle.ShowInfo);
-circleDelegate += circle.Area;
-circleDelegate += circle.Perimeter;
-
-circleDelegate.Invoke(15);
-
-circleDelegate -= circle.Area;
-circleDelegate?.Invoke(16);
 
 #region methods
 
-void ShowResult(int result)
-{
-    Console.WriteLine($"Result is {result}");
-}
-
-/*
-void Add(int x, int y = 0)
-{
-    Console.WriteLine($"{x} + {y} = {x + y}");
-}*/
-
-// Changed add to a expression bodied method
 void Add(int x, int y = 0) => Console.WriteLine($"{x} + {y} = {x + y}");
 
 void Add2(int x = 0, float y = 0)
 {
     Console.WriteLine($"{x} + {y} = {x + y}");
+}
+
+void Multiply(int x, int y)
+{
+    Console.WriteLine($"{x} * {y} = {x * y}");
 }
 
 void Sum(int x, int y, Action<int> showResult) // the third parameter is a callback method
@@ -93,12 +53,10 @@ void Subtract(int x, int y, Action<int> showResult)
     showResult(result);
 }
 
-void Multiply(int x, int y)
+void ShowResult(int result)
 {
-    Console.WriteLine($"{x} * {y} = {x * y}");
+    Console.WriteLine($"Result is {result}");
 }
 
 #endregion
-
-public delegate void Calculate(int x, int y);
 

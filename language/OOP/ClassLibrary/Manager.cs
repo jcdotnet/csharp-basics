@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClassLibrary
+namespace ClassLibrary 
 {
     // is-a relationship (Manager is an Employee) // sealed (classes cannot inherit from Manager)
-    sealed public class Manager: Employee 
+    sealed public class Manager: Employee, ISales 
     { 
         private string _department; 
 

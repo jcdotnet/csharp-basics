@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Abstraction
+namespace ClassLibrary
 {
     public interface ITeacher
     {
@@ -37,34 +37,5 @@ namespace Abstraction
             throw new NotImplementedException();
         }
     }
-    public class Student
-    {
-        public void Study()
-        {
-
-        }
-        public void Register()
-        {
-
-        }
-    }
-
-    public class BachelorStudent : Student
-    {
-
-    }
-
-    public class MasterStudent :Student, ITeacher
-    {
-        public void TakeExam()
-        {
-            Console.WriteLine("The master student is taking an exam");
-        }
-
-        public void Teach()
-        {
-            Console.WriteLine("The master student is teaching");
-
-        }
-    }
+    
 }

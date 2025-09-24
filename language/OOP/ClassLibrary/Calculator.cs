@@ -21,6 +21,11 @@ namespace ClassLibrary
         public int Add() => firstNumber + secondNumber;
         public int Subtract() { return firstNumber - secondNumber; }
 
-
+        public virtual string DoAllOperations()
+        {
+            return
+                $"Addition is: {Add()}\n" +
+                $"Subtraction is {Subtract()}";
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace ClassLibrary
     // Base class: Employee
     // Derived class: Salesman (specialization of employee)
     // Salesman is a employee
-    public class Salesman: Employee
+    public class Salesman: Employee, ISales
     {
         private string _region;
 

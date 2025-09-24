@@ -1,9 +1,6 @@
-﻿using ClassLibrary;
-
-namespace Inheritance
+﻿namespace ClassLibrary
 {
-    // internal: accessible only within files in the same assembly
-    internal class CalculatorPro : Calculator 
+    public class CalculatorPro : Calculator 
     {
         /* 
          * int firstNumber;
@@ -27,6 +24,17 @@ namespace Inheritance
         public double PowerX()
         {
             return Math.Pow(firstNumber, secondNumber);
+        }
+
+        public override string DoAllOperations()
+        {
+            return
+                //$"Addition is: {Add()}\n" +
+                //$"Subtraction is {Subtract()}\n" +
+                //base.DoAllOperations() +
+                $"\nPower2 is {Power2()}\n" +
+                $"PowerX is {PowerX()}\n" +
+                $"{base.DoAllOperations()}";
         }
     }
 }

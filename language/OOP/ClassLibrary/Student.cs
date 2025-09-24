@@ -50,7 +50,10 @@ namespace ClassLibrary
         }
 
         // methods // PascalCase
+        public void Study()
+        {
 
+        }
         //public void Register()
         //{
         //    // we can only assign values to a read only property inside constructors
@@ -62,6 +65,25 @@ namespace ClassLibrary
             return $"{name} is at grade {grade} in the {department} department with score {Score}. Graduated: {IsGraduated}";
         }
 
+    }
+
+    public class BachelorStudent : Student
+    {
+
+    }
+
+    public class MasterStudent : Student, ITeacher
+    {
+        public void TakeExam()
+        {
+            Console.WriteLine("The master student is taking an exam");
+        }
+
+        public void Teach()
+        {
+            Console.WriteLine("The master student is teaching");
+
+        }
     }
 }
 

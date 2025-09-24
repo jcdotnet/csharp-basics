@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ClassLibrary
-{
+{   
     public class Employee
     {
         // fields
@@ -60,7 +60,7 @@ namespace ClassLibrary
         }
 
         // public methods
-        public virtual void Rest() // can be override if required
+        public virtual void Rest() // virtual method (can be overrided if required)
         {
             Console.WriteLine("Employee is resting.");
         }
@@ -68,5 +68,10 @@ namespace ClassLibrary
         {
             Console.WriteLine("Employee is working.");
         }
+    }
+
+    public interface ISales
+    {
+        long GetTotalSales();
     }
 }

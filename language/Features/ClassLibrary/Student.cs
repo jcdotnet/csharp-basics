@@ -3,13 +3,14 @@
     public class Student
     {
         private int grade = 100;
+        private string name = "John";
         public string Location { get; set; } = "Málaga"; // auto-implemented property init (C#6)
 
         public void PrintGrade()
         {
             Console.WriteLine("Grade: " + grade);
         }
-
+   
         // local function (C#7.0)
         public void DisplayGrades(params int[] grades)
         {
@@ -57,6 +58,15 @@
                 Console.WriteLine(subjects[i]);
             }
         }
+
+        /*
+        public int GetNameLength()
+        {
+            return name.Length;
+        }
+        */
+        // expression-bodied method (C#7.0)
+        public int GetNameLength() => name.Length;
 
         // public method with ref return (C# 7.3)
         public ref int RefReturnExample()

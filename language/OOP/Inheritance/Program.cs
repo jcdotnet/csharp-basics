@@ -1,8 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
-using ClassLibrary;
+﻿using ClassLibrary;
 using Inheritance;
 
-Console.WriteLine("Inheritance");
+Console.WriteLine("OOP - Inheritance");
 
 Employee employee = new Employee();
 employee.Id = 101;
@@ -28,7 +27,6 @@ sales1.Work();
 sales1.Rest();
 Console.WriteLine(sales1.GetTotalSales());
 
-
 Salesman sales2 = new Salesman();
 sales2.Id = 101;
 sales2.Name = "Jane";
@@ -37,7 +35,6 @@ sales2.Region = "Centro";
 sales2.Work();
 sales2.Rest();
 Console.WriteLine(sales2.GetTotalSales());
-
 
 
 var calc = new Calculator(15, 20);
@@ -51,8 +48,18 @@ Console.WriteLine($"PowerX result is : {calcPro.PowerX()}");
 Console.WriteLine($"Addition Pro result is : {calcPro.Add()}");
 //calcPro.firstNumber = 10;
 
-var penguin = new Penguin();
-penguin.Eat();
-penguin.Swim();
-penguin.LayEgg();
+// characters
+Warrior c1 = new Warrior("Arthur", 100, 20, 10);
+Mage c2 = new Mage("Merlin", 80, 15, 5);
+Dragon c3 = new Dragon("Smaug", 200, 30, 20);
 
+c1.AttackCharacter(c2);
+c2.Defend();
+c3.BreatheFire(c1);
+c3.Defend();
+c1.Defend();
+
+Game game = new Game();
+game.Battle(c1, c2);
+game.Battle(c3, c1);
+game.Battle(c2, c3);
