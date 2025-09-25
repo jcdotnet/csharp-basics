@@ -13,6 +13,7 @@ namespace ClassLibrary
         private string name;
         private string description;
         private double price;
+        private double discountPercentage;
         private double tax;
         public const string categoryName = "Electronics"; // compile-time constant
         private readonly string purchaseDate; // runtime constant
@@ -56,6 +57,15 @@ namespace ClassLibrary
         {
             price = value;  // this.price
         }
+
+        public double GetDiscountPercentage()
+        {
+            return discountPercentage;
+        }
+        public void SetDiscountPercentage(double value)
+        {
+            discountPercentage = value;
+        }
         public double GetTax()
         {
             return price;
@@ -64,6 +74,7 @@ namespace ClassLibrary
         {
             return purchaseDate;
         }
+
 
         // public methods
         public void CalculateTax(double percentage = 12) // default parameter value (C#4)

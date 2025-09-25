@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using ClassLibrary;
+using Constructors;
 
 Console.WriteLine("Constructors");
 
@@ -47,3 +48,16 @@ bankAccount.Withdraw(50);
 Console.WriteLine($"Bank account balance is: {bankAccount.Balance}");
 bankAccount.Withdraw(300);
 Console.WriteLine($"Bank account balance is: {bankAccount.Balance}");
+
+// destructors (used to close unmanaged resources that are opened during the class execution)
+{
+    DestructorExample _ = new();
+} // destructor is called automatically
+
+// IDisposable interface
+// https://learn.microsoft.com/en-us/dotnet/api/system.idisposable?view=net-9.0
+using (IDisposableExample d = new())
+{
+    d.DisplayData();
+    // some other operations
+} // dispose method is called automatically

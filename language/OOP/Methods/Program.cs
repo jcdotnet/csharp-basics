@@ -1,4 +1,7 @@
-﻿Console.WriteLine("-- Optional Parameters ---");
+﻿using ClassLibrary;
+using Methods;
+
+Console.WriteLine("-- Optional Parameters ---");
 
 Add(10, 20);
 Add(10);
@@ -26,6 +29,13 @@ Subtract(10, 20, show);
 
 show(50);
 
+// extension methods
+// https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods
+Product product = new Product();
+product.SetPrice(1000);
+product.SetDiscountPercentage(10);
+double discount = product.GetDiscount(); // extension method
+Console.WriteLine(discount);
 
 #region methods
 
