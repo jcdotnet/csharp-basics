@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Collections
+namespace ClassLibrary
 {
     public class SalesAnalysis
     {
-        // readonly to store the list of items sold
+        // readonly prop to store the list of items sold
         public readonly List<string> ItemsSold;
 
         // const to represent the separator character

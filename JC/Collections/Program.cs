@@ -1,17 +1,6 @@
 ﻿using Collections;
 using Features;
 
-Console.WriteLine("Collections: TO-DO");
-
-Console.WriteLine("Collections Exercises");
-SalesAnalysis sales = new SalesAnalysis(new List<string>() 
-{ 
-    "item1: 299",
-    "item2: 149",
-    "item3: 999",
-});
-Console.WriteLine(sales.ComputeTotalIncome());
-
 Console.WriteLine("LINQ");
 // Numbers list
 List<int> list = new List<int>() { 23, 75, 30, 34, 98, 27, 0};
