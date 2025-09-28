@@ -12,14 +12,18 @@ namespace Classes
         public int Id { get; set; }
         public string Name { get; set; }
         public string Position { get; set; }
+        public string Location { get; set; }
 
         public object Clone() 
         {
-            return new Employee() { Id = this.Id, Name = this.Name, Position = this.Position };
+            return new Employee() 
+            { 
+                Id = this.Id, Name = this.Name, Position = this.Position, Location = this.Location 
+            };
         }
         public override string? ToString()
         {
-            return $"Id: {Id}. Name: {Name}. Position: {Position}";
+            return $"Id: {Id}. Name: {Name}. Position: {Position}. Location: {Location}";
         }
     }
 }

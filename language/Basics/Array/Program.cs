@@ -123,6 +123,7 @@ for (int i = 0; i < employees.Length; i++)
 }
 
 employees[0].Position = "Developer";
+employees[0].Location = "NYC";
 
 Console.WriteLine("Copied Array:");
 foreach (var employee in copiedArray) Console.WriteLine(employee);
