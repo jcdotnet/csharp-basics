@@ -8,8 +8,11 @@ namespace Classes
 {
     public class Student
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
+        public DateTime BirthDate { get; set; }
+        public Student() {}
 
         // traditional constructor (verbose)
         //public Student(string name, int age)

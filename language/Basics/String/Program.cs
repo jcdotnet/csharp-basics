@@ -95,10 +95,13 @@ Console.WriteLine(hello.Count(ch => Array.IndexOf(vowels, ch) != 0));   // 8
 
 // String Builder (Mutable)
 // https://learn.microsoft.com/en-us/dotnet/api/system.text.stringbuilder?view=net-9.0
-string[] sentenceWords = ["Too","bad", "I", "hid", "a", "boot"];
+string[] wordsArr = ["Too", "bad", "I", "hid", "a", "boot"];
 
-StringBuilder sb = new StringBuilder();
+StringBuilder sentence = new StringBuilder();
 
-foreach (string word in sentenceWords) sb.Append(word).Append(' ');
+foreach (string word in wordsArr) sentence.Append(word.ToLower().Trim());
 
-Console.WriteLine(sb.ToString().Trim());
+
+var reverse = string.Join("", sentence.ToString().Reverse().ToArray()); 
+
+Console.WriteLine($"Palindrome: {reverse == sentence.ToString()}");     // True

@@ -1,7 +1,7 @@
 ﻿// https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/delegates/
+using Classes;
 using Delegate;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 Console.WriteLine("--- Delegates ---");
 var methods = new DelegatesTest();
