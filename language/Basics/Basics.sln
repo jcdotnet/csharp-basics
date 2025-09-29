@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DateTime", "DateTime\DateTi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegularExpressions", "RegularExpressions\RegularExpressions.csproj", "{01C69B22-40BC-44CC-940E-9BFE54DD9EC1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encoding", "Encoding\Encoding.csproj", "{77DAD85D-7272-421D-ABCA-3F07C25213BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{01C69B22-40BC-44CC-940E-9BFE54DD9EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01C69B22-40BC-44CC-940E-9BFE54DD9EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01C69B22-40BC-44CC-940E-9BFE54DD9EC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
