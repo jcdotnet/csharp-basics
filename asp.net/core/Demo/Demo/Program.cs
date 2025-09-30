@@ -31,6 +31,10 @@ app.Use(async (context, next) => {
 app.MapFallback(async (context) => {
     await context.Response.WriteAsync($"Page Not Found at { context.Request.Path}");
 });
+
+// https://learn.microsoft.com/en-us/aspnet/core/fundamentals/static-files?view=aspnetcore-9.0
+app.UseStaticFiles();
+
 app.MapControllers();
 
 app.Run();
