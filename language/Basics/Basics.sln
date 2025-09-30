@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegularExpressions", "Regul
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encoding", "Encoding\Encoding.csproj", "{77DAD85D-7272-421D-ABCA-3F07C25213BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputOutput", "InputOutput\InputOutput.csproj", "{1380EC83-5C68-4A17-A591-63BA9F8C49A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77DAD85D-7272-421D-ABCA-3F07C25213BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
