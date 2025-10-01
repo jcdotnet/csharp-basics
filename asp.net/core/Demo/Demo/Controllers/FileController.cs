@@ -6,6 +6,7 @@ namespace Demo.Controllers
     {
 
         [Route("/files/{filename:minlength(3)}.{extension = txt}")]
+        // no model binding (= learning purposes = Request.RouteValues)
         public IActionResult DownloadFile()
         {
             string? fileName = Convert.ToString(Request.RouteValues["filename"]);

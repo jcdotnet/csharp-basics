@@ -1,5 +1,6 @@
 ﻿using Demo.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace Demo.Controllers
 {
@@ -29,7 +30,8 @@ namespace Demo.Controllers
         [Route("employees/json-demo")]
         public JsonResult JsonResultDemo()
         {
-            Employee employee = new Employee() { Id = Guid.NewGuid(), FirstName="John", LastName="Doe", Age=40 };
+            // Employee employee = new Employee() { Id = Guid.NewGuid(), FirstName="John", LastName="Doe", Age=40 };
+            Employee employee = new Employee() { Id = 101, FirstName = "John", LastName = "Doe", Age = 40 };
             return new JsonResult(employee);
         }
 
@@ -46,20 +48,16 @@ namespace Demo.Controllers
         // https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.iactionresult?view=aspnetcore-9.0
         // StatusCodeResult
         // https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.statuscoderesult?view=aspnetcore-9.0
-        [Route("employees/{id:int?}")]
-        public IActionResult FindEmployee()
-        { 
-            if (Request.RouteValues.ContainsKey("id"))
+        [Route("employees/{id:int}")]
+        public IActionResult FindEmployee(Employee employee)
+        {
+            int? empId = employee.Id;
+            if (empId < 0 || empId > 1000)
             {
-                int empId = Convert.ToInt32(Request.RouteValues["id"]);
-                return Content($"Employee with id {empId} goes here"); // simplified
+                // Response.StatusCode = 400;
+                return BadRequest("Employee id is not valid");
             }
-            else
-            {
-                // non-reachable (we defined an endpoint for employees)
-                // code left here for learning purposes (StatusCodeResult)
-                return BadRequest("Employee id not supplied"); // simplified
-            }   
+            return Content($"Employee with id {empId} goes here"); // simplified  
         }
     }
 }

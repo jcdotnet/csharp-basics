@@ -1,15 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Net;
+﻿using Demo.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Demo.Controllers
 {
     public class BookController : Controller
     {
-        // url example: http://localhost:5035/books/1
-        [Route("/books/{id}")]
+        [Route("/books")]
         public IActionResult Index()
         {
-            int bookId = Convert.ToInt32(Request.RouteValues["id"]);
+            return Content("<h1>Books</h1>", "text/html");
+        }
+    
+        // url example: http://localhost:5035/books/1
+        [Route("/books/{id}")]
+        public IActionResult Find(Book book)
+        {
+            int? bookId = book.Id;
             Console.WriteLine(bookId);
             // id logic goes here...
             return File("/pg1513.txt", "text/plain"); // project gutenberg free book
@@ -19,30 +25,29 @@ namespace Demo.Controllers
         // moved to http://localhost:5035/books/1
         [Route("/bookstore")]
         [Route("/store/books")]
-        public IActionResult FindBook()
+        // model binding: bookid and isloggedin are nullable (= Nullable<T> = can be null)
+        // FromQuery is optional here because we are binding from the query string only...
+        // and not from the route data (to bind id from the route data we use [FromRoute]) 
+        public IActionResult FindLegacy([FromQuery]int? bookid, bool? isloggedin) 
         {
-            if (!Request.Query.ContainsKey("bookid")) 
+            if (!bookid.HasValue) // Nullable<T> property
             {
                 // Response.StatusCode = 400;
                 // return new BadRequestResult();
                 return BadRequest("Book id not supplied"); ;
             }
 
-            var bookId = Request.Query["bookid"];
+            // checking id here rather than in router validation to avoid non-reachable code
+            // since we have a /books route and no id value will match with the /books route
+            if (bookid < 0 || bookid > 1000)
+            {
+                // Response.StatusCode = 400;
+                return BadRequest("Book id is not valid");
+            }
 
-            if (string.IsNullOrEmpty(Convert.ToString(bookId)))
-            {
-                // Response.StatusCode = 400;
-                return BadRequest("Book id is not valid");
-            }
-            // checking id here rather than in router validation
-            // to avoid non-reachable code (= see FindEmployee())
-            if (Convert.ToInt32(bookId) < 0 || Convert.ToInt32(bookId) > 1000)
-            {
-                // Response.StatusCode = 400;
-                return BadRequest("Book id is not valid");
-            }
-            if (Convert.ToBoolean(Request.Query["isloggedin"]) == false)
+            // we can use model binding as well
+            // 
+            if (isloggedin == false)
             {
                 // Response.StatusCode = 401;
                 // return Content("You must be authenticated to get this book");
@@ -51,16 +56,17 @@ namespace Demo.Controllers
 
             // redirection (several ways)
             // 302
-            // return new RedirectToActionResult("Index", "Book", new { id = bookId });
-            // return RedirectToAction("Index", "Book", new { id = bookId });
-            // return LocalRedirectResult($"books/{bookId}"); // also new LocalRedirectResult
-            return Redirect($"books/{bookId}");
+            // return new RedirectToActionResult("Find", "Book", new { id = bookid });
+            // return RedirectToAction("Find", "Book", new { id = bookid });
+            return new LocalRedirectResult($"/books/{bookid}");
+            // return Redirect($"books/{bookId}");
 
             //301
-            // return new RedirectToActionResult("Index", "Book", new { id = bookId }, permanent: true); 
-            // return RedirectToActionPermanent("Index", "Book", new { id = bookId });
-            // return LocalRedirectPermanent($"books/{bookId}");
-            // return RedirectPermanent($"books/{bookId}"); 
+            // return new RedirectToActionResult("Find", "Book", new { id = bookid }, permanent: true); 
+            // return RedirectToActionPermanent("Find", "Book", new { id = bookid });
+            // return new LocalRedirectResult($"/books/{bookid}", true);
+            // return LocalRedirectPermanent($"/books/{bookid}");
+            // return RedirectPermanent($"books/{bookid}"); 
         }
     }
 }
