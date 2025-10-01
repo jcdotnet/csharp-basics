@@ -5,6 +5,20 @@ using ClassLibrary;
 
 Console.WriteLine("C#6 features");
 
-// Auto-Property Initializers
 Student student = new Student();
-Console.WriteLine(student.Location); // Málaga
+Console.WriteLine(student.Location); // Málaga // auto-property initializer
+
+Player player = new Player(ClassLibrary.Type.Elf); // static imports
+player.Name = "My Player"; // nameof operator
+Console.WriteLine(player.Armor); // immutable (read-only) properties
+Console.WriteLine(player.Defense); // expression bodied members
+Console.WriteLine(player); // string interpolation 
+
+player.StaticImportExample(); // static imports
+
+Console.WriteLine(Player.ArmedByKnife(player)); // null propagation operator
+
+// expression bodied members (functions with single body statements or return value)
+// C#7 expands this syntax to cover constructors, finalizers, and property accessors
+// https://learn.microsoft.com/en-us/dotnet/csharp/programming-guide/statements-expressions-operators/expression-bodied-members
+Console.WriteLine(student.GetNameLength());

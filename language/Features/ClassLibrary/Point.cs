@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Features
+namespace ClassLibrary
 {
     public class Point
     {
@@ -13,11 +13,18 @@ namespace Features
 
         //public Point(int x, int y) => (X, Y) = (x, y);
 
-        public void GetCoords( out int x, out int y)
+        public void GetCoords(out int x, out int y)
         {
             x = X; y = Y;
         }
 
         public void Deconstruct(out int x, out int y) => (x, y) = (X, Y);
+
+        public static string DisplayPosition(Point point) => point switch
+        {
+            (0, 0) => "Origin",
+            var (x, y) when x > 0 && y > 0 => $"Current Position is {x},{y}",
+            _ => "Unknow Position"
+        };
     }
 }

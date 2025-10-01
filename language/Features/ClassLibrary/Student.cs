@@ -1,10 +1,28 @@
-﻿namespace ClassLibrary
+﻿using System.Xml.Linq;
+
+namespace ClassLibrary
 {
     public class Student
     {
         private int grade = 100;
         private string name = "John";
-        public string Location { get; set; } = "Málaga"; // auto-implemented property init (C#6)
+
+        // auto-implemented property initializer (C#6)
+        public string Location { get; set; } = "Málaga"; 
+        
+        public int Age { get; set; }
+        public string Name { get => name; set => name = value; }
+
+        public Student() { }
+
+        // traditional constructor (verbose)
+        //public Student(string name, int age)
+        //{
+        //    Name = name;
+        //    Age = age;
+        //}
+        // primary constructor with property initializers
+        public Student(string name, int age) => (Name, Age) = (name, age);
 
         public void PrintGrade()
         {
@@ -31,7 +49,7 @@
             }
         }
 
-        // local static loca function (C#8.0)
+        // local static local function (C#8.0)
         public void DisplayGradesWithStaticFunction(params int[] grades)
         {
             for (int i = 0; i < grades.Length; i++)
@@ -73,5 +91,7 @@
         {
             return ref grade;
         }
+        
+        public override string ToString() => $"{Name} - {Age}";
     }
 }

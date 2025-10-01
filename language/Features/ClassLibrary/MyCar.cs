@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Features
+namespace ClassLibrary
 {
-    internal class Ferrari : ICar
+    public class MyCar: ICar
     {
         public void Run()
         {
-            Console.WriteLine("Car is running");
+            Console.WriteLine("My car is running");
         }
     }
 }

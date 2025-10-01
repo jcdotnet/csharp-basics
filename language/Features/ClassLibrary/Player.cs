@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 using static System.Math; // C#6: importing static members
-using static Features.Type; // C#6: importing static members
+using static ClassLibrary.Type; // C#6: importing static members
 
-namespace Features
+namespace ClassLibrary
 {
     public enum Type
     {
@@ -19,36 +14,38 @@ namespace Features
     {
         public Weapon(string name)
         {
-            Name = name; 
+            Name = name;
         }
 
         public string Name { get; }
     }
 
 
-    public class Character : INotifyPropertyChanged
+    public class Player : INotifyPropertyChanged
     {
-        
+
         private string name;
 
-        // C#6: automatic properties
-        public int MyProperty { get; set; }
+        public int MyProperty { get; set; } // automatic property
 
         // C#6: immutable (getter only) properties 
-        public int Armor { get; } = 100; // C#6: initialization of properties
+        public int Armor { get; } = 100; // C#6: auto-property initializers
 
         public Type Type { get; }
 
         public int Wear { get; private set; } = 15;
+        
         public int Health { get; private set; } = 100;
-        public int Defense => Wear >= Armor ? 0 : Armor - Wear; // C#6: expression-bodied members
+       
+        // C#6: expression-bodied members (methods and read-only properties)
+        public int Defense => Wear >= Armor ? 0 : Armor - Wear; 
         /*
         public int Defense
         {
             get { return Wear >= Armor ? 0 : Armor - Wear }
         }
         */
-        public Weapon Weapon { get;  }
+        public Weapon Weapon { get; }
 
         public string Name
         {
@@ -61,7 +58,7 @@ namespace Features
             }
         }
 
-        public Character(Type type)
+        public Player(Type type)
         {
             Type = type;
             Armor = 90; // ctor has preference in property initialization
@@ -79,12 +76,18 @@ namespace Features
         //    Health -= damage - Defense;
         //}
 
-        public void ImportStaticExample()
+        public static bool ArmedByKnife(Player c)
+        {
+            //return c != null && c.Weapon != null && c.Weapon.Name == "Knife";
+            return c?.Weapon?.Name == "Knife"; // C#6: safe navigation operator
+        }
+
+        public void StaticImportExample()
         {
             switch (Type)
             {
                 /*
-                case Type.Elf: Console.WriteLine("Elf"); break;
+                case Type.Elf: Console.WriteLine("Elf"); break; // before C#6
                 case Type.Ork: Console.WriteLine("Elf"); break;
                 */
                 case Elf: Console.WriteLine("Elf"); break; // C#6: importing static members
