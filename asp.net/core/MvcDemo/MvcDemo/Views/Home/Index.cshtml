@@ -1,0 +1,46 @@
+﻿@using MvcDemo.Models;
+@{ // @functions { // converts the functions below to methods of the Views_Home_index class)
+    int? GetAge(DateTime? birthDate)
+    {
+        if (birthDate is null) return null;
+        return (int)Math.Floor((DateTime.Now - birthDate).Value.TotalDays / 365);
+    }
+    void PrintMessage(Person person)
+    {
+        if (person.BirthDate is null) // person.BirthDate.HasValue == false
+        {
+            <span>Hello @person.Name, how old are you?</span>
+        }
+        else
+        {
+            <span>@person.Name is @GetAge(person.BirthDate) years old</span>
+        }       
+    }
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>@ViewData["pageTitle"]</title>
+</head>
+    <link href="~/style.css" rel="stylesheet" />
+<body>
+    <h1>@ViewData["pageTitle"]</h1>
+    <p>@ViewData["pageMessage"]</p>
+
+    <h2> Hello people!</h2>
+    <ol>
+        @{
+            var people = ViewBag.people;
+            if (people != null)
+            {
+                foreach (var person in people)
+                {
+                    <li>@{ PrintMessage(person); }</li>
+                }
+            }
+        }
+    </ol>
+</body>
+</html>

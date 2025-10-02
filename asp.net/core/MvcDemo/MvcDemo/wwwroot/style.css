@@ -1,0 +1,24 @@
+﻿body {
+    font-size: 1.2rem;
+    margin: 0;
+    padding: 1rem;
+}
+ol {
+    max-width: 400px;
+    color: #fff;
+}
+li {
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    background: deepskyblue;
+}
+
+li + li {
+    margin-top: 0.5rem;
+}
+
+::marker {
+    font-weight: 600;
+    color: blue;
+    font-size: 1.5rem;
+}
