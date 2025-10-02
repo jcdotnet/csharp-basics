@@ -1,7 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // builder.Services.AddTransient<HomeController>();
-// or we can let asp.net core detects them and add them as services
+// we can let asp.net core detects them and inject them as services
 builder.Services.AddControllers(); 
 
 var app = builder.Build();

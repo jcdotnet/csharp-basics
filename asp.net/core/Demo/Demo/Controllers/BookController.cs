@@ -30,6 +30,7 @@ namespace Demo.Controllers
         // and not from the route data (to bind id from the route data we use [FromRoute]) 
         public IActionResult FindLegacy([FromQuery]int? bookid, bool? isloggedin) 
         {
+            // validating here (not in the model, see User) for learning purposes
             if (!bookid.HasValue) // Nullable<T> property
             {
                 // Response.StatusCode = 400;
