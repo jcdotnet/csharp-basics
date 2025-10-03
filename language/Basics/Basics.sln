@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Encoding", "Encoding\Encodi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InputOutput", "InputOutput\InputOutput.csproj", "{1380EC83-5C68-4A17-A591-63BA9F8C49A3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Serialization", "Serialization\Serialization.csproj", "{C78F99D3-4140-4D2F-AA62-5AD67ABA8DA7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +107,10 @@ Global
 		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1380EC83-5C68-4A17-A591-63BA9F8C49A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C78F99D3-4140-4D2F-AA62-5AD67ABA8DA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C78F99D3-4140-4D2F-AA62-5AD67ABA8DA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C78F99D3-4140-4D2F-AA62-5AD67ABA8DA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C78F99D3-4140-4D2F-AA62-5AD67ABA8DA7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
