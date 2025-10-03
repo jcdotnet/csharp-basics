@@ -1,0 +1,38 @@
+﻿@model CityWeather
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Weather App</title>
+    <link href="~/StyleSheet.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="container margin-left">
+        <div class="page-content text-center"> 
+            @if (Model == null)
+            {
+                <h1>City Not Found</h1>
+            } else
+            {
+                <div class="box w-30 margin-auto margin-top-200">
+                    <div class="flex-borderless">
+                        <div class="w-50">
+                            <h2>@Model.Name</h2>
+                            <h4 class="text-dark-grey">@Model.DateAndTime.ToString("dd MM yyyy")</h4>
+                            <h4 class="text-dark-grey">@Model.DateAndTime.ToString("hh:mm tt")</h4>
+                        </div>
+                        <div class="w-50 border-left">
+                            <h1 class="margin-left">
+                                @Model.Temperature <sup class="text-grey">&#8457</sup>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            }
+            <a href="~/">Back to the Home Page</a>
+        </div>
+
+    </div>
+</body>
+</html>
