@@ -5,7 +5,7 @@
         if (birthDate is null) return null;
         return (int)Math.Floor((DateTime.Now - birthDate).Value.TotalDays / 365);
     }
-    void PrintMessage(Person person)
+    void PrintMessage(Customer person)
     {
         if (person.BirthDate is null) // person.BirthDate.HasValue == false
         {
@@ -23,13 +23,11 @@
     <meta name="viewport" content="width=device-width" />
     <meta charset="utf-8" />
     <title>@ViewData["pageTitle"]</title>
-</head>
     <link href="~/style.css" rel="stylesheet" />
+</head>
+    
 <body>
-    <h1>@ViewData["pageTitle"]</h1>
-    <p>@ViewData["pageMessage"]</p>
-
-    <h2> Hello people!</h2>
+    <h1>@ViewData["pageMessage"]</h1>
     <ol>
         @{
             var people = ViewBag.people;
