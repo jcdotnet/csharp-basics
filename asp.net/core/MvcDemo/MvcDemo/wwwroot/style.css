@@ -1,6 +1,18 @@
 ﻿body {
-    font-size: 1.2rem;
     margin: 0;
+    font-size: 1.2rem;
+}
+header, .footer {
+    padding: 1rem;
+    background: deepskyblue;
+    color: #fff;    
+}
+header {
+    display: grid;
+    place-content: center;
+    font-size: 1.5rem;
+}
+.main-content {
     padding: 1rem;
 }
 ol {

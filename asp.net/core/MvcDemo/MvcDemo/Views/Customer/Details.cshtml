@@ -1,22 +1,10 @@
 ﻿@using MvcDemo.Models;
 @model Customer
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <meta charset="UTF-8" />
-    <title>Details</title>
-    <link href="~/style.css" rel="stylesheet" />
-</head>
-<body>    
-    <h1>@Model.Name</h1>
-    <ol>
-        <li>Person Id: @Model?.Id</li>
-        <li>Birth date: @Model?.BirthDate</li>
-        <li>Gender: @Model?.Gender</li>
-    </ol>
-    <a href="/">Back to home</a>
-</body>
-</html>
+ 
+<h1>@Model.Name</h1>
+<ol>
+    <li>Person Id: @Model?.Id</li>
+    <li>Birth date: @Model?.BirthDate</li>
+    <li>Gender: @Model?.Gender</li>
+</ol>
+<a href="/">Back to home</a>

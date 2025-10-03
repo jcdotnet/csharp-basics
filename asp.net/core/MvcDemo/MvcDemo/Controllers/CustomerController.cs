@@ -8,14 +8,12 @@ namespace MvcDemo.Controllers
         [Route("/customers")]
         public IActionResult Index()
         {
-            List<Customer> people = [
+            List<Customer> customers = [
                 new Customer() { Name = "John Doe", Gender = Gender.Male, BirthDate = Convert.ToDateTime("1980/06/03") },
                 new Customer() { Name = "Mary Doe", Gender = Gender.Male, BirthDate = Convert.ToDateTime("1980/06/03") },
                 new Customer() { Name = "Jane Doe", Gender = Gender.Male},
             ];
-            ViewData["pageTitle"] = "ASP.NET core MVC Demo";
-            ViewData["pageMessage"] = "Hello, Customers!";
-            ViewData["people"] = people;
+            ViewData["customers"] = customers;
             // return new ViewResult() { ViewName="Index"}; // implements IActionResult
             return View();                                  // simplified, real world projects version  
             // return View("Home");                         // looks for Views/Customer/Home.cshtml
@@ -23,8 +21,7 @@ namespace MvcDemo.Controllers
 
         [Route("customers/{id}")]
         public IActionResult Details(int? id)
-        {
-            
+        {       
             if (id is null) return BadRequest("Id cannot be empty");
             if (id > 3 ) return NotFound("Person Not Found");
 

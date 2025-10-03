@@ -1,0 +1,23 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="UTF-8" />
+    <title>@ViewBag.Title</title>
+    <link href="~/style.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        @ViewBag.AppTitle
+    </header>
+    <div class="page-content">
+        <div class="main-content">
+            <h1>@ViewBag.Title</h1>
+            @RenderBody()
+        </div>
+        @RenderSection("footer", false)
+    </div>
+    @RenderSection("footer-scripts", false)
+</body>
+</html>

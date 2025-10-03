@@ -5,40 +5,29 @@
         if (birthDate is null) return null;
         return (int)Math.Floor((DateTime.Now - birthDate).Value.TotalDays / 365);
     }
-    void PrintMessage(Customer person)
+    void PrintMessage(Customer customer)
     {
-        if (person.BirthDate is null) // person.BirthDate.HasValue == false
+        if (customer.BirthDate is null) // customer.BirthDate.HasValue == false
         {
-            <span>Hello @person.Name, how old are you?</span>
+            <span>Hello @customer.Name, how old are you?</span>
         }
         else
         {
-            <span>@person.Name is @GetAge(person.BirthDate) years old</span>
+            <span>@customer.Name is @GetAge(customer.BirthDate) years old</span>
         }       
     }
 }
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <meta charset="utf-8" />
-    <title>@ViewData["pageTitle"]</title>
-    <link href="~/style.css" rel="stylesheet" />
-</head>
-    
-<body>
-    <h1>@ViewData["pageMessage"]</h1>
-    <ol>
-        @{
-            var people = ViewBag.people;
-            if (people != null)
+
+<h1>Hello, Customers!</h1>
+<ol>
+    @{
+        var customers = ViewBag.customers;
+        if (customers != null)
+        {
+            foreach (var customer in customers)
             {
-                foreach (var person in people)
-                {
-                    <li>@{ PrintMessage(person); }</li>
-                }
+                <li>@{ PrintMessage(customer); }</li>
             }
         }
-    </ol>
-</body>
-</html>
+    }
+</ol>
