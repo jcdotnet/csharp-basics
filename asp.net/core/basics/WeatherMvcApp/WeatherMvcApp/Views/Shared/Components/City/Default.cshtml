@@ -1,16 +1,6 @@
 ﻿@model CityWeather
-@{
-    string GetCssClass(int temperature)
-    {
-        return temperature switch
-        {
-            (< 44) => "blue-back",
-            (>= 44) and (< 75) => "green-back",
-            (>= 75) => "orange-back"
-        };
-    }
-}
-<div class="box w-30 @GetCssClass(Model.Temperature)">
+
+<div class="box w-30 @ViewBag.CityCssClass">
     <div class="flex-borderless">
         <div class="w-50">
             <h2>@Model.Name</h2>
