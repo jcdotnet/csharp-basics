@@ -1,35 +1,11 @@
 ﻿@model IEnumerable<CityWeather>
-@{
-    string GetCssClass(int temperature)
-    {
-        return temperature switch
-        {
-            (< 44) => "blue-back",
-            (>= 44) and (< 75) => "green-back",
-            (>= 75) => "orange-back"
-        };
-    }
-}
-     
+
 <h1>Weather</h1>
 <div class="margin-top-200">
     <div class="flex">
         @foreach (CityWeather city in Model)
         {
-            <div class="box w-30 @GetCssClass(city.Temperature)">
-                <div class="flex-borderless">
-                    <div class="w-50">
-                        <h2>@city.Name</h2>
-                        <h4 class="text-dark-grey">@city.DateAndTime.ToString("hh:mm tt")</h4>
-                        <a href="~/weather/@city.Code" class="margin-top">Details</a>
-                    </div>
-                    <div class="w-50 border-left">
-                        <h1 class="margin-left">
-                            @city.Temperature <sup class="text-grey">&#8457</sup>
-                        </h1>
-                        </div>
-                </div>
-            </div>
+            <partial name="_CityPartial" model="city" />
         }
     </div>
 </div>
