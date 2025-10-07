@@ -1,19 +1,23 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WeatherMvcApp.Models;
+using Models;
+using ServiceContracts;
 
 namespace WeatherMvcApp.Controllers
 {
     public class WeatherController : Controller
     {
-        private readonly List<CityWeather> cities = [
-            new() { Code = "LDN", Name = "London", DateAndTime = Convert.ToDateTime("2030-01-01 8:00"), Temperature = 33 },
-            new() { Code = "NYC", Name = "New York", DateAndTime = Convert.ToDateTime("2030-01-01 3:00"), Temperature = 60 },
-            new() { Code = "PAR", Name = "Paris", DateAndTime = Convert.ToDateTime("2030-01-01 9:00"), Temperature = 82 }
-        ];
+        private readonly IWeatherService _weatherService;
+
+        //Create a constructor and inject IWeatherService
+        public WeatherController(IWeatherService weatherService)
+        {
+            _weatherService = weatherService;
+        }
 
         [Route("/")]
         public IActionResult Index()
         {
+            var cities = _weatherService.GetWeatherDetails();
             return View(cities); 
         }
 
@@ -24,9 +28,7 @@ namespace WeatherMvcApp.Controllers
             {
                 return View();
             }
-
-            // FirstOrDefault: city is null if we entered a city code that does not exist
-            CityWeather? city = cities.Where(temp => temp.Code == cityCode).FirstOrDefault();
+            CityWeather? city = _weatherService.GetWeatherByCityCode(cityCode);
             return View(city);
         }
     }

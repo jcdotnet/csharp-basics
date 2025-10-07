@@ -1,4 +1,4 @@
-﻿namespace WeatherMvcApp.Models
+﻿namespace Models
 {
     public class CityWeather
     {
