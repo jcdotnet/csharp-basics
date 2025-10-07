@@ -5,8 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concurrency
-{
+namespace Threading
     public class FileDownloader
     {
         private readonly BackgroundWorker _worker = new BackgroundWorker();

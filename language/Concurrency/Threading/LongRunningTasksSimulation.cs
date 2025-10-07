@@ -4,17 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concurrency
+namespace Threading
 {
     public class LongRunningTasksSimulation
     {
-        private Thread _thread;
+        private Thread? _thread;
 
         public void StartSimulation()
         {
             _thread = new Thread(RunSimulation);
             _thread.Priority = ThreadPriority.Highest;
             _thread.Start();
+            // _thread.Join(); // let's keep the main thread running for the remaining examples 
         }
 
         private void RunSimulation()
@@ -23,7 +24,7 @@ namespace Concurrency
             {
                 // Perform complex calculations
             }
-            Console.WriteLine("Simulation Complete");
+            Console.WriteLine("Long running tasks: simulation complete");
         }
     }
 }

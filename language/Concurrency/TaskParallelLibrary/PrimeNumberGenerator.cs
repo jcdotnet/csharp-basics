@@ -4,19 +4,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concurrency
+namespace TaskParallelLibrary
 {
-    public class ParallelPrimeNumberGenerator
+    public class PrimeNumberGenerator
     {
         public void Generate(int upperLimit)
         {
-            Parallel.For(2, upperLimit + 1, i =>
+            for (int i = 2; i <= upperLimit; i++)
             {
                 if (IsPrime(i))
                 {
-                    Console.WriteLine(i);
+                    Console.Write($"{i} ");
                 }
-            });
+            }
         }
         private bool IsPrime(int number)
         {

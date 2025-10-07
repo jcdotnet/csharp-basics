@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Concurrency
+namespace Asyncrhonous
 {
     public class HttpServerAsync
     {
@@ -15,15 +15,12 @@ namespace Concurrency
         }
         public async Task<string> GetUrlContent()
         {
-
             using var client = new HttpClient();
-
             Task<string> getStringTask =
                 client.GetStringAsync(_url);
 
             DoIndependentWork();
             return await getStringTask;                    
-
         }
 
         void DoIndependentWork()
