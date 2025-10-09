@@ -12,5 +12,7 @@ namespace ServiceContracts
         PersonResponse AddContact(PersonAddRequest? personDto);
 
         List<PersonResponse> GetContacts();
+
+        PersonResponse? GetContact(Guid? id);
     }
 }

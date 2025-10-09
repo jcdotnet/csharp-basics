@@ -44,6 +44,15 @@ namespace Services
             return ConvertToPersonResponseDto(person);
         }
 
+        public PersonResponse? GetContact(Guid? id)
+        {
+            if (id == null) return null;
+
+            Person? person = _contacts.FirstOrDefault(p => p.Id == id);
+
+            return person?.ToPersonResponse();
+        }
+
         public List<PersonResponse> GetContacts()
         {
             throw new NotImplementedException();

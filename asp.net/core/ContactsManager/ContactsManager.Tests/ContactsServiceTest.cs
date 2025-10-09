@@ -12,10 +12,12 @@ namespace ContactsManager.Tests
     public class ContactsServiceTest
     {
         private readonly IContactsService _service;
+        private readonly ICountriesService _countriesService;
 
         public ContactsServiceTest()
         {
             _service = new ContactsService();
+            _countriesService = new CountriesService();
         }
 
         #region AddContact
@@ -50,7 +52,6 @@ namespace ContactsManager.Tests
             });
         }
 
-
         // Requirement: when proper person details, it should insert it in the contacts
         [Fact]
         public void AddContact()
@@ -66,6 +67,39 @@ namespace ContactsManager.Tests
             Assert.True(personResponse.Id != Guid.Empty);
             Assert.Contains(personResponse, listResponse);
         }
+        #endregion
+
+        #region GetContact
+
+        // Requirement: when person id is null, it should return null
+        [Fact]
+        public void GetContact_NullPersonId()
+        {
+            // Arrange
+            // Act
+            PersonResponse? personGetResponse = _service.GetContact(null);
+
+            // Assert
+            Assert.Null(personGetResponse);
+        }
+
+        [Fact]
+        public void GetContact()
+        {
+            // Arrange
+            CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
+            CountryResponse country = _countriesService.AddCountry(countryRequest);
+
+            PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe", CountryId = country.Id};
+            PersonResponse? personAddResponse = _service.AddContact(personRequest);
+
+            // Act
+            PersonResponse? personGetResponse = _service.GetContact(personAddResponse.Id);
+
+            // Assert
+            Assert.Equal(personAddResponse, personGetResponse);
+        }
+
         #endregion
     }
 }
