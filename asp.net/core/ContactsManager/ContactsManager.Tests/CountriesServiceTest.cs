@@ -13,6 +13,7 @@ namespace ContactsManager.Tests
             _service = new CountriesService();
         }
 
+        #region AddCountry
         // Requirement: when country is null, it should throw ArgumentNullException
         [Fact]
         public void AddCountry_NullCountry()
@@ -73,5 +74,59 @@ namespace ContactsManager.Tests
             // Assert
             Assert.True(response.Id != Guid.Empty);
         }
+        #endregion
+
+        #region GetAllCountries
+        // requirement: the list of countries should be emtpy by default
+        [Fact]
+        public void GetAllCountries_DefaulEmptytList()
+        {
+            // Arrange
+            // Act
+            var response = _service.GetAllCountries();
+
+            // Assert
+            Assert.Empty(response);
+        }
+
+        [Fact]
+        public void GetAllCountries_AddCountries()
+        {
+            // Arrange
+            var request = new List<CountryAddRequest>() {
+                new CountryAddRequest() { Name = "Spain"},
+                new CountryAddRequest() { Name = "USA" }
+            };
+
+            // Act
+            var list = new List<CountryResponse>();
+            foreach (var country in request)
+            {
+                list.Add(_service.AddCountry(country));            
+            }
+            var responseList = _service.GetAllCountries();
+
+            // Assert
+            foreach (var country in list)
+            {
+                Assert.Contains(country, responseList);
+            }
+        }
+
+        [Fact]
+        public void GetAllCountries()
+        {
+            // Arrange
+            CountryAddRequest request = new CountryAddRequest() { Name = "Spain" };
+
+            // Act
+            var response = _service.AddCountry(request);
+            var responseList = _service.GetAllCountries();
+
+            // Assert
+            Assert.True(response.Id != Guid.Empty && responseList.Count > 0);
+            Assert.Contains(response, responseList);
+        }
+        #endregion
     }
 }
