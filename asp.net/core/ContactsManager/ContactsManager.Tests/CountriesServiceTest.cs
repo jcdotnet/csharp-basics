@@ -128,5 +128,35 @@ namespace ContactsManager.Tests
             Assert.Contains(response, responseList);
         }
         #endregion
+
+        #region GetCountry
+
+        [Fact]
+        public void GetCountry_NullCountryId()
+        {
+            // Arrange
+            Guid? id = null;
+
+            // Act
+            var response = _service.GetCountry(id);
+
+            // Assert
+            Assert.Null(response);
+        }
+
+        [Fact]
+        public void GetCountry()
+        {
+            // Arrange
+            var request = new CountryAddRequest() { Name = "Spain" };
+            var addResponse = _service.AddCountry(request);
+
+            // Act
+            var getReponse = _service.GetCountry(addResponse.Id);
+
+            // Assert
+            Assert.Equal(addResponse, getReponse);
+        }
+        #endregion
     }
 }
