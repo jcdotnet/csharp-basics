@@ -25,5 +25,7 @@ namespace ServiceContracts
         List<PersonResponse> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder);
 
         PersonResponse UpdateContact(PersonUpdateRequest? personDto);
+
+        bool DeleteContact(Guid? id);
     }
 }

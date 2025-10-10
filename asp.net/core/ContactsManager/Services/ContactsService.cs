@@ -39,6 +39,18 @@ namespace Services
             return ConvertToPersonResponse(person);
         }
 
+        public bool DeleteContact(Guid? id)
+        {
+            if (id == null) throw new ArgumentNullException(nameof(id));
+
+            Person? person = _contacts.FirstOrDefault(p => p.Id == id);
+            if (person == null) { return false; }
+
+            _contacts.RemoveAll(p => p.Id == id);
+
+            return true;
+        }
+
         public PersonResponse? GetContact(Guid? id)
         {
             if (id == null) return null;

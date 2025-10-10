@@ -306,6 +306,36 @@ namespace ContactsManager.Tests
         }
 
         #endregion
+
+        #region DeleteContact
+
+        // requirements: if person id is invalid, it should return false
+        [Fact]
+        public void DeleteContact_InvalidId()
+        {
+            // Arrange
+
+            // Act
+            bool isDeleted = _service.DeleteContact(Guid.NewGuid());
+
+            // Assert
+            Assert.False(isDeleted);
+        }
+
+        [Fact]
+        public void DeleteContact()
+        {
+            // Arrange
+            PersonResponse addedPerson = _service.AddContact(GenerateDummyPerson());
+
+            // Act
+            bool isDeleted = _service.DeleteContact(addedPerson.Id);
+
+            // Assert
+            Assert.True(isDeleted);
+        }
+        #endregion
+
         private CountryResponse AddDummyCountry()
         {
             CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
@@ -322,8 +352,6 @@ namespace ContactsManager.Tests
             ];
             return contacts;
         }
-
-        
 
         private PersonAddRequest GenerateDummyPerson()
         {
