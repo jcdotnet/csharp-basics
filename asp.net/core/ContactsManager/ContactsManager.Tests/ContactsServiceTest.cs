@@ -1,6 +1,7 @@
 ﻿using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 using Services;
 using System;
 using System.Collections.Generic;
@@ -121,12 +122,7 @@ namespace ContactsManager.Tests
         public void GetContacts_AddContacts()
         {
             // Arrange
-            CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            CountryResponse country = _countriesService.AddCountry(countryRequest);
-            var contacts = new List<PersonAddRequest>() {
-                new PersonAddRequest() { Name = "John Doe", CountryId = country.Id },
-                new PersonAddRequest() { Name = "Jane Doe", CountryId = country.Id }
-            };
+            var contacts = GenerateDummyContactList();
 
             var addedPeople = new List<PersonResponse>();
             foreach (var person in contacts)
@@ -164,5 +160,102 @@ namespace ContactsManager.Tests
         }
 
         #endregion
+
+        #region GetFilteredContacts
+
+        // requirements: if search is empty and searchBy is "Name", it should return all contacts
+        [Fact]
+        public void GetFilteredContacts_EmptySearch()
+        {
+            // Arrange
+            var contacts = GenerateDummyContactList();
+
+            var addedPeople = new List<PersonResponse>();
+            foreach (var person in contacts)
+            {
+                addedPeople.Add(_service.AddContact(person));
+            }
+
+            // Act
+            var getFilteredResponse = _service.GetFilteredContacts(nameof(Person.Name), "");
+
+            // Assert
+            foreach (var person in addedPeople)
+            {
+                Assert.Contains(person, getFilteredResponse);
+            }
+        }
+
+        [Fact]
+        public void GetFilteredContacts_PersonName()
+        {
+            // Arrange
+            var contacts = GenerateDummyContactList();
+
+            var addedPeople = new List<PersonResponse>();
+            foreach (var person in contacts)
+            {
+                addedPeople.Add(_service.AddContact(person));
+            }
+
+            // Act
+            var getFilteredResponse = _service.GetFilteredContacts(nameof(Person.Name), "ja");
+
+            // Assert
+            foreach (var person in addedPeople)
+            {
+                if (person.Name == null) continue;
+                if (person.Name.Contains("ja", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assert.Contains(person, getFilteredResponse);
+                }
+            }
+            Assert.Equal(2, getFilteredResponse.Count);
+        }
+
+        #endregion
+
+        #region GetSortedContacts
+
+        [Fact]
+        public void GetSortedContacts_PersonName_Descending()
+        {
+            // Arrange
+            var contacts = GenerateDummyContactList();
+
+            var addedPeople = new List<PersonResponse>();
+            foreach (var person in contacts)
+            {
+                addedPeople.Add(_service.AddContact(person));
+            }
+
+            // Act
+            var getSortedResponse = _service.GetSortedContacts(
+                _service.GetContacts(), 
+                nameof(Person.Name), 
+                SortOrder.Descending);
+
+            var sortedAddedPeople = addedPeople.OrderByDescending(p => p.Name).ToList();
+
+            // Assert
+            for (int i = 0; i < sortedAddedPeople.Count; i++)
+            {
+                Assert.Equal(sortedAddedPeople[i], getSortedResponse[i]);
+            }
+        }
+
+        #endregion
+
+        private List<PersonAddRequest> GenerateDummyContactList()
+        {
+            CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
+            CountryResponse country = _countriesService.AddCountry(countryRequest);
+            List<PersonAddRequest> contacts = [
+                new PersonAddRequest() { Name = "John Doe", CountryId = country.Id },
+                new PersonAddRequest() { Name = "Jane Doe", CountryId = country.Id },
+                new PersonAddRequest() { Name = "Jade Doe", CountryId = country.Id }
+            ];
+            return contacts;
+        }
     }
 }
