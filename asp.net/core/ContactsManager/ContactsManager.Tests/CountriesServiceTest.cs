@@ -77,6 +77,7 @@ namespace ContactsManager.Tests
         #endregion
 
         #region GetAllCountries
+
         // requirement: the list of countries should be emtpy by default
         [Fact]
         public void GetAllCountries_DefaulEmptytList()

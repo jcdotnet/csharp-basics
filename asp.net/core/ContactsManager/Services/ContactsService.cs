@@ -55,7 +55,7 @@ namespace Services
 
         public List<PersonResponse> GetContacts()
         {
-            throw new NotImplementedException();
+            return _contacts.Select(c => c.ToPersonResponse()).ToList();
         }
 
         private PersonResponse ConvertToPersonResponseDto(Person person)
