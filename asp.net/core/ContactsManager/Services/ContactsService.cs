@@ -145,6 +145,30 @@ namespace Services
             return getSorted;
         }
 
+        public PersonResponse UpdateContact(PersonUpdateRequest? personDto)
+        {
+            if (personDto == null)
+                throw new ArgumentNullException(nameof(Person));
+
+            ValidationHelper.ModelValidation(personDto);
+
+            Person? person = _contacts.FirstOrDefault(p => p.Id == personDto.Id);
+            if (person == null)
+            {
+                throw new ArgumentException("Person does not exist");
+            }
+
+            person.Name = personDto.Name;
+            person.Email = personDto.Email;
+            person.BirthDate = personDto.BirthDate;
+            person.Gender = personDto.Gender.ToString();
+            person.CountryId = personDto.Id;
+            person.Address = personDto.Address;
+            person.ReceiveNewsletters = personDto.ReceiveNewsletters;
+
+            return person.ToPersonResponse();
+        }
+
         private PersonResponse ConvertToPersonResponse(Person person)
         {
             PersonResponse personResponseDto = person.ToPersonResponse();

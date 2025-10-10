@@ -23,5 +23,7 @@ namespace ServiceContracts
         List<PersonResponse> GetFilteredContacts(string searchBy, string? search);
 
         List<PersonResponse> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder);
+
+        PersonResponse UpdateContact(PersonUpdateRequest? personDto);
     }
 }

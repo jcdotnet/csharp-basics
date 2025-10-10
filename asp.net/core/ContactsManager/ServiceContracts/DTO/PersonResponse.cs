@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace ServiceContracts.DTO
 {
@@ -22,6 +23,20 @@ namespace ServiceContracts.DTO
         public bool? ReceiveNewsletters { get; set; }
         public double? Age { get; set; }
 
+        public PersonUpdateRequest ToPersonUpdateRequest()
+        {
+            return new PersonUpdateRequest() { 
+                Id = Id, 
+                Name = Name, 
+                Email = Email, 
+                BirthDate = BirthDate, 
+                Gender = (Gender)Enum.Parse(typeof(Gender), Gender, true), 
+                Address = Address, 
+                CountryId = CountryId,
+                ReceiveNewsletters = ReceiveNewsletters,
+            };
+        }
+
         public override int GetHashCode()
         {
             return base.GetHashCode();
@@ -32,6 +47,7 @@ namespace ServiceContracts.DTO
             if (obj.GetType() != typeof(PersonResponse)) return false;
             return this.Id == ((PersonResponse)obj).Id;
         }
+
     }
 
     public static class PersonExtensions

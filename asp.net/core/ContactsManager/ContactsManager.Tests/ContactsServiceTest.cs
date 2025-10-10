@@ -246,16 +246,91 @@ namespace ContactsManager.Tests
 
         #endregion
 
-        private List<PersonAddRequest> GenerateDummyContactList()
+        #region UpdateContact
+
+        // Requirement: when person is null, it should throw ArgumentNullException
+        [Fact]
+        public void UpdateContact_NullPerson()
+        {
+            // Arrange
+            // Assert
+            Assert.Throws<ArgumentNullException>(() => {
+                //Act
+                _service.UpdateContact(null);
+            });
+        }
+
+        // Requirement: when person id is invalid, it should throw ArgumentException
+        [Fact]
+        public void UpdateContact_InvalidPersonId()
+        {
+            // Arrange
+            PersonUpdateRequest? request = new PersonUpdateRequest() {Id = Guid.NewGuid() };
+            // Assert
+            Assert.Throws<ArgumentException>(() => {
+                //Act
+                _service.UpdateContact(request);
+            });
+        }
+
+        // Requirement: when person name is null, it should throw ArgumentException
+        [Fact]
+        public void UpdateContact_NullPersonName()
+        {
+            // Arrange
+            PersonResponse addedPerson = _service.AddContact(GenerateDummyPerson());
+            PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
+            updateRequest.Name = null;
+
+            // Assert
+            Assert.Throws<ArgumentException>(() => {
+                // Act
+                _service.UpdateContact(updateRequest);
+            });
+        }
+
+        [Fact]
+        public void UpdateContact()
+        {
+            // Arrange
+            PersonResponse addedPerson = _service.AddContact(GenerateDummyPerson());
+            PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
+            updateRequest.Address = "123 Main Street";
+
+            // Act
+            PersonResponse updatedResponse = _service.UpdateContact(updateRequest);
+            PersonResponse? getResponse = _service.GetContact(updatedResponse.Id);
+
+            // Assert
+            Assert.Equal(getResponse, updatedResponse);
+        }
+
+        #endregion
+        private CountryResponse AddDummyCountry()
         {
             CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            CountryResponse country = _countriesService.AddCountry(countryRequest);
+            return _countriesService.AddCountry(countryRequest);
+        }
+
+        private List<PersonAddRequest> GenerateDummyContactList()
+        {
+            var country = AddDummyCountry();
             List<PersonAddRequest> contacts = [
-                new PersonAddRequest() { Name = "John Doe", CountryId = country.Id },
-                new PersonAddRequest() { Name = "Jane Doe", CountryId = country.Id },
-                new PersonAddRequest() { Name = "Jade Doe", CountryId = country.Id }
+                new PersonAddRequest() { Name = "John Doe", Email = "john@email.com", CountryId = country.Id },
+                new PersonAddRequest() { Name = "Jane Doe", Email = "jane@email.com", CountryId = country.Id },
+                new PersonAddRequest() { Name = "Jade Doe", Email = "jade@email.com", CountryId = country.Id }
             ];
             return contacts;
+        }
+
+        
+
+        private PersonAddRequest GenerateDummyPerson()
+        {
+            var country = AddDummyCountry();
+            return new PersonAddRequest() {
+                Name = "John Doe", Email = "john@email.com", Gender = Gender.Male, CountryId = country.Id 
+            };
         }
     }
 }
