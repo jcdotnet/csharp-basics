@@ -1,0 +1,16 @@
+﻿@{
+    var sortedByOption = (ViewBag.SortOrder == SortOrder.Ascending.ToString()) ? SortOrder.Descending : SortOrder.Ascending;
+}
+<th>
+    <a href="~/contacts/index?searchBy=@ViewBag.SearchBy&search=@ViewBag.Search&sortBy=@ViewBag.Name&sortOrder=@sortedByOption">
+        @ViewBag.DisplayName
+    </a>
+    @if (ViewBag.SortBy == ViewBag.Name && ViewBag.SortOrder == SortOrder.Ascending.ToString())
+    {
+        <i class="fa-solid fa-sort-up"></i>    
+    }
+    else if (ViewBag.SortBy == ViewBag.Name && ViewBag.SortOrder == SortOrder.Descending.ToString())
+    {
+        <i class="fa-solid fa-sort-down"></i>
+    }      
+</th>

@@ -18,8 +18,8 @@ namespace ContactsManager.Tests
 
         public ContactsServiceTest()
         {
-            _service = new ContactsService();
-            _countriesService = new CountriesService();
+            _service = new ContactsService(false);
+            _countriesService = new CountriesService(false);
         }
 
         #region AddContact
