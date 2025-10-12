@@ -15,12 +15,19 @@ namespace ServiceContracts.DTO
         public string? Name { get; set; }
 
         [EmailAddress]
+        [DataType(DataType.EmailAddress)]
         public string? Email { get; set; }
+        
         public string? Address { get; set; }
+
+        [DataType(DataType.Date)]
         public DateTime? BirthDate { get; set; }
+        
         public Gender? Gender { get; set; }
+        
         public Guid? CountryId { get; set; } // FK
-        public bool? ReceiveNewsletters { get; set; }
+        
+        public bool ReceiveNewsletters { get; set; }
 
         public Person ToPerson()
         {

@@ -126,13 +126,16 @@
     margin-bottom: 10px;
 }
 
-
 .ml {
     margin-left: 10px;
 }
 
 .mr {
     margin-right: 10px;
+}
+
+.p0 {
+    padding: 0!important;
 }
 
 .pt {
@@ -251,9 +254,13 @@
     align-items: stretch;
 }
 
-    .flex > div {
-        padding: 15px;
-    }
+.flex.align-center {
+    align-items: center;
+}
+
+.flex > div {
+    padding: 15px;
+}
 
 .flex-1 {
     flex: 1 auto;

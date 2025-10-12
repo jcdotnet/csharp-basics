@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -49,7 +50,11 @@ namespace ContactsManager.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            ViewBag.countries = _countriesService.GetAllCountries();
+            var countries       = _countriesService.GetAllCountries();
+            ViewBag.Countries   = countries.Select(country => new SelectListItem()
+            { 
+                Text = country.Name, Value = country.Id.ToString() 
+            });
             return View();
         }
 
@@ -59,8 +64,15 @@ namespace ContactsManager.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.countries = _countriesService.GetAllCountries();
-                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                var countries       = _countriesService.GetAllCountries();
+                ViewBag.Countries   = countries.Select(country => new SelectListItem()
+                { 
+                    Text = country.Name, Value = country.Id.ToString() 
+                });
+
+                // using cllient server validation instead
+                //ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                
                 return View();
             }
             _contactsService.AddContact(personAddRequest);

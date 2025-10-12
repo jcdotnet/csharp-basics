@@ -9,8 +9,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="navbar">
-            <div class="navbar-brand">Contacts Manager</div>
+        <div class="navbar flex align-center">
+            <div class="navbar-brand p0">
+                <img src="~/logo.png" alt="Contacts Manager" width="80px" asp-append-version="true" />
+                
+            </div>
             <ul>
                 <li>
                     <a href="~/contacts/index">Contacts</a>
@@ -22,5 +25,6 @@
             @RenderBody()
         </div>
     </div>
+    @RenderSection("scripts", required: false)
 </body>
 </html>

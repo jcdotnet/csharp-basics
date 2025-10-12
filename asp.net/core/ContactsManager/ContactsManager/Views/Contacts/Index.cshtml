@@ -3,8 +3,9 @@
     ViewBag.Title = "Contacts Manager";
 }
 <h1>Contacts</h1>
-<a href="~/contacts/create" class="link-hover">Add New Contact</a>
-<form action="~/contacts/index" method="get">
+<a asp-controller="Contacts" asp-action="Create" class="link-hover">Add New Contact</a>
+
+<form asp-controller="Contacts" method="get">
 <div class="box flex">
     <div class="flex-1">
         <select class="form-input" name="searchBy">
@@ -22,7 +23,7 @@
 
     <div class="flex-1">
         <button class="button button-blue-back">Search</button> @* type="submit" (default in forms) *@
-        <a href="~/contacts/index" class="link-hover">Clear All</a>
+            <a asp-controller="Contacts" class="link-hover">Clear All</a>
     </div>
     @* Eg: searchBy=Name&search=John *@
     
@@ -69,7 +70,7 @@
             @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData)
             {
                 { "Name", nameof(PersonResponse.ReceiveNewsletters)},
-                { "DisplayName", "Receive newsletters"}
+                { "DisplayName", "Newsletters"}
             })
         </tr>
     </thead>
