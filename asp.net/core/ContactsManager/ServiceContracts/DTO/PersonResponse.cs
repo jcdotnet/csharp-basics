@@ -20,7 +20,7 @@ namespace ServiceContracts.DTO
         public string? Gender { get; set; }
         public Guid? CountryId { get; set; } // FK
         public string? Country { get; set; }
-        public bool? ReceiveNewsletters { get; set; }
+        public bool ReceiveNewsletters { get; set; }
         public double? Age { get; set; }
 
         public PersonUpdateRequest ToPersonUpdateRequest()

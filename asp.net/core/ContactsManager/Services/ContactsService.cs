@@ -245,7 +245,7 @@ namespace Services
             person.Email = personDto.Email;
             person.BirthDate = personDto.BirthDate;
             person.Gender = personDto.Gender.ToString();
-            person.CountryId = personDto.Id;
+            person.CountryId = personDto.CountryId;
             person.Address = personDto.Address;
             person.ReceiveNewsletters = personDto.ReceiveNewsletters;
 

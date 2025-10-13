@@ -23,7 +23,7 @@ namespace ServiceContracts.DTO
         public DateTime? BirthDate { get; set; }
         public Gender Gender { get; set; }
         public Guid? CountryId { get; set; } // FK
-        public bool? ReceiveNewsletters { get; set; }
+        public bool ReceiveNewsletters { get; set; }
 
         public Person ToPerson()
         {

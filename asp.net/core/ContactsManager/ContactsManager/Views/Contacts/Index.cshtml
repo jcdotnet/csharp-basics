@@ -67,11 +67,8 @@
                 { "Name", nameof(PersonResponse.Country)},
                 { "DisplayName", "Country"}
             })
-            @await Html.PartialAsync("_TableHeader", new ViewDataDictionary(ViewData)
-            {
-                { "Name", nameof(PersonResponse.ReceiveNewsletters)},
-                { "DisplayName", "Newsletters"}
-            })
+            <th>Newsletters</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -83,9 +80,13 @@
                 <td style="width:20%">@person.Address</td>
                 <td style="width:10%">@person.BirthDate?.ToString("yyyy/MM/dd")</td>
                 <td style="width:5%">@person.Age</td>
-                <td style="width:10%">@person.Gender</td>
+                <td style="width:5%">@person.Gender</td>
                 <td style="width:10%">@person.Country</td>
                 <td style="width:5%">@person.ReceiveNewsletters</td>
+                <td style="width:5%">
+                    <a asp-controller="Contacts" asp-action="Edit" asp-route-id="@person.Id">Edit</a>
+                    <a asp-controller="Contacts" asp-action="Delete" asp-route-id="@person.Id">Delete</a>
+                </td>
             </tr>
         }
     </tbody> 
