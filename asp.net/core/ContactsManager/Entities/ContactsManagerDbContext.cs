@@ -50,7 +50,9 @@ namespace Entities
 
         public List<Person> sp_GetPeople()
         {
-            return People.FromSqlRaw("EXECUTE [dbo].[GetPeople]").ToList();
+            return People.FromSqlRaw("EXEC [dbo].[GetPeople]")
+                //.Include(p => p.Country)
+                .ToList();
         }
 
         public int sp_InsertPerson(Person person)
@@ -59,11 +61,11 @@ namespace Entities
             [
                 new SqlParameter("@Id", person.Id),
                 new SqlParameter("@Name", person.Name),
-                new SqlParameter("@Email", (object)person.Email ?? DBNull.Value),
-                new SqlParameter("@Address", (object)person.Address ?? DBNull.Value),
-                new SqlParameter("@BirthDate", (object)person.BirthDate ?? DBNull.Value),
-                new SqlParameter("@Gender", (object)person.Gender ?? DBNull.Value),
-                new SqlParameter("@CountryId", (object)person.CountryId ?? DBNull.Value),
+                new SqlParameter("@Email", (object?)person.Email ?? DBNull.Value),
+                new SqlParameter("@Address", (object?)person.Address ?? DBNull.Value),
+                new SqlParameter("@BirthDate", (object?)person.BirthDate ?? DBNull.Value),
+                new SqlParameter("@Gender", (object?)person.Gender ?? DBNull.Value),
+                new SqlParameter("@CountryId", (object?)person.CountryId ?? DBNull.Value),
                 new SqlParameter("@ReceiveNewsletters", person.ReceiveNewsletters),
             ]; 
             return Database.ExecuteSqlRaw(

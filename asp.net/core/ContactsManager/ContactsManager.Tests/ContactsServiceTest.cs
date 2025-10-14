@@ -23,8 +23,7 @@ namespace ContactsManager.Tests
                 new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options)
             );
             _service = new ContactsService(
-                new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options),
-                _countriesService
+                new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options)
             );
         }
 

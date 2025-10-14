@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ namespace Entities
         
         public bool ReceiveNewsletters { get; set; }
 
-
+        // navigation property
+        [ForeignKey(nameof(CountryId))]
+        public virtual Country? Country { get; set; }
     }
 }

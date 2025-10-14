@@ -1,23 +1,20 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services.Helpers;
 using System;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Services
 {
     public class ContactsService : IContactsService
     {
         private readonly ContactsManagerDbContext _db;
-        private readonly ICountriesService _countriesService;
 
-        public ContactsService(ContactsManagerDbContext contactsManagerDbContext,
-            ICountriesService countriesService)
+        public ContactsService(ContactsManagerDbContext contactsManagerDbContext)
         {
             _db = contactsManagerDbContext;
-            _countriesService = countriesService;
         }
 
         public PersonResponse AddContact(PersonAddRequest? personDto)
@@ -43,7 +40,7 @@ namespace Services
             // stored procedure
             _db.sp_InsertPerson(person);
 
-            return ConvertToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
         public bool DeleteContact(Guid? id)
@@ -63,23 +60,25 @@ namespace Services
         {
             if (id == null) return null;
 
-            Person? person = _db.People.FirstOrDefault(p => p.Id == id);
+            Person? person = _db.People.Include("Country").FirstOrDefault(p => p.Id == id);
 
             if (person == null) { return null; }
 
-            return ConvertToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
         public List<PersonResponse> GetContacts()
         {
             // InvalidOperationException
-            //return _db.People.Select(c => ConvertToPersonResponse(c)).ToList();
+            //return _db.People.Select(c => c.ToPersonResponse()).ToList();
 
             // first db operations (Select * from People), then user methods
-            //return _db.People.ToList().Select(c => ConvertToPersonResponse(c)).ToList();
+            return _db.People.Include("Country").ToList().Select(c => c.ToPersonResponse()).ToList();
 
             // stored procedure
-            return _db.sp_GetPeople().Select(c => ConvertToPersonResponse(c)).ToList();
+            // Include: the data returned from the stored procedure is mapped
+            // to entities and not directly loaded into navigation properties
+            //return _db.sp_GetPeople().Select(c => c.ToPersonResponse()).ToList();
         }
 
         public List<PersonResponse> GetFilteredContacts(string searchBy, string? search)
@@ -196,17 +195,8 @@ namespace Services
 
             _db.SaveChanges();
 
-            return ConvertToPersonResponse(person);
+            return person.ToPersonResponse();
         }
 
-        #region private
-        private PersonResponse ConvertToPersonResponse(Person person)
-        {
-            PersonResponse personResponseDto = person.ToPersonResponse();
-            personResponseDto.Country = _countriesService.GetCountry(person.CountryId)?.Name;
-            return personResponseDto;
-        }
-
-        #endregion
     }
 }

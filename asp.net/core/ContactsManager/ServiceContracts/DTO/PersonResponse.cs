@@ -56,13 +56,14 @@ namespace ServiceContracts.DTO
         {
             return new PersonResponse()
             {
-                Id = person.Id,
-                Name = person.Name,
-                Email = person.Email,
-                Address = person.Address,
-                BirthDate = person.BirthDate,
-                Gender = person.Gender,
-                CountryId = person.CountryId,
+                Id          = person.Id,
+                Name        = person.Name,
+                Email       = person.Email,
+                Address     = person.Address,
+                BirthDate   = person.BirthDate,
+                Gender      = person.Gender,
+                CountryId   = person.CountryId,
+                Country     = person.Country?.Name,
                 ReceiveNewsletters = person.ReceiveNewsletters,
                 Age = (person.BirthDate != null) ? Math.Round((DateTime.Now - person.BirthDate.Value).TotalDays / 365.25) : null
             };
