@@ -28,80 +28,82 @@ namespace ContactsManager.Tests
         }
 
         #region AddContact
+
         // Requirement: when person is null, it should throw ArgumentNullException
         [Fact]
-        public void AddContact_NullPerson()
+        public async Task AddContact_NullPerson()
         {
             // Arrange
             PersonAddRequest? person = null;
 
             // Assert
-            Assert.Throws<ArgumentNullException>(() =>
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
             {
                 // Act
-                _service.AddContact(person);
+                await _service.AddContact(person);
             });
         }
 
         // Requirement: when person name is null, it should throw ArgumentException
         // Optional: same with email addresses, etc.
         [Fact]
-        public void AddContact_NullPersonName()
+        public async Task AddContact_NullPersonName()
         {
             // Arrange
             PersonAddRequest? person = new PersonAddRequest() { Name = null };
 
             // Assert
-            Assert.Throws<ArgumentException>(() =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
                 // Act
-                _service.AddContact(person);
+                await _service.AddContact(person);
             });
         }
 
         // Requirement: when proper person details, it should insert it in the contacts
         [Fact]
-        public void AddContact()
+        public async Task AddContact()
         {
             // Arrange
             PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe" };
 
             // Act
-            PersonResponse? personResponse= _service.AddContact(personRequest);
-            List<PersonResponse> listResponse = _service.GetContacts();
+            PersonResponse? personResponse= await _service.AddContact(personRequest);
+            List<PersonResponse> listResponse = await _service.GetContacts();
 
             // Assert
             Assert.True(personResponse.Id != Guid.Empty);
             Assert.Contains(personResponse, listResponse);
         }
+
         #endregion
 
         #region GetContact
 
         // Requirement: when person id is null, it should return null
         [Fact]
-        public void GetContact_NullPersonId()
+        public async Task GetContact_NullPersonId()
         {
             // Arrange
             // Act
-            PersonResponse? personGetResponse = _service.GetContact(null);
+            PersonResponse? personGetResponse = await _service.GetContact(null);
 
             // Assert
             Assert.Null(personGetResponse);
         }
 
         [Fact]
-        public void GetContact()
+        public async Task GetContact()
         {
             // Arrange
             CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            CountryResponse country = _countriesService.AddCountry(countryRequest);
+            CountryResponse country = await _countriesService.AddCountry(countryRequest);
 
             PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe", CountryId = country.Id};
-            PersonResponse? personAddResponse = _service.AddContact(personRequest);
+            PersonResponse? personAddResponse = await _service.AddContact(personRequest);
 
             // Act
-            PersonResponse? personGetResponse = _service.GetContact(personAddResponse.Id);
+            PersonResponse? personGetResponse = await _service.GetContact(personAddResponse.Id);
 
             // Assert
             Assert.Equal(personAddResponse, personGetResponse);
@@ -113,30 +115,30 @@ namespace ContactsManager.Tests
 
         // requirement: the contact list should be emtpy by default
         [Fact]
-        public void GetContacts_DefaulEmptytList()
+        public async Task GetContacts_DefaulEmptytList()
         {
             // Arrange
             // Act
-            var contactsList = _service.GetContacts();
+            var contactsList = await _service.GetContacts();
 
             // Assert
             Assert.Empty(contactsList);
         }
 
         [Fact]
-        public void GetContacts_AddContacts()
+        public async Task GetContacts_AddContacts()
         {
             // Arrange
-            var contacts = GenerateDummyContactList();
+            var contacts = await GenerateDummyContactList();
 
             var addedPeople = new List<PersonResponse>();
             foreach (var person in contacts)
             {
-                addedPeople.Add(_service.AddContact(person));
+                addedPeople.Add(await _service.AddContact(person));
             }
 
             // Act
-            var getAllResponse= _service.GetContacts();
+            var getAllResponse= await _service.GetContacts();
 
             // Assert
             foreach (var person in addedPeople)
@@ -146,18 +148,17 @@ namespace ContactsManager.Tests
         }
 
         [Fact]
-        public void GetContacts()
+        public async Task GetContacts()
         {
             // Arrange
             CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            CountryResponse country = _countriesService.AddCountry(countryRequest);
+            CountryResponse country = await _countriesService.AddCountry(countryRequest);
 
             PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe", CountryId = country.Id };
-            PersonResponse? personAddResponse = _service.AddContact(personRequest);
+            PersonResponse? personAddResponse = await _service.AddContact(personRequest);
 
             // Act
-
-            List<PersonResponse> getAllRequest = _service.GetContacts();
+            List<PersonResponse> getAllRequest = await _service.GetContacts();
 
             // Assert
             Assert.True(personAddResponse.Id != Guid.Empty && getAllRequest.Count > 0);
@@ -170,19 +171,19 @@ namespace ContactsManager.Tests
 
         // requirements: if search is empty and searchBy is "Name", it should return all contacts
         [Fact]
-        public void GetFilteredContacts_EmptySearch()
+        public async Task GetFilteredContacts_EmptySearch()
         {
             // Arrange
-            var contacts = GenerateDummyContactList();
+            var contacts = await GenerateDummyContactList();
 
             var addedPeople = new List<PersonResponse>();
             foreach (var person in contacts)
             {
-                addedPeople.Add(_service.AddContact(person));
+                addedPeople.Add(await _service.AddContact(person));
             }
 
             // Act
-            var getFilteredResponse = _service.GetFilteredContacts(nameof(Person.Name), "");
+            var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "");
 
             // Assert
             foreach (var person in addedPeople)
@@ -192,19 +193,19 @@ namespace ContactsManager.Tests
         }
 
         [Fact]
-        public void GetFilteredContacts_PersonName()
+        public async Task GetFilteredContacts_PersonName()
         {
             // Arrange
-            var contacts = GenerateDummyContactList();
+            var contacts = await GenerateDummyContactList();
 
             var addedPeople = new List<PersonResponse>();
             foreach (var person in contacts)
             {
-                addedPeople.Add(_service.AddContact(person));
+                addedPeople.Add(await _service.AddContact(person));
             }
 
             // Act
-            var getFilteredResponse = _service.GetFilteredContacts(nameof(Person.Name), "ja");
+            var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "ja");
 
             // Assert
             foreach (var person in addedPeople)
@@ -223,20 +224,20 @@ namespace ContactsManager.Tests
         #region GetSortedContacts
 
         [Fact]
-        public void GetSortedContacts_PersonName_Descending()
+        public async Task GetSortedContacts_PersonName_Descending()
         {
             // Arrange
-            var contacts = GenerateDummyContactList();
+            var contacts = await GenerateDummyContactList();
 
             var addedPeople = new List<PersonResponse>();
             foreach (var person in contacts)
             {
-                addedPeople.Add(_service.AddContact(person));
+                addedPeople.Add(await _service.AddContact(person));
             }
 
             // Act
-            var getSortedResponse = _service.GetSortedContacts(
-                _service.GetContacts(), 
+            var getSortedResponse = await _service.GetSortedContacts(
+                await _service.GetContacts(), 
                 nameof(Person.Name), 
                 SortOrder.Descending);
 
@@ -255,56 +256,56 @@ namespace ContactsManager.Tests
 
         // Requirement: when person is null, it should throw ArgumentNullException
         [Fact]
-        public void UpdateContact_NullPerson()
+        public async Task UpdateContact_NullPerson()
         {
             // Arrange
             // Assert
-            Assert.Throws<ArgumentNullException>(() => {
+            await Assert.ThrowsAsync<ArgumentNullException>(async () => {
                 //Act
-                _service.UpdateContact(null);
+                await _service.UpdateContact(null);
             });
         }
 
         // Requirement: when person id is invalid, it should throw ArgumentException
         [Fact]
-        public void UpdateContact_InvalidPersonId()
+        public async Task UpdateContact_InvalidPersonId()
         {
             // Arrange
             PersonUpdateRequest? request = new PersonUpdateRequest() {Id = Guid.NewGuid() };
             // Assert
-            Assert.Throws<ArgumentException>(() => {
+            await Assert.ThrowsAsync<ArgumentException>(async () => {
                 //Act
-                _service.UpdateContact(request);
+                await _service.UpdateContact(request);
             });
         }
 
         // Requirement: when person name is null, it should throw ArgumentException
         [Fact]
-        public void UpdateContact_NullPersonName()
+        public async Task UpdateContact_NullPersonName()
         {
             // Arrange
-            PersonResponse addedPerson = _service.AddContact(GenerateDummyPerson());
+            PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
             PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
             updateRequest.Name = null;
 
             // Assert
-            Assert.Throws<ArgumentException>(() => {
+            await Assert.ThrowsAsync<ArgumentException>(async() => {
                 // Act
-                _service.UpdateContact(updateRequest);
+                await _service.UpdateContact(updateRequest);
             });
         }
 
         [Fact]
-        public void UpdateContact()
+        public async Task UpdateContact()
         {
             // Arrange
-            PersonResponse addedPerson = _service.AddContact(GenerateDummyPerson());
+            PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
             PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
             updateRequest.Address = "123 Main Street";
 
             // Act
-            PersonResponse updatedResponse = _service.UpdateContact(updateRequest);
-            PersonResponse? getResponse = _service.GetContact(updatedResponse.Id);
+            PersonResponse updatedResponse = await _service.UpdateContact(updateRequest);
+            PersonResponse? getResponse = await _service.GetContact(updatedResponse.Id);
 
             // Assert
             Assert.Equal(getResponse, updatedResponse);
@@ -316,40 +317,39 @@ namespace ContactsManager.Tests
 
         // requirements: if person id is invalid, it should return false
         [Fact]
-        public void DeleteContact_InvalidId()
+        public async Task DeleteContact_InvalidId()
         {
             // Arrange
-
             // Act
-            bool isDeleted = _service.DeleteContact(Guid.NewGuid());
+            bool isDeleted = await _service.DeleteContact(Guid.NewGuid());
 
             // Assert
             Assert.False(isDeleted);
         }
 
         [Fact]
-        public void DeleteContact()
+        public async Task DeleteContact()
         {
             // Arrange
-            PersonResponse addedPerson = _service.AddContact(GenerateDummyPerson());
+            PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
 
             // Act
-            bool isDeleted = _service.DeleteContact(addedPerson.Id);
+            bool isDeleted = await _service.DeleteContact(addedPerson.Id);
 
             // Assert
             Assert.True(isDeleted);
         }
         #endregion
 
-        private CountryResponse AddDummyCountry()
+        private async Task<CountryResponse> AddDummyCountry()
         {
             CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            return _countriesService.AddCountry(countryRequest);
+            return await _countriesService.AddCountry(countryRequest);
         }
 
-        private List<PersonAddRequest> GenerateDummyContactList()
+        private async Task<List<PersonAddRequest>> GenerateDummyContactList()
         {
-            var country = AddDummyCountry();
+            var country = await AddDummyCountry();
             List<PersonAddRequest> contacts = [
                 new PersonAddRequest() { Name = "John Doe", Email = "john@email.com", CountryId = country.Id },
                 new PersonAddRequest() { Name = "Jane Doe", Email = "jane@email.com", CountryId = country.Id },
@@ -358,9 +358,9 @@ namespace ContactsManager.Tests
             return contacts;
         }
 
-        private PersonAddRequest GenerateDummyPerson()
+        private async Task<PersonAddRequest> GenerateDummyPerson()
         {
-            var country = AddDummyCountry();
+            var country = await AddDummyCountry();
             return new PersonAddRequest() {
                 Name = "John Doe", Email = "john@email.com", Gender = Gender.Male, CountryId = country.Id 
             };

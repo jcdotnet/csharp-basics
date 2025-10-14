@@ -17,7 +17,7 @@ namespace Services
             _db = contactsManagerDbContext;
         }
 
-        public PersonResponse AddContact(PersonAddRequest? personDto)
+        public async Task<PersonResponse> AddContact(PersonAddRequest? personDto)
         {
             if (personDto == null)
             {
@@ -34,16 +34,16 @@ namespace Services
             Person person = personDto.ToPerson();
             person.Id = Guid.NewGuid();
 
-            //_db.People.Add(person);
-            //_db.SaveChanges(); // DDL
+            _db.People.Add(person);
+            await _db.SaveChangesAsync(); // DDL
 
             // stored procedure
-            _db.sp_InsertPerson(person);
+            //_db.sp_InsertPerson(person);
 
             return person.ToPersonResponse();
         }
 
-        public bool DeleteContact(Guid? id)
+        public async Task<bool> DeleteContact(Guid? id)
         {
             if (id == null) throw new ArgumentNullException(nameof(id));
 
@@ -51,29 +51,29 @@ namespace Services
             if (person == null) { return false; }
 
             _db.People.Remove(_db.People.First(p => p.Id == id));
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return true;
         }
 
-        public PersonResponse? GetContact(Guid? id)
+        public async Task<PersonResponse?> GetContact(Guid? id)
         {
             if (id == null) return null;
 
-            Person? person = _db.People.Include("Country").FirstOrDefault(p => p.Id == id);
+            Person? person = await _db.People.Include("Country").FirstOrDefaultAsync(p => p.Id == id);
 
             if (person == null) { return null; }
 
             return person.ToPersonResponse();
         }
 
-        public List<PersonResponse> GetContacts()
+        public async Task<List<PersonResponse>> GetContacts()
         {
             // InvalidOperationException
             //return _db.People.Select(c => c.ToPersonResponse()).ToList();
 
             // first db operations (Select * from People), then user methods
-            return _db.People.Include("Country").ToList().Select(c => c.ToPersonResponse()).ToList();
+            return (await _db.People.Include("Country").ToListAsync()).Select(c => c.ToPersonResponse()).ToList();
 
             // stored procedure
             // Include: the data returned from the stored procedure is mapped
@@ -81,9 +81,9 @@ namespace Services
             //return _db.sp_GetPeople().Select(c => c.ToPersonResponse()).ToList();
         }
 
-        public List<PersonResponse> GetFilteredContacts(string searchBy, string? search)
+        public async Task<List<PersonResponse>> GetFilteredContacts(string searchBy, string? search)
         {
-            List<PersonResponse> getAll = GetContacts();
+            List<PersonResponse> getAll = await GetContacts();
             List<PersonResponse> getFiltered = getAll;
 
             if (string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(search))
@@ -132,7 +132,7 @@ namespace Services
             return getFiltered;
         }
 
-        public List<PersonResponse> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder)
+        public async Task<List<PersonResponse>> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder)
         {
             if (string.IsNullOrEmpty(sortBy))
                 return contacts;
@@ -173,14 +173,14 @@ namespace Services
             return getSorted;
         }
 
-        public PersonResponse UpdateContact(PersonUpdateRequest? personDto)
+        public async Task<PersonResponse> UpdateContact(PersonUpdateRequest? personDto)
         {
             if (personDto == null)
                 throw new ArgumentNullException(nameof(Person));
 
             ValidationHelper.ModelValidation(personDto);
 
-            Person? person = _db.People.FirstOrDefault(p => p.Id == personDto.Id);
+            Person? person = await _db.People.FirstOrDefaultAsync(p => p.Id == personDto.Id);
             if (person == null)
             {
                 throw new ArgumentException("Person does not exist");
@@ -193,7 +193,7 @@ namespace Services
             person.Address = personDto.Address;
             person.ReceiveNewsletters = personDto.ReceiveNewsletters;
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return person.ToPersonResponse();
         }

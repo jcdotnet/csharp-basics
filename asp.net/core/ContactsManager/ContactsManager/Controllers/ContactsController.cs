@@ -22,7 +22,7 @@ namespace ContactsManager.Controllers
         [Route("/")]
         // [Route("index")]
         [Route("[action]")] // route token
-        public IActionResult Index(string searchBy, string? search,
+        public async Task<IActionResult> Index(string searchBy, string? search,
             string sortBy = nameof(PersonResponse.Name),
             SortOrder sortOrder = SortOrder.Ascending)
         {
@@ -41,16 +41,16 @@ namespace ContactsManager.Controllers
             ViewBag.SortBy = sortBy;
             ViewBag.SortOrder = sortOrder.ToString();
 
-            var filteredContacts = _contactsService.GetFilteredContacts(searchBy, search);
-            var sortedContacts = _contactsService.GetSortedContacts(filteredContacts, sortBy, sortOrder);
+            var filteredContacts = await _contactsService.GetFilteredContacts(searchBy, search);
+            var sortedContacts = await _contactsService.GetSortedContacts(filteredContacts, sortBy, sortOrder);
             return View(sortedContacts);
         }
 
         [Route("[action]")]
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var countries = _countriesService.GetAllCountries();
+            var countries = await _countriesService.GetAllCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem()
             {
                 Text = country.Name,
@@ -61,12 +61,12 @@ namespace ContactsManager.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public IActionResult Create(PersonAddRequest personAddRequest)
+        public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
         {
             if (!ModelState.IsValid)
             {
                 // this happens when client side validations fails (very rarely)
-                var countries = _countriesService.GetAllCountries();
+                var countries = await _countriesService.GetAllCountries();
                 ViewBag.Countries = countries.Select(country => new SelectListItem()
                 {
                     Text = country.Name,
@@ -78,21 +78,21 @@ namespace ContactsManager.Controllers
 
                 return View();
             }
-            _contactsService.AddContact(personAddRequest);
+            await _contactsService.AddContact(personAddRequest);
 
             return RedirectToAction("Index", "Contacts");
         }
 
         [Route("[action]/{id}")]
         [HttpGet]
-        public IActionResult Edit(Guid id)
+        public async Task<IActionResult> Edit(Guid id)
         {
-            var person = _contactsService.GetContact(id); // PersonResponse?
+            var person = await _contactsService.GetContact(id); 
             if (person == null)
             {
                 return RedirectToAction("Index");
             }
-            var countries = _countriesService.GetAllCountries();
+            var countries = await _countriesService.GetAllCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem()
             {
                 Text = country.Name,
@@ -100,11 +100,12 @@ namespace ContactsManager.Controllers
             });
             return View(person.ToPersonUpdateRequest());
         }
+
         [HttpPost]
         [Route("[action]/{id}")]
-        public IActionResult Edit(PersonUpdateRequest personUpdateRequest)
+        public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest)
         {
-            var person = _contactsService.GetContact(personUpdateRequest.Id); // PersonResponse?
+            var person = await _contactsService.GetContact(personUpdateRequest.Id);
 
             if (person == null)
             {
@@ -113,13 +114,13 @@ namespace ContactsManager.Controllers
 
             if (ModelState.IsValid)
             {
-                _contactsService.UpdateContact(personUpdateRequest);
+                await _contactsService.UpdateContact(personUpdateRequest);
                 return RedirectToAction("Index");
             }
             else
             {
                 // this happens when client side validations fails (very rarely)
-                var countries = _countriesService.GetAllCountries();
+                var countries = await _countriesService.GetAllCountries();
                 ViewBag.Countries = countries.Select(country => new SelectListItem()
                 {
                     Text = country.Name,
@@ -132,9 +133,9 @@ namespace ContactsManager.Controllers
 
         [HttpGet]
         [Route("[action]/{id}")]
-        public IActionResult Delete(Guid? id)
+        public async Task<IActionResult> Delete(Guid? id)
         {
-            var person = _contactsService.GetContact(id); // PersonResponse?
+            var person = await _contactsService.GetContact(id);
             if (person == null)
                 return RedirectToAction("Index");
 
@@ -143,13 +144,13 @@ namespace ContactsManager.Controllers
 
         [HttpPost]
         [Route("[action]/{id}")]
-        public IActionResult Delete(PersonUpdateRequest personUpdateRequest)
+        public async Task<IActionResult> Delete(PersonUpdateRequest personUpdateRequest)
         {
-            var person = _contactsService.GetContact(personUpdateRequest.Id);
+            var person = await _contactsService.GetContact(personUpdateRequest.Id);
             if (person == null)
                 return RedirectToAction("Index");
 
-            _contactsService.DeleteContact(personUpdateRequest.Id);
+            await _contactsService.DeleteContact(personUpdateRequest.Id);
             return RedirectToAction("Index");
         }
     }

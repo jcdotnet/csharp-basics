@@ -14,18 +14,18 @@ namespace ServiceContracts
     /// </summary>
     public interface IContactsService
     {
-        PersonResponse AddContact(PersonAddRequest? personDto);
+        Task<PersonResponse> AddContact(PersonAddRequest? personDto);
 
-        List<PersonResponse> GetContacts();
+        Task<List<PersonResponse>> GetContacts();
 
-        PersonResponse? GetContact(Guid? id);
+        Task<PersonResponse?> GetContact(Guid? id);
 
-        List<PersonResponse> GetFilteredContacts(string searchBy, string? search);
+        Task<List<PersonResponse>> GetFilteredContacts(string searchBy, string? search);
 
-        List<PersonResponse> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder);
+        Task<List<PersonResponse>> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder);
 
-        PersonResponse UpdateContact(PersonUpdateRequest? personDto);
+        Task<PersonResponse> UpdateContact(PersonUpdateRequest? personDto);
 
-        bool DeleteContact(Guid? id);
+        Task<bool> DeleteContact(Guid? id);
     }
 }
