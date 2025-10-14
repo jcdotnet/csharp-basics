@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +46,30 @@ namespace Entities
             {
                 modelBuilder.Entity<Person>().HasData(person);
             }
+        }
+
+        public List<Person> sp_GetPeople()
+        {
+            return People.FromSqlRaw("EXECUTE [dbo].[GetPeople]").ToList();
+        }
+
+        public int sp_InsertPerson(Person person)
+        {
+            SqlParameter[] parameters =
+            [
+                new SqlParameter("@Id", person.Id),
+                new SqlParameter("@Name", person.Name),
+                new SqlParameter("@Email", (object)person.Email ?? DBNull.Value),
+                new SqlParameter("@Address", (object)person.Address ?? DBNull.Value),
+                new SqlParameter("@BirthDate", (object)person.BirthDate ?? DBNull.Value),
+                new SqlParameter("@Gender", (object)person.Gender ?? DBNull.Value),
+                new SqlParameter("@CountryId", (object)person.CountryId ?? DBNull.Value),
+                new SqlParameter("@ReceiveNewsletters", person.ReceiveNewsletters),
+            ]; 
+            return Database.ExecuteSqlRaw(
+                "EXECUTE [dbo].[InsertPerson] @Id, @Name, @Email, @Address, @BirthDate, @Gender, @CountryId, @ReceiveNewsletters", 
+                parameters
+            );
         }
     }
 }

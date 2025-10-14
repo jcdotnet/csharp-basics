@@ -37,8 +37,11 @@ namespace Services
             Person person = personDto.ToPerson();
             person.Id = Guid.NewGuid();
 
-            _db.People.Add(person);
-            _db.SaveChanges(); // DDL
+            //_db.People.Add(person);
+            //_db.SaveChanges(); // DDL
+
+            // stored procedure
+            _db.sp_InsertPerson(person);
 
             return ConvertToPersonResponse(person);
         }
@@ -71,8 +74,12 @@ namespace Services
         {
             // InvalidOperationException
             //return _db.People.Select(c => ConvertToPersonResponse(c)).ToList();
+
             // first db operations (Select * from People), then user methods
-            return _db.People.ToList().Select(c => ConvertToPersonResponse(c)).ToList();
+            //return _db.People.ToList().Select(c => ConvertToPersonResponse(c)).ToList();
+
+            // stored procedure
+            return _db.sp_GetPeople().Select(c => ConvertToPersonResponse(c)).ToList();
         }
 
         public List<PersonResponse> GetFilteredContacts(string searchBy, string? search)
@@ -192,11 +199,14 @@ namespace Services
             return ConvertToPersonResponse(person);
         }
 
+        #region private
         private PersonResponse ConvertToPersonResponse(Person person)
         {
             PersonResponse personResponseDto = person.ToPersonResponse();
             personResponseDto.Country = _countriesService.GetCountry(person.CountryId)?.Name;
             return personResponseDto;
         }
+
+        #endregion
     }
 }
