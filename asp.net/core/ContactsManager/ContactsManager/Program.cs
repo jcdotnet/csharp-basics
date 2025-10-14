@@ -1,11 +1,20 @@
 using ServiceContracts;
 using Services;
+using Entities;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// IoC container
 builder.Services.AddControllersWithViews();
-builder.Services.AddSingleton<ICountriesService, CountriesService>();
-builder.Services.AddSingleton<IContactsService, ContactsService>();
+builder.Services.AddScoped<ICountriesService, CountriesService>();
+builder.Services.AddScoped<IContactsService, ContactsService>();
+
+builder.Services.AddDbContext<ContactsManagerDbContext>(options =>
+{
+    //options.UseSqlServer(builder.Configuration["ConnectionStrings::Default"]);
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+});
 
 var app = builder.Build();
 

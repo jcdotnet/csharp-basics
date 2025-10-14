@@ -1,0 +1,22 @@
+[
+  {
+    "Id": "6B820C12-FF44-4412-9E14-7941A869FB03",
+    "Name": "USA"
+  },
+  {
+    "Id": "D736FB55-4204-41DA-B3DA-144B4C70DD51",
+    "Name": "UK"
+  },
+  {
+    "Id": "59C3A91A-E333-409D-8D95-C6E42CCD1680",
+    "Name": "Spain"
+  },
+  {
+    "Id": "28DC009E-FC31-4598-A5A5-692F3E84E0CD",
+    "Name": "Germany"
+  },
+  {
+    "Id": "FFD79E28-72C6-4181-A5EB-F09B02252CD6",
+    "Name": "Canada"
+  }
+]

@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -18,8 +19,13 @@ namespace ContactsManager.Tests
 
         public ContactsServiceTest()
         {
-            _service = new ContactsService(false);
-            _countriesService = new CountriesService(false);
+            _countriesService = new CountriesService(
+                new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options)
+            );
+            _service = new ContactsService(
+                new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options),
+                _countriesService
+            );
         }
 
         #region AddContact
