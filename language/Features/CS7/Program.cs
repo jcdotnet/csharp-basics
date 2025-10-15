@@ -1,7 +1,6 @@
 ﻿using ClassLibrary;
 using CS7;
 
-// New Features in C#7
 // https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-version-history#c-version-70
 // https://devblogs.microsoft.com/dotnet/new-features-in-c-7-0/
 Console.WriteLine("--- C# 7.0 Features ---");
@@ -42,18 +41,72 @@ Console.WriteLine("--- C# 7.0 Features ---");
 
 }
 
-// pattern matching
+// pattern matching (is-expressions)
 // https://devblogs.microsoft.com/dotnet/new-features-in-c-7-0/#pattern-matching
-object obj = "hello";
-if (obj is string s)
-{
-    Console.WriteLine($"String length: {s.Length}");
-}
-
 int intNum = 5;
 if (intNum is 5)
 {
     Console.WriteLine("Number is five.");
+}
+
+// type pattern with variable pattern:
+// if (variable is ClassName anotherVariable) 
+object obj = "hello";
+if (obj is string s) // before C# 7: if (obj.GetType() == typeof(string)
+{
+    Console.WriteLine($"String length: {s.Length}");
+}
+
+// var pattern
+void IsVar(object? o)
+{
+    if (o is var x) Console.WriteLine($"x: {x}"); // will match any value, even null
+}
+IsVar(intNum);
+IsVar(null);
+
+// pattern matching (switch-case pattern)
+object? input = 100;
+switch (input)
+{
+    case int i:
+        Console.WriteLine("Entered an integer");
+        break;
+    case string str:
+        Console.WriteLine($"Entered a string: {str}");
+        break;
+    default:
+        Console.WriteLine("Unknown type");
+        break;
+}
+
+// switch with when pattern 
+switch (input)
+{
+    case int i when i > 0:
+        Console.WriteLine("Entered a positive integer");
+        break;
+    default:
+        Console.WriteLine("Unknown type");
+        break;
+}
+
+// see switch expressions in C# 8
+Person person = new("John", "Doe", 20);
+switch (person)
+{
+    case Person p when p.Age < 13:
+        Console.WriteLine($"{p} is a child");
+        break;
+    case Person p when p.Age >= 13 && p.Age < 18:
+        Console.WriteLine($"{p} is a teenager");
+        break;
+    case Person p when p.Age > 18:
+        Console.WriteLine($"{p} is an adult");
+        break;
+    default:
+        Console.WriteLine($"{person} is a person");
+        break;
 }
 
 // local functions (C#7.0)

@@ -8,7 +8,7 @@ Console.WriteLine("C#6 features");
 Student student = new Student();
 Console.WriteLine(student.Location); // Málaga // auto-property initializer
 
-Player player = new Player(ClassLibrary.Type.Elf); // static imports
+Player player = new Player(ClassLibrary.PlayerType.Elf); // static imports
 player.Name = "My Player"; // nameof operator
 Console.WriteLine(player.Armor); // immutable (read-only) properties
 Console.WriteLine(player.Defense); // expression bodied members

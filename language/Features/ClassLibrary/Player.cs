@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
-using static System.Math; // C#6: importing static members
-using static ClassLibrary.Type; // C#6: importing static members
+using static System.Math;               // C#6: importing static members
+using static ClassLibrary.PlayerType;   // C#6: importing static members
 
 namespace ClassLibrary
 {
-    public enum Type
+    public enum PlayerType
     {
         Elf,
         Ork
@@ -31,7 +31,7 @@ namespace ClassLibrary
         // C#6: immutable (getter only) properties 
         public int Armor { get; } = 100; // C#6: auto-property initializers
 
-        public Type Type { get; }
+        public PlayerType Type { get; }
 
         public int Wear { get; private set; } = 15;
         
@@ -58,7 +58,7 @@ namespace ClassLibrary
             }
         }
 
-        public Player(Type type)
+        public Player(PlayerType type)
         {
             Type = type;
             Armor = 90; // ctor has preference in property initialization

@@ -12,6 +12,9 @@ namespace CS7
 
         public string Name { get { return _name; } }
 
+        // public Character() { // this is allowed in C# 10
+        // _name = "Unknown hero";
+        // } 
         public Character(string name)
         {
             // initializes the character name

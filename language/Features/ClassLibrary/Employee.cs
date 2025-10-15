@@ -12,6 +12,7 @@ namespace ClassLibrary
         public string Name { get; set; }
         public string? Job { get; set; } // nullable string
 
+        public Employee() { }
         public Employee(int id, string name)
         {
             EmployeeID = id;
