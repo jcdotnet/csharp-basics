@@ -10,13 +10,14 @@ using System.Threading.Tasks;
 
 namespace Entities
 {
-    public class ContactsManagerDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
 
-        public ContactsManagerDbContext(DbContextOptions options): base(options) { }     
+        public ApplicationDbContext(DbContextOptions options): base(options) { }     
 
-        public DbSet<Country> Countries { get; set; }
-        public DbSet<Person> People { get; set; }
+        // DbSet properties: virtual to allow mocking classes to override them
+        public virtual DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> People { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

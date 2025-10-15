@@ -1,4 +1,5 @@
 ﻿using Entities;
+using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -19,12 +20,21 @@ namespace ContactsManager.Tests
 
         public ContactsServiceTest()
         {
-            _countriesService = new CountriesService(
-                new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options)
+            // mocking the dbContext (using test double instead of DbContext)
+            // object that look and behave like their production equivalent ones 
+            var countriesInitialData    = new List<Country>();  // empty collection as a data source
+            var peopleInitialData       = new List<Person>();   // empty collection as a data source
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+                new DbContextOptionsBuilder<ApplicationDbContext>().Options
             );
-            _service = new ContactsService(
-                new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options)
-            );
+            ApplicationDbContext dbContext = dbContextMock.Object;
+
+            // mocking the dbSets
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
+            dbContextMock.CreateDbSetMock(temp => temp.People, peopleInitialData);
+
+            _countriesService = new CountriesService(dbContext);
+            _service = new ContactsService(dbContext);
         }
 
         #region AddContact

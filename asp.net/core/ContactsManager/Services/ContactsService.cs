@@ -10,9 +10,9 @@ namespace Services
 {
     public class ContactsService : IContactsService
     {
-        private readonly ContactsManagerDbContext _db;
+        private readonly ApplicationDbContext _db;
 
-        public ContactsService(ContactsManagerDbContext contactsManagerDbContext)
+        public ContactsService(ApplicationDbContext contactsManagerDbContext)
         {
             _db = contactsManagerDbContext;
         }

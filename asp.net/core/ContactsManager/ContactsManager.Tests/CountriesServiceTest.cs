@@ -1,4 +1,5 @@
 ﻿using Entities;
+using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -8,11 +9,30 @@ namespace ContactsManager.Tests
 {
     public class CountriesServiceTest
     {
+        
         private readonly ICountriesService _service;
 
         public CountriesServiceTest()
         {
-            _service = new CountriesService(new ContactsManagerDbContext(new DbContextOptionsBuilder<ContactsManagerDbContext>().Options));
+            // mocking the dbContext (using test double instead of DbContext)
+            // object that look and behave like their production equivalent ones 
+
+            // this dbContext will try to interact with the real SQL Server
+            //var dbContext = new ApplicationDbContext(
+            //  new DbContextOptionsBuilder<ApplicationDbContext>().Options
+            //);
+
+            // we require a dbContext mock for unit testing
+            var countriesInitialData = new List<Country>(); // empty collection as a data source
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+                new DbContextOptionsBuilder<ApplicationDbContext>().Options
+            );
+            ApplicationDbContext dbContext = dbContextMock.Object;
+
+            // mocking the dbSets
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
+
+            _service = new CountriesService(dbContext);
         }
 
         #region AddCountry
@@ -57,8 +77,8 @@ namespace ContactsManager.Tests
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async() =>
             {
-                // Act
-                await _service.AddCountry(request1);
+               // Act
+               await _service.AddCountry(request1);
                 await _service.AddCountry(request2);
             });
         }
