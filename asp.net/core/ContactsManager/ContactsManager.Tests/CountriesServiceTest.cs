@@ -1,4 +1,5 @@
-﻿using Entities;
+﻿using AutoFixture;
+using Entities;
 using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
@@ -11,6 +12,9 @@ namespace ContactsManager.Tests
     {
         
         private readonly ICountriesService _service;
+
+        // AutoFixture automates non-relevant test fixture by generating dummy values
+        private readonly IFixture _fixture;
 
         public CountriesServiceTest()
         {
@@ -33,6 +37,7 @@ namespace ContactsManager.Tests
             dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
 
             _service = new CountriesService(dbContext);
+            _fixture = new Fixture();
         }
 
         #region AddCountry
@@ -71,8 +76,10 @@ namespace ContactsManager.Tests
         public async Task AddCountry_DuplicateCountryName()
         {
             // Arrange
-            CountryAddRequest? request1 = new CountryAddRequest() { Name = "Spain" };
-            CountryAddRequest? request2 = new CountryAddRequest() { Name = "Spain" };
+            CountryAddRequest request1 = _fixture.Build<CountryAddRequest>()
+                .With(temp => temp.Name, "Spain").Create();
+            CountryAddRequest request2 = _fixture.Build<CountryAddRequest>()
+                .With(temp => temp.Name, "Spain").Create();
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async() =>
@@ -88,7 +95,7 @@ namespace ContactsManager.Tests
         public async Task AddCountry()
         {
             // Arrange
-            CountryAddRequest? request = new CountryAddRequest() { Name = "Spain" };
+            CountryAddRequest request = GenerateDummyCountry();
 
             // Act
             CountryResponse? response = await _service.AddCountry(request);
@@ -117,8 +124,8 @@ namespace ContactsManager.Tests
         {
             // Arrange
             var request = new List<CountryAddRequest>() {
-                new CountryAddRequest() { Name = "Spain"},
-                new CountryAddRequest() { Name = "USA" }
+                 GenerateDummyCountry(),
+                 GenerateDummyCountry()
             };
 
             // Act
@@ -140,7 +147,7 @@ namespace ContactsManager.Tests
         public async Task GetAllCountries()
         {
             // Arrange
-            CountryAddRequest request = new CountryAddRequest() { Name = "Spain" };
+            CountryAddRequest request = GenerateDummyCountry();
 
             // Act
             var response = await _service.AddCountry(request);
@@ -171,7 +178,7 @@ namespace ContactsManager.Tests
         public async Task GetCountry()
         {
             // Arrange
-            var request = new CountryAddRequest() { Name = "Spain" };
+            var request = GenerateDummyCountry();
             var addResponse = await _service.AddCountry(request);
 
             // Act
@@ -180,6 +187,16 @@ namespace ContactsManager.Tests
             // Assert
             Assert.Equal(addResponse, getReponse);
         }
+        #endregion
+
+        #region private 
+
+        private CountryAddRequest GenerateDummyCountry()
+        {
+            // initializes all model properties with dummy values
+            return _fixture.Create<CountryAddRequest>(); 
+        }
+
         #endregion
     }
 }

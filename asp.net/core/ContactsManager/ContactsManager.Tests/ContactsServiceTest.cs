@@ -1,4 +1,6 @@
-﻿using Entities;
+﻿using AutoFixture;
+using AutoFixture.Kernel;
+using Entities;
 using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
@@ -18,6 +20,9 @@ namespace ContactsManager.Tests
         private readonly IContactsService _service;
         private readonly ICountriesService _countriesService;
 
+        // AutoFixture automates non-relevant test fixture by generating dummy values
+        private readonly IFixture _fixture; 
+
         public ContactsServiceTest()
         {
             // mocking the dbContext (using test double instead of DbContext)
@@ -33,8 +38,10 @@ namespace ContactsManager.Tests
             dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
             dbContextMock.CreateDbSetMock(temp => temp.People, peopleInitialData);
 
-            _countriesService = new CountriesService(dbContext);
-            _service = new ContactsService(dbContext);
+            _countriesService   = new CountriesService(dbContext);
+            _service            = new ContactsService(dbContext);
+            _fixture            = new Fixture();
+
         }
 
         #region AddContact
@@ -60,7 +67,8 @@ namespace ContactsManager.Tests
         public async Task AddContact_NullPersonName()
         {
             // Arrange
-            PersonAddRequest? person = new PersonAddRequest() { Name = null };
+            //PersonAddRequest? person = new PersonAddRequest() { Name = null };
+            var person = _fixture.Build<PersonAddRequest>().With(temp => temp.Name, null as string).Create();
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -75,7 +83,7 @@ namespace ContactsManager.Tests
         public async Task AddContact()
         {
             // Arrange
-            PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe" };
+            PersonAddRequest? personRequest = await GenerateDummyPerson();
 
             // Act
             PersonResponse? personResponse= await _service.AddContact(personRequest);
@@ -106,10 +114,8 @@ namespace ContactsManager.Tests
         public async Task GetContact()
         {
             // Arrange
-            CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            CountryResponse country = await _countriesService.AddCountry(countryRequest);
-
-            PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe", CountryId = country.Id};
+            CountryResponse country = await AddDummyCountry();
+            PersonAddRequest? personRequest = await GenerateDummyPerson(); 
             PersonResponse? personAddResponse = await _service.AddContact(personRequest);
 
             // Act
@@ -161,10 +167,7 @@ namespace ContactsManager.Tests
         public async Task GetContacts()
         {
             // Arrange
-            CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
-            CountryResponse country = await _countriesService.AddCountry(countryRequest);
-
-            PersonAddRequest? personRequest = new PersonAddRequest() { Name = "John Doe", CountryId = country.Id };
+            PersonAddRequest? personRequest = await GenerateDummyPerson();
             PersonResponse? personAddResponse = await _service.AddContact(personRequest);
 
             // Act
@@ -353,7 +356,7 @@ namespace ContactsManager.Tests
 
         private async Task<CountryResponse> AddDummyCountry()
         {
-            CountryAddRequest countryRequest = new CountryAddRequest() { Name = "Spain" };
+            CountryAddRequest countryRequest = _fixture.Create<CountryAddRequest>();
             return await _countriesService.AddCountry(countryRequest);
         }
 
@@ -361,9 +364,12 @@ namespace ContactsManager.Tests
         {
             var country = await AddDummyCountry();
             List<PersonAddRequest> contacts = [
-                new PersonAddRequest() { Name = "John Doe", Email = "john@email.com", CountryId = country.Id },
-                new PersonAddRequest() { Name = "Jane Doe", Email = "jane@email.com", CountryId = country.Id },
-                new PersonAddRequest() { Name = "Jade Doe", Email = "jade@email.com", CountryId = country.Id }
+                 _fixture.Build<PersonAddRequest>().With(temp => temp.Name, "John Doe")
+                .With(temp => temp.Email, "john@email.com").With(temp => temp.CountryId, country.Id).Create(),
+                _fixture.Build<PersonAddRequest>().With(temp => temp.Name, "Jane Doe")
+                .With(temp => temp.Email, "jane@email.com").With(temp => temp.CountryId, country.Id).Create(),
+                _fixture.Build<PersonAddRequest>().With(temp => temp.Name, "Jade Doe")
+                .With(temp => temp.Email, "jade@email.com").With(temp => temp.CountryId, country.Id).Create(),
             ];
             return contacts;
         }
@@ -371,9 +377,15 @@ namespace ContactsManager.Tests
         private async Task<PersonAddRequest> GenerateDummyPerson()
         {
             var country = await AddDummyCountry();
-            return new PersonAddRequest() {
-                Name = "John Doe", Email = "john@email.com", Gender = Gender.Male, CountryId = country.Id 
-            };
+
+            //return new PersonAddRequest() {
+            //    Name = "John Doe", Email = "john@email.com", Gender = Gender.Male, CountryId = country.Id 
+            //};
+            //return _fixture.Create<PersonAddRequest>(); // initializes all model properties with dummy values
+            return _fixture.Build<PersonAddRequest>()  // build allows us to customize the dummy values
+                .With(temp => temp.Email, "email@example.com")
+                .With(temp => temp.CountryId, country.Id)
+                .Create();
         }
     }
 }
