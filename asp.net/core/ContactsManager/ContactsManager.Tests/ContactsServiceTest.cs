@@ -1,7 +1,10 @@
 ﻿using AutoFixture;
 using AutoFixture.Kernel;
+using Azure.Core;
 using Entities;
 using EntityFrameworkCoreMock;
+using FluentAssertions;
+using FluentAssertions.Execution;
 using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -9,6 +12,7 @@ using ServiceContracts.Enums;
 using Services;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -53,12 +57,14 @@ namespace ContactsManager.Tests
             // Arrange
             PersonAddRequest? person = null;
 
-            // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            // Act
+            var func = async () =>
             {
-                // Act
                 await _service.AddContact(person);
-            });
+            };
+
+            // Assert
+            await func.Should().ThrowAsync<ArgumentNullException>();
         }
 
         // Requirement: when person name is null, it should throw ArgumentException
@@ -70,12 +76,14 @@ namespace ContactsManager.Tests
             //PersonAddRequest? person = new PersonAddRequest() { Name = null };
             var person = _fixture.Build<PersonAddRequest>().With(temp => temp.Name, null as string).Create();
 
-            // Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            // Act
+            var func = async () =>
             {
-                // Act
                 await _service.AddContact(person);
-            });
+            };
+
+            // Assert
+            await func.Should().ThrowAsync<ArgumentException>();
         }
 
         // Requirement: when proper person details, it should insert it in the contacts
@@ -90,8 +98,10 @@ namespace ContactsManager.Tests
             List<PersonResponse> listResponse = await _service.GetContacts();
 
             // Assert
-            Assert.True(personResponse.Id != Guid.Empty);
-            Assert.Contains(personResponse, listResponse);
+            //Assert.True(personResponse.Id != Guid.Empty);
+            personResponse.Id.Should().NotBe(Guid.Empty);   // fluent assertion
+            //Assert.Contains(personResponse, listResponse);
+            listResponse.Should().Contain(personResponse);  // fluent assertion
         }
 
         #endregion
@@ -107,7 +117,8 @@ namespace ContactsManager.Tests
             PersonResponse? personGetResponse = await _service.GetContact(null);
 
             // Assert
-            Assert.Null(personGetResponse);
+            //Assert.Null(personGetResponse);
+            personGetResponse.Should().BeNull();
         }
 
         [Fact]
@@ -122,7 +133,8 @@ namespace ContactsManager.Tests
             PersonResponse? personGetResponse = await _service.GetContact(personAddResponse.Id);
 
             // Assert
-            Assert.Equal(personAddResponse, personGetResponse);
+            //Assert.Equal(personAddResponse, personGetResponse);
+            personGetResponse.Should().Be(personAddResponse); // fluent
         }
 
         #endregion
@@ -138,7 +150,8 @@ namespace ContactsManager.Tests
             var contactsList = await _service.GetContacts();
 
             // Assert
-            Assert.Empty(contactsList);
+            //Assert.Empty(contactsList);
+            contactsList.Should().BeEmpty();
         }
 
         [Fact]
@@ -157,10 +170,11 @@ namespace ContactsManager.Tests
             var getAllResponse= await _service.GetContacts();
 
             // Assert
-            foreach (var person in addedPeople)
-            {
-                Assert.Contains(person, getAllResponse);
-            }
+            //foreach (var person in addedPeople)
+            //{
+            //    Assert.Contains(person, getAllResponse); 
+            //}
+            addedPeople.Should().BeEquivalentTo(getAllResponse);
         }
 
         [Fact]
@@ -174,8 +188,11 @@ namespace ContactsManager.Tests
             List<PersonResponse> getAllRequest = await _service.GetContacts();
 
             // Assert
-            Assert.True(personAddResponse.Id != Guid.Empty && getAllRequest.Count > 0);
-            Assert.Contains(personAddResponse, getAllRequest);
+            //Assert.True(personAddResponse.Id != Guid.Empty && getAllRequest.Count > 0);
+            //Assert.Contains(personAddResponse, getAllRequest);
+            personAddResponse.Id.Should().NotBe(Guid.Empty);
+            getAllRequest.Should().HaveCountGreaterThan(0);
+            getAllRequest.Should().Contain(personAddResponse);
         }
 
         #endregion
@@ -199,10 +216,11 @@ namespace ContactsManager.Tests
             var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "");
 
             // Assert
-            foreach (var person in addedPeople)
-            {
-                Assert.Contains(person, getFilteredResponse);
-            }
+            //foreach (var person in addedPeople)
+            //{
+            //    Assert.Contains(person, getFilteredResponse);
+            //}
+            addedPeople.Should().BeEquivalentTo(getFilteredResponse);
         }
 
         [Fact]
@@ -221,15 +239,17 @@ namespace ContactsManager.Tests
             var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "ja");
 
             // Assert
-            foreach (var person in addedPeople)
-            {
-                if (person.Name == null) continue;
-                if (person.Name.Contains("ja", StringComparison.OrdinalIgnoreCase))
-                {
-                    Assert.Contains(person, getFilteredResponse);
-                }
-            }
-            Assert.Equal(2, getFilteredResponse.Count);
+            //foreach (var person in addedPeople)
+            //{
+            //    if (person.Name == null) continue;
+            //    if (person.Name.Contains("ja", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        Assert.Contains(person, getFilteredResponse);
+            //    }
+            //}
+            addedPeople.Should().Contain(p => p.Name.Contains("ja", StringComparison.OrdinalIgnoreCase));
+            //Assert.Equal(2, getFilteredResponse.Count);
+            getFilteredResponse.Count.Should().Be(2);
         }
 
         #endregion
@@ -254,13 +274,14 @@ namespace ContactsManager.Tests
                 nameof(Person.Name), 
                 SortOrder.Descending);
 
-            var sortedAddedPeople = addedPeople.OrderByDescending(p => p.Name).ToList();
+            //var sortedAddedPeople = addedPeople.OrderByDescending(p => p.Name).ToList();
 
             // Assert
-            for (int i = 0; i < sortedAddedPeople.Count; i++)
-            {
-                Assert.Equal(sortedAddedPeople[i], getSortedResponse[i]);
-            }
+            //for (int i = 0; i < sortedAddedPeople.Count; i++)
+            //{
+            //    Assert.Equal(sortedAddedPeople[i], getSortedResponse[i]);
+            //}
+            getSortedResponse.Should().BeInDescendingOrder(p => p.Name);
         }
 
         #endregion
@@ -271,12 +292,13 @@ namespace ContactsManager.Tests
         [Fact]
         public async Task UpdateContact_NullPerson()
         {
-            // Arrange
-            // Assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () => {
-                //Act
+            // Act
+            var func = async () =>
+            {
                 await _service.UpdateContact(null);
-            });
+            };
+            // Assert
+            await func.Should().ThrowAsync<ArgumentNullException>();
         }
 
         // Requirement: when person id is invalid, it should throw ArgumentException
@@ -285,11 +307,14 @@ namespace ContactsManager.Tests
         {
             // Arrange
             PersonUpdateRequest? request = new PersonUpdateRequest() {Id = Guid.NewGuid() };
-            // Assert
-            await Assert.ThrowsAsync<ArgumentException>(async () => {
-                //Act
+
+            //Act
+            var func = async () =>
+            {
                 await _service.UpdateContact(request);
-            });
+            };
+            // Assert
+            await func.Should().ThrowAsync<ArgumentException>();
         }
 
         // Requirement: when person name is null, it should throw ArgumentException
@@ -301,11 +326,13 @@ namespace ContactsManager.Tests
             PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
             updateRequest.Name = null;
 
-            // Assert
-            await Assert.ThrowsAsync<ArgumentException>(async() => {
-                // Act
+            // Act
+            var func = async () =>
+            {
                 await _service.UpdateContact(updateRequest);
-            });
+            };
+            // Assert
+            await func.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
@@ -321,7 +348,8 @@ namespace ContactsManager.Tests
             PersonResponse? getResponse = await _service.GetContact(updatedResponse.Id);
 
             // Assert
-            Assert.Equal(getResponse, updatedResponse);
+            //Assert.Equal(getResponse, updatedResponse);
+            updatedResponse.Should().Be(getResponse);
         }
 
         #endregion
@@ -337,7 +365,8 @@ namespace ContactsManager.Tests
             bool isDeleted = await _service.DeleteContact(Guid.NewGuid());
 
             // Assert
-            Assert.False(isDeleted);
+            //Assert.False(isDeleted);
+            isDeleted.Should().BeFalse();
         }
 
         [Fact]
@@ -350,7 +379,8 @@ namespace ContactsManager.Tests
             bool isDeleted = await _service.DeleteContact(addedPerson.Id);
 
             // Assert
-            Assert.True(isDeleted);
+            //Assert.True(isDeleted);
+            isDeleted.Should().BeTrue();
         }
         #endregion
 
