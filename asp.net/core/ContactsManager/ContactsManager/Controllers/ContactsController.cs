@@ -76,7 +76,7 @@ namespace ContactsManager.Controllers
                 // using cllient server validation instead
                 //ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
 
-                return View();
+                return View(personAddRequest);
             }
             await _contactsService.AddContact(personAddRequest);
 
