@@ -10,7 +10,7 @@ namespace ServiceContracts
     {   
         Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest);
 
-        Task<List<CountryResponse>> GetAllCountries();
+        Task<List<CountryResponse>> GetCountries();
 
         Task<CountryResponse?> GetCountry(Guid? id);
     }

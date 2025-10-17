@@ -50,7 +50,7 @@ namespace ContactsManager.Controllers
         [HttpGet]
         public async Task<IActionResult> Create()
         {
-            var countries = await _countriesService.GetAllCountries();
+            var countries = await _countriesService.GetCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem()
             {
                 Text = country.Name,
@@ -66,7 +66,7 @@ namespace ContactsManager.Controllers
             if (!ModelState.IsValid)
             {
                 // this happens when client side validations fails (very rarely)
-                var countries = await _countriesService.GetAllCountries();
+                var countries = await _countriesService.GetCountries();
                 ViewBag.Countries = countries.Select(country => new SelectListItem()
                 {
                     Text = country.Name,
@@ -92,7 +92,7 @@ namespace ContactsManager.Controllers
             {
                 return RedirectToAction("Index");
             }
-            var countries = await _countriesService.GetAllCountries();
+            var countries = await _countriesService.GetCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem()
             {
                 Text = country.Name,
@@ -120,7 +120,7 @@ namespace ContactsManager.Controllers
             else
             {
                 // this happens when client side validations fails (very rarely)
-                var countries = await _countriesService.GetAllCountries();
+                var countries = await _countriesService.GetCountries();
                 ViewBag.Countries = countries.Select(country => new SelectListItem()
                 {
                     Text = country.Name,

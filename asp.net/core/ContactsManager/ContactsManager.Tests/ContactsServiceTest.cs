@@ -1,11 +1,11 @@
 ﻿using AutoFixture;
-using AutoFixture.Kernel;
 using Azure.Core;
 using Entities;
 using EntityFrameworkCoreMock;
 using FluentAssertions;
-using FluentAssertions.Execution;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -13,7 +13,9 @@ using Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.Metrics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,37 +24,25 @@ namespace ContactsManager.Tests
     public class ContactsServiceTest
     {
         private readonly IContactsService _service;
-        private readonly ICountriesService _countriesService;
+        private readonly Mock<IContactsRepository> _repositoryMock;
+        private readonly IContactsRepository _repository;
 
         // AutoFixture automates non-relevant test fixture by generating dummy values
         private readonly IFixture _fixture; 
 
         public ContactsServiceTest()
         {
-            // mocking the dbContext (using test double instead of DbContext)
-            // object that look and behave like their production equivalent ones 
-            var countriesInitialData    = new List<Country>();  // empty collection as a data source
-            var peopleInitialData       = new List<Person>();   // empty collection as a data source
-            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
-                new DbContextOptionsBuilder<ApplicationDbContext>().Options
-            );
-            ApplicationDbContext dbContext = dbContextMock.Object;
-
-            // mocking the dbSets
-            dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
-            dbContextMock.CreateDbSetMock(temp => temp.People, peopleInitialData);
-
-            _countriesService   = new CountriesService(dbContext);
-            _service            = new ContactsService(dbContext);
+            _repositoryMock     = new Mock<IContactsRepository>();
+            _repository         = _repositoryMock.Object;
+            _service            = new ContactsService(_repository);
             _fixture            = new Fixture();
-
         }
 
         #region AddContact
 
         // Requirement: when person is null, it should throw ArgumentNullException
         [Fact]
-        public async Task AddContact_NullPerson()
+        public async Task AddContact_NullPerson_ToBeArgumentNullException()
         {
             // Arrange
             PersonAddRequest? person = null;
@@ -70,16 +60,22 @@ namespace ContactsManager.Tests
         // Requirement: when person name is null, it should throw ArgumentException
         // Optional: same with email addresses, etc.
         [Fact]
-        public async Task AddContact_NullPersonName()
+        public async Task AddContact_NullPersonName_ToBeArgumentException()
         {
             // Arrange
-            //PersonAddRequest? person = new PersonAddRequest() { Name = null };
-            var person = _fixture.Build<PersonAddRequest>().With(temp => temp.Name, null as string).Create();
+            var personAddRequest = _fixture.Build<PersonAddRequest>().
+                With(temp => temp.Name, null as string).Create();
+
+            var person = personAddRequest.ToPerson();
+
+            // mocking the repository (using test double method instead of the AddContact method)
+            // i.e. creating an object that look and behave like their production equivalent ones
+            _repositoryMock.Setup(p => p.AddContact(It.IsAny<Person>())).ReturnsAsync(person);
 
             // Act
             var func = async () =>
             {
-                await _service.AddContact(person);
+                await _service.AddContact(personAddRequest);
             };
 
             // Assert
@@ -88,20 +84,29 @@ namespace ContactsManager.Tests
 
         // Requirement: when proper person details, it should insert it in the contacts
         [Fact]
-        public async Task AddContact()
+        public async Task AddContact_PersonDetails_ToBeSuccessful()
         {
             // Arrange
-            PersonAddRequest? personRequest = await GenerateDummyPerson();
+            var personRequest = _fixture.Build<PersonAddRequest>() 
+                .With(temp => temp.Email, "email@example.com")
+                .Create();
+            var person = personRequest.ToPerson();
+            var expectedPerson = person.ToPersonResponse();
+
+            _repositoryMock.Setup(p => p.AddContact(It.IsAny<Person>()))
+                .ReturnsAsync(person);
 
             // Act
             PersonResponse? personResponse= await _service.AddContact(personRequest);
-            List<PersonResponse> listResponse = await _service.GetContacts();
+            expectedPerson.Id = personResponse.Id;
+
+            // unit testing: we must test a single method in a single test case
+            // not calling service.GetContacts now and testing AddContacts only
+            //List<PersonResponse> listResponse = await _service.GetContacts();
 
             // Assert
-            //Assert.True(personResponse.Id != Guid.Empty);
-            personResponse.Id.Should().NotBe(Guid.Empty);   // fluent assertion
-            //Assert.Contains(personResponse, listResponse);
-            listResponse.Should().Contain(personResponse);  // fluent assertion
+            personResponse.Id.Should().NotBe(Guid.Empty);
+            personResponse.Should().Be(expectedPerson);
         }
 
         #endregion
@@ -110,7 +115,7 @@ namespace ContactsManager.Tests
 
         // Requirement: when person id is null, it should return null
         [Fact]
-        public async Task GetContact_NullPersonId()
+        public async Task GetContact_NullPersonId_ToBeNull()
         {
             // Arrange
             // Act
@@ -122,19 +127,24 @@ namespace ContactsManager.Tests
         }
 
         [Fact]
-        public async Task GetContact()
+        public async Task GetContact_PersonDetails_ToBeSuccessful()
         {
             // Arrange
-            CountryResponse country = await AddDummyCountry();
-            PersonAddRequest? personRequest = await GenerateDummyPerson(); 
-            PersonResponse? personAddResponse = await _service.AddContact(personRequest);
+            // unit testing: we must test a single method in a single test case
+            // so we'll comment the call to AddContact to test GetContact only
+            //PersonAddRequest? personRequest = GenerateDummyPerson();
+            //PersonResponse? personAddResponse = await _service.AddContact(personRequest);
+            Person person = GenerateDummyPerson();
+
+            // mocking the repository (using test double method instead of the GetContact method)
+            // i.e. creating an object that look and behave like their production equivalent ones
+            _repositoryMock.Setup(p => p.GetContact(It.IsAny<Guid>())).ReturnsAsync(person);
 
             // Act
-            PersonResponse? personGetResponse = await _service.GetContact(personAddResponse.Id);
+            PersonResponse? personGetResponse = await _service.GetContact(person.Id);
 
             // Assert
-            //Assert.Equal(personAddResponse, personGetResponse);
-            personGetResponse.Should().Be(personAddResponse); // fluent
+            personGetResponse.Should().Be(person.ToPersonResponse());
         }
 
         #endregion
@@ -143,9 +153,14 @@ namespace ContactsManager.Tests
 
         // requirement: the contact list should be emtpy by default
         [Fact]
-        public async Task GetContacts_DefaulEmptytList()
+        public async Task GetContacts_Default_ToBeEmptyList()
         {
             // Arrange
+            // mocking the repository (using test double method instead of the GetContacts method)
+            // i.e. creating an object that look and behave like their production equivalent ones
+            var people = new List<Person>();
+            _repositoryMock.Setup(p => p.GetContacts()).ReturnsAsync(people); // mocks GetContacts
+
             // Act
             var contactsList = await _service.GetContacts();
 
@@ -155,16 +170,19 @@ namespace ContactsManager.Tests
         }
 
         [Fact]
-        public async Task GetContacts_AddContacts()
+        public async Task GetContacts_AddContacts_ToBeSuccessful()
         {
             // Arrange
-            var contacts = await GenerateDummyContactList();
+            var people = GenerateDummyContactList();
 
-            var addedPeople = new List<PersonResponse>();
-            foreach (var person in contacts)
-            {
-                addedPeople.Add(await _service.AddContact(person));
-            }
+            // unit testing: we must test a single method in a single test case
+            // we won't call _service.AddContact and will test GetContacts only
+
+            var expectedList = people.Select(p => p.ToPersonResponse()).ToList();
+
+            // mocking the repository (using test double method instead of the GetContacts method)
+            // i.e. creating an object that look and behave like their production equivalent ones
+            _repositoryMock.Setup(p => p.GetContacts()).ReturnsAsync(people); // mocks GetContacts
 
             // Act
             var getAllResponse= await _service.GetContacts();
@@ -174,25 +192,7 @@ namespace ContactsManager.Tests
             //{
             //    Assert.Contains(person, getAllResponse); 
             //}
-            addedPeople.Should().BeEquivalentTo(getAllResponse);
-        }
-
-        [Fact]
-        public async Task GetContacts()
-        {
-            // Arrange
-            PersonAddRequest? personRequest = await GenerateDummyPerson();
-            PersonResponse? personAddResponse = await _service.AddContact(personRequest);
-
-            // Act
-            List<PersonResponse> getAllRequest = await _service.GetContacts();
-
-            // Assert
-            //Assert.True(personAddResponse.Id != Guid.Empty && getAllRequest.Count > 0);
-            //Assert.Contains(personAddResponse, getAllRequest);
-            personAddResponse.Id.Should().NotBe(Guid.Empty);
-            getAllRequest.Should().HaveCountGreaterThan(0);
-            getAllRequest.Should().Contain(personAddResponse);
+            getAllResponse.Should().BeEquivalentTo(expectedList);
         }
 
         #endregion
@@ -201,16 +201,20 @@ namespace ContactsManager.Tests
 
         // requirements: if search is empty and searchBy is "Name", it should return all contacts
         [Fact]
-        public async Task GetFilteredContacts_EmptySearch()
+        public async Task GetFilteredContacts_EmptySearch_ToBeSuccessful()
         {
             // Arrange
-            var contacts = await GenerateDummyContactList();
+            var people = GenerateDummyContactList();
 
-            var addedPeople = new List<PersonResponse>();
-            foreach (var person in contacts)
-            {
-                addedPeople.Add(await _service.AddContact(person));
-            }
+            // unit testing: we must test a single method in a single test case
+            // we won't call _service.AddContact and will test this method only
+            var expectedList = people.Select(p=>p.ToPersonResponse()).ToList();
+
+            // mocking the repository (using test double method instead of the GetFilteredContacts method)
+            // i.e. creating an object that look and behave like their production equivalent ones
+            _repositoryMock.Setup(temp =>
+                temp.GetFilteredContacts(It.IsAny<Expression<Func<Person, bool>>>())
+            ).ReturnsAsync(people);
 
             // Act
             var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "");
@@ -220,36 +224,30 @@ namespace ContactsManager.Tests
             //{
             //    Assert.Contains(person, getFilteredResponse);
             //}
-            addedPeople.Should().BeEquivalentTo(getFilteredResponse);
+            getFilteredResponse.Should().BeEquivalentTo(expectedList);
         }
 
         [Fact]
-        public async Task GetFilteredContacts_PersonName()
+        public async Task GetFilteredContacts_PersonName_ToBeSuccessful()
         {
             // Arrange
-            var contacts = await GenerateDummyContactList();
+            var people = GenerateDummyContactList();
 
-            var addedPeople = new List<PersonResponse>();
-            foreach (var person in contacts)
-            {
-                addedPeople.Add(await _service.AddContact(person));
-            }
+            // unit testing: we must test a single method in a single test case
+            // we won't call _service.AddContact and will test this method only
+            var expectedList = people.Select(p => p.ToPersonResponse()).ToList();
+
+            _repositoryMock.Setup(temp => temp
+                .GetFilteredContacts(It.IsAny<Expression<Func<Person, bool>>>())
+            ).ReturnsAsync(people);
 
             // Act
             var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "ja");
 
             // Assert
-            //foreach (var person in addedPeople)
-            //{
-            //    if (person.Name == null) continue;
-            //    if (person.Name.Contains("ja", StringComparison.OrdinalIgnoreCase))
-            //    {
-            //        Assert.Contains(person, getFilteredResponse);
-            //    }
-            //}
-            addedPeople.Should().Contain(p => p.Name.Contains("ja", StringComparison.OrdinalIgnoreCase));
-            //Assert.Equal(2, getFilteredResponse.Count);
-            getFilteredResponse.Count.Should().Be(2);
+            getFilteredResponse.Should().BeEquivalentTo(expectedList);
+            getFilteredResponse.Should()
+                .Contain(p => p.Name.Contains("ja", StringComparison.OrdinalIgnoreCase));
         }
 
         #endregion
@@ -257,16 +255,16 @@ namespace ContactsManager.Tests
         #region GetSortedContacts
 
         [Fact]
-        public async Task GetSortedContacts_PersonName_Descending()
+        public async Task GetSortedContacts_PersonNameDescending_ToBeSuccessful()
         {
             // Arrange
-            var contacts = await GenerateDummyContactList();
+            var people = GenerateDummyContactList();
 
-            var addedPeople = new List<PersonResponse>();
-            foreach (var person in contacts)
-            {
-                addedPeople.Add(await _service.AddContact(person));
-            }
+            // unit testing: we must test a single method in a single test case
+            // we won't call _service.AddContact and will test this method only
+            //var expectedList = people.Select(p => p.ToPersonResponse()).ToList();
+
+            _repositoryMock.Setup(temp => temp.GetContacts()).ReturnsAsync(people);
 
             // Act
             var getSortedResponse = await _service.GetSortedContacts(
@@ -290,7 +288,7 @@ namespace ContactsManager.Tests
 
         // Requirement: when person is null, it should throw ArgumentNullException
         [Fact]
-        public async Task UpdateContact_NullPerson()
+        public async Task UpdateContact_NullPerson_ToBeArgumentNullException()
         {
             // Act
             var func = async () =>
@@ -303,7 +301,7 @@ namespace ContactsManager.Tests
 
         // Requirement: when person id is invalid, it should throw ArgumentException
         [Fact]
-        public async Task UpdateContact_InvalidPersonId()
+        public async Task UpdateContact_InvalidPersonId_ToBeArgumentException()
         {
             // Arrange
             PersonUpdateRequest? request = new PersonUpdateRequest() {Id = Guid.NewGuid() };
@@ -319,37 +317,46 @@ namespace ContactsManager.Tests
 
         // Requirement: when person name is null, it should throw ArgumentException
         [Fact]
-        public async Task UpdateContact_NullPersonName()
+        public async Task UpdateContact_NullPersonName_ToBeArgumentException()
         {
             // Arrange
-            PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
-            PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
-            updateRequest.Name = null;
+            // unit testing: we must test a single method in a single test case
+            // we won't call _service.AddContact and will test GetContacts only
+            //PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
+            //PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
+
+            Person person = GenerateDummyPerson();
+            person.Name = null;
 
             // Act
             var func = async () =>
             {
-                await _service.UpdateContact(updateRequest);
+                await _service.UpdateContact(person.ToPersonResponse().ToPersonUpdateRequest());
             };
             // Assert
             await func.Should().ThrowAsync<ArgumentException>();
         }
 
         [Fact]
-        public async Task UpdateContact()
+        public async Task UpdateContact_PersonDetails_ToBeSuccessful()
         {
             // Arrange
-            PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
-            PersonUpdateRequest updateRequest = addedPerson.ToPersonUpdateRequest();
-            updateRequest.Address = "123 Main Street";
+            // unit testing: we must test a single method in a single test case
+            // we won't call _service.AddContact and will test GetContacts only
+            Person person = GenerateDummyPerson();
+
+            PersonResponse expectedperson = person.ToPersonResponse();
+            PersonUpdateRequest personUpdateRequest = expectedperson.ToPersonUpdateRequest();
+
+            _repositoryMock.Setup(temp => temp.UpdateContact(It.IsAny<Person>())).ReturnsAsync(person);
+            _repositoryMock.Setup(temp => temp.GetContact(It.IsAny<Guid>())).ReturnsAsync(person);
 
             // Act
-            PersonResponse updatedResponse = await _service.UpdateContact(updateRequest);
-            PersonResponse? getResponse = await _service.GetContact(updatedResponse.Id);
+            PersonResponse updatedPerson = await _service.UpdateContact(personUpdateRequest);
+            //PersonResponse? getResponse = await _service.GetContact(personResponse.Id);
 
             // Assert
-            //Assert.Equal(getResponse, updatedResponse);
-            updatedResponse.Should().Be(getResponse);
+            updatedPerson.Should().Be(expectedperson);
         }
 
         #endregion
@@ -358,7 +365,7 @@ namespace ContactsManager.Tests
 
         // requirements: if person id is invalid, it should return false
         [Fact]
-        public async Task DeleteContact_InvalidId()
+        public async Task DeleteContact_InvalidId_ToBeFalse()
         {
             // Arrange
             // Act
@@ -370,13 +377,16 @@ namespace ContactsManager.Tests
         }
 
         [Fact]
-        public async Task DeleteContact()
+        public async Task DeleteContact_ValidId_ToBeTrue()
         {
             // Arrange
-            PersonResponse addedPerson = await _service.AddContact(await GenerateDummyPerson());
+            Person person = GenerateDummyPerson();
 
+            _repositoryMock.Setup(temp => temp.DeleteContact(It.IsAny<Guid>())).ReturnsAsync(true);
+
+            _repositoryMock.Setup(temp => temp.GetContact(It.IsAny<Guid>())).ReturnsAsync(person);
             // Act
-            bool isDeleted = await _service.DeleteContact(addedPerson.Id);
+            bool isDeleted = await _service.DeleteContact(person.Id);
 
             // Assert
             //Assert.True(isDeleted);
@@ -384,36 +394,40 @@ namespace ContactsManager.Tests
         }
         #endregion
 
-        private async Task<CountryResponse> AddDummyCountry()
+        private Country GenerateDummyCountry()
         {
-            CountryAddRequest countryRequest = _fixture.Create<CountryAddRequest>();
-            return await _countriesService.AddCountry(countryRequest);
+            // unit testing principle: we must test a single method in a single test case
+            // so we will comment the call to AddCountry to test our contact methods only
+            //CountryAddRequest countryRequest = _fixture.Create<CountryAddRequest>();
+            //return await _countriesService.AddCountry(countryRequest);
+            return _fixture.Create<Country>();
         }
 
-        private async Task<List<PersonAddRequest>> GenerateDummyContactList()
+        private List<Person> GenerateDummyContactList()
         {
-            var country = await AddDummyCountry();
-            List<PersonAddRequest> contacts = [
-                 _fixture.Build<PersonAddRequest>().With(temp => temp.Name, "John Doe")
+            var country = GenerateDummyCountry();
+            List<Person> contacts = [
+                 _fixture.Build<Person>().With(temp => temp.Name, "John Doe")
                 .With(temp => temp.Email, "john@email.com").With(temp => temp.CountryId, country.Id).Create(),
-                _fixture.Build<PersonAddRequest>().With(temp => temp.Name, "Jane Doe")
+                _fixture.Build<Person>().With(temp => temp.Name, "Jane Doe")
                 .With(temp => temp.Email, "jane@email.com").With(temp => temp.CountryId, country.Id).Create(),
-                _fixture.Build<PersonAddRequest>().With(temp => temp.Name, "Jade Doe")
+                _fixture.Build<Person>().With(temp => temp.Name, "Jade Doe")
                 .With(temp => temp.Email, "jade@email.com").With(temp => temp.CountryId, country.Id).Create(),
             ];
             return contacts;
         }
 
-        private async Task<PersonAddRequest> GenerateDummyPerson()
+        private Person GenerateDummyPerson()
         {
-            var country = await AddDummyCountry();
+            var country = GenerateDummyCountry();
 
             //return new PersonAddRequest() {
             //    Name = "John Doe", Email = "john@email.com", Gender = Gender.Male, CountryId = country.Id 
             //};
             //return _fixture.Create<PersonAddRequest>(); // initializes all model properties with dummy values
-            return _fixture.Build<PersonAddRequest>()  // build allows us to customize the dummy values
+            return _fixture.Build<Person>()  // build allows us to customize the dummy values
                 .With(temp => temp.Email, "email@example.com")
+                .With(temp => temp.Gender, "Female")
                 .With(temp => temp.CountryId, country.Id)
                 .Create();
         }
