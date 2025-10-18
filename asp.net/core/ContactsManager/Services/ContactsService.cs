@@ -66,22 +66,25 @@ namespace Services
 
         public async Task<List<PersonResponse>> GetFilteredContacts(string searchBy, string? search)
         {
-            List<Person> getFiltered = searchBy switch
-            {
-                nameof(PersonResponse.Name) => await _repository.GetFilteredContacts(p =>
-                    p.Name.Contains(search)),
-                nameof(PersonResponse.Email) => await _repository.GetFilteredContacts(p =>
-                    p.Email.Contains(search)),
-                nameof(PersonResponse.Address) => await _repository.GetFilteredContacts(p =>
-                    p.Address.Contains(search)),
-                nameof(PersonResponse.BirthDate) => await _repository.GetFilteredContacts(p =>
-                    p.BirthDate.Value.ToString("dd MMMM yyyy").Contains(search)),
-                nameof(PersonResponse.Gender) => await _repository.GetFilteredContacts(p =>
-                    p.Gender.Contains(search)),
-                nameof(PersonResponse.CountryId) => await _repository.GetFilteredContacts(p =>
-                    p.Country.Name.Contains(search)),
-                _ => await _repository.GetContacts()
-            };
+            List<Person> getFiltered;
+            if (string.IsNullOrEmpty(search)) getFiltered = await _repository.GetContacts();
+            else 
+                getFiltered = searchBy switch
+                {
+                    nameof(PersonResponse.Name) => await _repository.GetFilteredContacts(p =>
+                        p.Name.Contains(search)),
+                    nameof(PersonResponse.Email) => await _repository.GetFilteredContacts(p =>
+                        p.Email.Contains(search)),
+                    nameof(PersonResponse.Address) => await _repository.GetFilteredContacts(p =>
+                        p.Address.Contains(search)),
+                    nameof(PersonResponse.BirthDate) => await _repository.GetFilteredContacts(p =>
+                        p.BirthDate.Value.ToString("dd MMMM yyyy").Contains(search)),
+                    nameof(PersonResponse.Gender) => await _repository.GetFilteredContacts(p =>
+                        p.Gender.Contains(search)),
+                    nameof(PersonResponse.CountryId) => await _repository.GetFilteredContacts(p =>
+                        p.Country.Name.Contains(search)),
+                    _ => await _repository.GetContacts()
+                };
             return getFiltered.Select(p => p.ToPersonResponse()).ToList();
         }
 

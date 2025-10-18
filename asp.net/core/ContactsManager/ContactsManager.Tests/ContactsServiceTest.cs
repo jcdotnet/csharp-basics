@@ -212,9 +212,11 @@ namespace ContactsManager.Tests
 
             // mocking the repository (using test double method instead of the GetFilteredContacts method)
             // i.e. creating an object that look and behave like their production equivalent ones
-            _repositoryMock.Setup(temp =>
-                temp.GetFilteredContacts(It.IsAny<Expression<Func<Person, bool>>>())
-            ).ReturnsAsync(people);
+            //_repositoryMock.Setup(temp =>
+            //    temp.GetFilteredContacts(It.IsAny<Expression<Func<Person, bool>>>())
+            //).ReturnsAsync(people);
+            // in this case we need to mock GetContacts only (it should return all contacts)
+            _repositoryMock.Setup(temp => temp.GetContacts()).ReturnsAsync(people);
 
             // Act
             var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "");
