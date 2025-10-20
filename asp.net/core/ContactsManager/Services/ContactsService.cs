@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Exceptions;
 using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 using ServiceContracts;
@@ -139,7 +140,8 @@ namespace Services
             Person? person = await _repository.GetContact(personDto.Id);
             if (person == null)
             {
-                throw new ArgumentException("Person does not exist");
+                //throw new ArgumentException("Person does not exist");
+                throw new InvalidPersonIdException("Person does not exist");
             }
             person.Name = personDto.Name;
             person.Email = personDto.Email;
