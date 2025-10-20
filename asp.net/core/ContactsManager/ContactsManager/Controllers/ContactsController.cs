@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ContactsManager.Filters.ActionFilters;
+using ContactsManager.Filters.AuthorizationFilters;
+using ContactsManager.Filters.ResultFilters;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -7,6 +10,7 @@ using ServiceContracts.Enums;
 namespace ContactsManager.Controllers
 {
     [Route("contacts")]
+    [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = ["X-Controller-Key", "MyValue"])]
     public class ContactsController : Controller
     {
 
@@ -22,24 +26,27 @@ namespace ContactsManager.Controllers
         [Route("/")]
         // [Route("index")]
         [Route("[action]")] // route token
+        [TypeFilter(typeof(ContactsListActionFilter))] // [TypeFilter<ContactsListActionFilter>]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = ["X-Index-Key", "MyValue"])]
+        [TypeFilter(typeof(ContactsListResultFilter))]
         public async Task<IActionResult> Index(string searchBy, string? search,
             string sortBy = nameof(PersonResponse.Name),
             SortOrder sortOrder = SortOrder.Ascending)
         {
-            ViewBag.SearchBy = searchBy;
-            ViewBag.Search = search;
-            ViewBag.SearchFields = new Dictionary<string, string>()
-            {
-                { nameof(PersonResponse.Name), "Name" },
-                { nameof(PersonResponse.Email), "Email" },
-                { nameof(PersonResponse.BirthDate), "Birth Date" },
-                { nameof(PersonResponse.Gender), "Gender" },
-                { nameof(PersonResponse.CountryId), "Country" },
-                { nameof(PersonResponse.Address), "Address" }
-            };
-
-            ViewBag.SortBy = sortBy;
-            ViewBag.SortOrder = sortOrder.ToString();
+            // setting the viewdata in the filter action
+            //ViewBag.SearchBy = searchBy;
+            //ViewBag.Search = search;
+            //ViewBag.SearchFields = new Dictionary<string, string>()
+            //{
+            //    { nameof(PersonResponse.Name), "Name" },
+            //    { nameof(PersonResponse.Email), "Email" },
+            //    { nameof(PersonResponse.BirthDate), "Birth Date" },
+            //    { nameof(PersonResponse.Gender), "Gender" },
+            //    { nameof(PersonResponse.CountryId), "Country" },
+            //    { nameof(PersonResponse.Address), "Address" }
+            //};
+            //ViewBag.SortBy = sortBy;
+            //ViewBag.SortOrder = sortOrder.ToString();
 
             var filteredContacts = await _contactsService.GetFilteredContacts(searchBy, search);
             var sortedContacts = await _contactsService.GetSortedContacts(filteredContacts, sortBy, sortOrder);
@@ -48,6 +55,8 @@ namespace ContactsManager.Controllers
 
         [Route("[action]")]
         [HttpGet]
+        [TypeFilter(typeof(ContactsHttpPostActionFilter))]
+        [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = ["X-Create-Key", "MyValue"])]
         public async Task<IActionResult> Create()
         {
             var countries = await _countriesService.GetCountries();
@@ -61,30 +70,34 @@ namespace ContactsManager.Controllers
 
         [Route("[action]")]
         [HttpPost]
-        public async Task<IActionResult> Create(PersonAddRequest personAddRequest)
+        [TypeFilter(typeof(ContactsHttpPostActionFilter))]
+        public async Task<IActionResult> Create(PersonAddRequest personRequest)
         {
-            if (!ModelState.IsValid)
-            {
-                // this happens when client side validations fails (very rarely)
-                var countries = await _countriesService.GetCountries();
-                ViewBag.Countries = countries.Select(country => new SelectListItem()
-                {
-                    Text = country.Name,
-                    Value = country.Id.ToString()
-                });
+            // logic moved to (short circuiting) action filter
+            //if (!ModelState.IsValid)
+            //{
+            //    // this happens when client side validations fails (very rarely)
+            //    var countries = await _countriesService.GetCountries();
+            //    ViewBag.Countries = countries.Select(country => new SelectListItem()
+            //    {
+            //        Text = country.Name,
+            //        Value = country.Id.ToString()
+            //    });
 
-                // using cllient server validation instead
-                //ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            //    // using cllient server validation instead
+            //    //ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e =>
+            //    e.ErrorMessage).ToList();
 
-                return View(personAddRequest);
-            }
-            await _contactsService.AddContact(personAddRequest);
+            //    return View(personRequest);
+            //}
+            await _contactsService.AddContact(personRequest);
 
             return RedirectToAction("Index", "Contacts");
         }
 
         [Route("[action]/{id}")]
         [HttpGet]
+        [TypeFilter(typeof(TokenResultFilter))]
         public async Task<IActionResult> Edit(Guid id)
         {
             var person = await _contactsService.GetContact(id); 
@@ -103,32 +116,32 @@ namespace ContactsManager.Controllers
 
         [HttpPost]
         [Route("[action]/{id}")]
-        public async Task<IActionResult> Edit(PersonUpdateRequest personUpdateRequest)
+        [TypeFilter(typeof(TokenAuthorizationFilter))]
+        public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
-            var person = await _contactsService.GetContact(personUpdateRequest.Id);
+            var person = await _contactsService.GetContact(personRequest.Id);
 
             if (person == null)
             {
                 return RedirectToAction("Index");
             }
 
-            if (ModelState.IsValid)
-            {
-                await _contactsService.UpdateContact(personUpdateRequest);
-                return RedirectToAction("Index");
-            }
-            else
-            {
-                // this happens when client side validations fails (very rarely)
-                var countries = await _countriesService.GetCountries();
-                ViewBag.Countries = countries.Select(country => new SelectListItem()
-                {
-                    Text = country.Name,
-                    Value = country.Id.ToString()
-                }); 
-                //ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-                return View();
-            }
+            // modelstate logic moved to (short circuiting) action filter
+            //if (ModelState.IsValid)
+            //{
+            //    // this happens when client side validations fails (very rarely)
+            //    var countries = await _countriesService.GetCountries();
+            //    ViewBag.Countries = countries.Select(country => new SelectListItem()
+            //    {
+            //        Text = country.Name,
+            //        Value = country.Id.ToString()
+            //    });
+            //    ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e =>
+            //    e.ErrorMessage).ToList();
+            //    return View();
+            //}
+            await _contactsService.UpdateContact(personRequest);
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
