@@ -78,34 +78,12 @@ namespace ContactsManager.Tests
 
         #region Create
 
-        [Fact]
-        public async Task Create_ModelErrors_ToReturnCreateView()
-        {
-            //Arrange
-            PersonAddRequest personAddRequest = _fixture.Create<PersonAddRequest>();
-            PersonResponse personResponse = _fixture.Create<PersonResponse>();
-           
-            List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
-
-            _countriesServiceMock.Setup(temp => temp.GetCountries()).ReturnsAsync(countries);
-            _contactsAdderServiceMock.Setup(temp => temp.AddContact(It.IsAny<PersonAddRequest>()))
-             .ReturnsAsync(personResponse);
-
-            var controller = new ContactsController(_contactsAdderService, _contactsGetterService,
-                _contactsUpdaterService, _contactsSorterService, _contactsDeleterService, _countriesService);
-
-            //Act
-            controller.ModelState.AddModelError("Name", "Person Name is required");
-
-            IActionResult actionResult = await controller.Create(personAddRequest);
-
-            //Assert
-            ViewResult viewResult = Assert.IsType<ViewResult>(actionResult);
-
-            viewResult.ViewData.Model.Should().BeAssignableTo<PersonAddRequest>();
-            viewResult.ViewData.Model.Should().Be(personAddRequest);
-        }
-
+        // now, the filter is the responsible of checking the model state, not the controller
+        //[Fact]
+        //public async Task Create_ModelErrors_ToReturnCreateView()
+        //{
+        //   // test not applicabe
+        //}
 
         [Fact]
         public async Task Create_NoModelErrors_ToRedirectToIndex()
