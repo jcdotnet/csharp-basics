@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <link href="~/StyleSheet.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <div class="page-content">
+        <div class="container">
+            <div class="flex top-bar mb">
+                <div class="flex-1">
+                    <h1 class="app-title">
+                        <i class="fa-solid fa-users"></i>Contacts Manager
+                    </h1>
+                </div>
+                <div class="flex-1 pr search-box">
+                    <div class="navbar account-links">
+                        <ul>
+                            <li>
+                                <a asp-controller="Account" asp-action="Register">Register</a>
+                                <a asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="main-content">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

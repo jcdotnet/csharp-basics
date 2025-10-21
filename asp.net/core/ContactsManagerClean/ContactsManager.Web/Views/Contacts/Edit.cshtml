@@ -1,0 +1,139 @@
+﻿@model PersonUpdateRequest
+@{
+    ViewBag.Title = "Edit Contact";
+}
+
+<div class="flex">
+    <div class="flex-1">
+        <div class="text-grey">
+            <span>Contacts</span>
+            <i class="fa-solid fa-caret-right"></i>
+            <span class="text-grey">Edit</span>
+        </div>
+    </div>
+
+    <div class="flex-1 text-right">
+         <a asp-controller="Contacts" asp-action="Index" class="link-hover">Back to contacts</a>
+    </div>
+</div>
+
+<div class="form-container">
+    <h2 class="text-large">@ViewBag.Title</h2>
+    <form asp-controller="Contacts" asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="flex form-field">
+            <div class="w-25">
+                <label for="Name" class="form-label pt">Name</label>
+            </div>
+            <div class="flex-1">
+                <input asp-for="Name" class="form-input"/>
+                <!-- client side validation: show error messages if any -->
+                <span asp-validation-for="Name" class="text-red"></span>
+            </div>
+        </div>
+        <div class="flex form-field">
+            <div class="w-25">
+                <label for="email" class="form-label pt">Email</label>
+            </div>
+            <div class="flex-1">
+                <!--
+                we associated a EmailAdress datatype in the PersonAddRequest DTO
+                -->
+                <!--<input asp-for="Email" type="email" class="form-input" />-->
+                <input asp-for="Email" class="form-input" />
+            </div>
+        </div>
+        <div class="flex form-field">
+            <div class="w-25">
+                <label for="Address" class="form-label pt">Address</label>
+            </div>
+            <div class="flex-1">
+                <textarea asp-for="Address" class="form-input"></textarea>
+            </div>
+        </div>
+        <div class="flex form-field">
+            <div class="w-25">
+                <label for="BirthDate" class="form-label pt">Birth Date</label>
+            </div>
+            <div class="flex-1">
+                <!--
+                we associated a Date datatype to this field in PersonAddRequest DTO 
+                -->
+                <!--<input asp-for="BirthDate" type="date" class="form-input" />-->
+                <input asp-for="BirthDate" class="form-input" />
+            </div>
+        </div>
+        <div class="flex form-field">
+            <div class="w-25">
+                <label class="form-label">Gender</label>
+            </div>
+            <div class="flex-1">
+                @{
+                    var genderNames = Enum.GetNames(typeof(Gender));
+                }
+                @foreach (var gender in genderNames)
+                {
+                    <label for=@gender>@gender</label>
+                    <input asp-for="Gender" type="radio" value="@gender" />
+                }
+            </div>
+        </div>
+        <div class="flex form-field">
+            <div class="w-25">
+                <label for="CountryId" class="form-label pt">Country</label>
+            </div>
+            <div class="flex-1">
+                <select asp-for="CountryId" class="form-input" asp-items="@ViewBag.Countries">
+                    <option value="">-- Select Country --</option>
+                </select>
+            </div>
+        </div>
+        <div class="flex form-field">
+            <div class="w-25">
+            </div>
+            <div class="flex-1">        
+                <input asp-for="ReceiveNewsletters" value="true" /> <!-- property is bool type -->
+                <label for="ReceiveNewsletters" class="form-label">Receive Newsletters</label>
+            </div>
+        </div>
+        <div class="form-field flex">
+            <div class="w-25">
+            </div>
+            <div class="flex-1">
+                <button class="button button-green-back">Update</button>
+                
+                @* using client side validation
+                @if (ViewBag.Errors != null)
+                {
+                    <div class="text-red ml">
+                        <ul>
+                            @foreach (string error in ViewBag.Errors)
+                            {
+                                <li class="ml">@error</li>
+                            }
+                        </ul>
+                    </div>
+                }
+                *@
+            </div>
+        </div>
+    </form>
+</div>
+
+@section scripts {
+<!-- jQuery validate for client side validation -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" 
+    asp-fallback-test="window.jQuery" 
+    asp-fallback-src="~/jquery.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"
+    asp-fallback-test="window.jQuery.validator"
+    asp-fallback-src="~/jquery-validate.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"
+    asp-fallback-src="~/jquery-validate-unobtrusive.min.js"
+    asp-fallback-test="window.jQuery.validator.unobtrusive">
+</script>
+}
