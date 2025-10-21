@@ -12,20 +12,12 @@ namespace ServiceContracts
     /// Logic business for manipulating the Person Entity
     /// Design note: passing returning DTO objects, not Person 
     /// </summary>
-    public interface IContactsService
+    public interface IContactsGetterService
     {
-        Task<PersonResponse> AddContact(PersonAddRequest? personDto);
-
         Task<List<PersonResponse>> GetContacts();
 
         Task<PersonResponse?> GetContact(Guid? id);
 
         Task<List<PersonResponse>> GetFilteredContacts(string searchBy, string? search);
-
-        Task<List<PersonResponse>> GetSortedContacts(List<PersonResponse> contacts, string sortBy, SortOrder sortOrder);
-
-        Task<PersonResponse> UpdateContact(PersonUpdateRequest? personDto);
-
-        Task<bool> DeleteContact(Guid? id);
     }
 }

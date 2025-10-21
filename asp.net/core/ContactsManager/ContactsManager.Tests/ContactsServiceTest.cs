@@ -1,29 +1,24 @@
 ﻿using AutoFixture;
-using Azure.Core;
 using Entities;
-using EntityFrameworkCoreMock;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.Metrics;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ContactsManager.Tests
 {
     public class ContactsServiceTest
     {
-        private readonly IContactsService _service;
+        private readonly IContactsAdderService _adderService;
+        private readonly IContactsGetterService _getterService;
+        private readonly IContactsUpdaterService _updaterService;
+        private readonly IContactsSorterService _sorterService;
+        private readonly IContactsDeleterService _deleterService;
         private readonly Mock<IContactsRepository> _repositoryMock;
         private readonly IContactsRepository _repository;
 
@@ -32,10 +27,14 @@ namespace ContactsManager.Tests
 
         public ContactsServiceTest()
         {
-            _repositoryMock     = new Mock<IContactsRepository>();
-            _repository         = _repositoryMock.Object;
-            _service            = new ContactsService(_repository);
-            _fixture            = new Fixture();
+            _repositoryMock = new Mock<IContactsRepository>();
+            _repository     = _repositoryMock.Object;
+            _adderService   = new ContactsAdderService(_repository);
+            _getterService  = new ContactsGetterService(_repository);
+            _updaterService = new ContactsUpdaterService(_repository);
+            _sorterService  = new ContactsSorterService(_repository);
+            _deleterService = new ContactsDeleterService(_repository);
+            _fixture        = new Fixture();
         }
 
         #region AddContact
@@ -50,7 +49,7 @@ namespace ContactsManager.Tests
             // Act
             var func = async () =>
             {
-                await _service.AddContact(person);
+                await _adderService.AddContact(person);
             };
 
             // Assert
@@ -75,7 +74,7 @@ namespace ContactsManager.Tests
             // Act
             var func = async () =>
             {
-                await _service.AddContact(personAddRequest);
+                await _adderService.AddContact(personAddRequest);
             };
 
             // Assert
@@ -97,7 +96,7 @@ namespace ContactsManager.Tests
                 .ReturnsAsync(person);
 
             // Act
-            PersonResponse? personResponse= await _service.AddContact(personRequest);
+            PersonResponse? personResponse= await _adderService.AddContact(personRequest);
             expectedPerson.Id = personResponse.Id;
 
             // unit testing: we must test a single method in a single test case
@@ -119,7 +118,7 @@ namespace ContactsManager.Tests
         {
             // Arrange
             // Act
-            PersonResponse? personGetResponse = await _service.GetContact(null);
+            PersonResponse? personGetResponse = await _getterService.GetContact(null);
 
             // Assert
             //Assert.Null(personGetResponse);
@@ -141,7 +140,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(p => p.GetContact(It.IsAny<Guid>())).ReturnsAsync(person);
 
             // Act
-            PersonResponse? personGetResponse = await _service.GetContact(person.Id);
+            PersonResponse? personGetResponse = await _getterService.GetContact(person.Id);
 
             // Assert
             personGetResponse.Should().Be(person.ToPersonResponse());
@@ -162,7 +161,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(p => p.GetContacts()).ReturnsAsync(people); // mocks GetContacts
 
             // Act
-            var contactsList = await _service.GetContacts();
+            var contactsList = await _getterService.GetContacts();
 
             // Assert
             //Assert.Empty(contactsList);
@@ -185,7 +184,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(p => p.GetContacts()).ReturnsAsync(people); // mocks GetContacts
 
             // Act
-            var getAllResponse= await _service.GetContacts();
+            var getAllResponse= await _getterService.GetContacts();
 
             // Assert
             //foreach (var person in addedPeople)
@@ -219,7 +218,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(temp => temp.GetContacts()).ReturnsAsync(people);
 
             // Act
-            var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "");
+            var getFilteredResponse = await _getterService.GetFilteredContacts(nameof(Person.Name), "");
 
             // Assert
             //foreach (var person in addedPeople)
@@ -244,7 +243,7 @@ namespace ContactsManager.Tests
             ).ReturnsAsync(people);
 
             // Act
-            var getFilteredResponse = await _service.GetFilteredContacts(nameof(Person.Name), "ja");
+            var getFilteredResponse = await _getterService.GetFilteredContacts(nameof(Person.Name), "ja");
 
             // Assert
             getFilteredResponse.Should().BeEquivalentTo(expectedList);
@@ -269,8 +268,8 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(temp => temp.GetContacts()).ReturnsAsync(people);
 
             // Act
-            var getSortedResponse = await _service.GetSortedContacts(
-                await _service.GetContacts(), 
+            var getSortedResponse = await _sorterService.GetSortedContacts(
+                await _getterService.GetContacts(), 
                 nameof(Person.Name), 
                 SortOrder.Descending);
 
@@ -295,7 +294,7 @@ namespace ContactsManager.Tests
             // Act
             var func = async () =>
             {
-                await _service.UpdateContact(null);
+                await _updaterService.UpdateContact(null);
             };
             // Assert
             await func.Should().ThrowAsync<ArgumentNullException>();
@@ -311,7 +310,7 @@ namespace ContactsManager.Tests
             //Act
             var func = async () =>
             {
-                await _service.UpdateContact(request);
+                await _updaterService.UpdateContact(request);
             };
             // Assert
             await func.Should().ThrowAsync<ArgumentException>();
@@ -333,7 +332,7 @@ namespace ContactsManager.Tests
             // Act
             var func = async () =>
             {
-                await _service.UpdateContact(person.ToPersonResponse().ToPersonUpdateRequest());
+                await _updaterService.UpdateContact(person.ToPersonResponse().ToPersonUpdateRequest());
             };
             // Assert
             await func.Should().ThrowAsync<ArgumentException>();
@@ -354,7 +353,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(temp => temp.GetContact(It.IsAny<Guid>())).ReturnsAsync(person);
 
             // Act
-            PersonResponse updatedPerson = await _service.UpdateContact(personUpdateRequest);
+            PersonResponse updatedPerson = await _updaterService.UpdateContact(personUpdateRequest);
             //PersonResponse? getResponse = await _service.GetContact(personResponse.Id);
 
             // Assert
@@ -371,7 +370,7 @@ namespace ContactsManager.Tests
         {
             // Arrange
             // Act
-            bool isDeleted = await _service.DeleteContact(Guid.NewGuid());
+            bool isDeleted = await _deleterService.DeleteContact(Guid.NewGuid());
 
             // Assert
             //Assert.False(isDeleted);
@@ -388,7 +387,7 @@ namespace ContactsManager.Tests
 
             _repositoryMock.Setup(temp => temp.GetContact(It.IsAny<Guid>())).ReturnsAsync(person);
             // Act
-            bool isDeleted = await _service.DeleteContact(person.Id);
+            bool isDeleted = await _deleterService.DeleteContact(person.Id);
 
             // Assert
             //Assert.True(isDeleted);

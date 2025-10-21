@@ -14,13 +14,27 @@ namespace ContactsManager.Controllers
     public class ContactsController : Controller
     {
 
-        private ICountriesService _countriesService;
-        private IContactsService _contactsService;
+        private ICountriesAdderService _countriesAdderService;
+        private ICountriesGetterService _countriesGetterService;
+        private IContactsAdderService _contactsAdderService;
+        private IContactsGetterService _contactsGetterService;
+        private IContactsUpdaterService _contactsUpdaterService;
+        private IContactsSorterService _contactsSorterService;
+        private IContactsDeleterService _contactsDeleterService;
 
-        public ContactsController(ICountriesService countriesService, IContactsService contactsService)
+        public ContactsController(IContactsAdderService contactsAdderService,
+            IContactsGetterService contactsGetterService,
+            IContactsUpdaterService contactsUpdaterService,
+            IContactsSorterService contactsSorterService,
+            IContactsDeleterService contactsDeleterService,
+            ICountriesGetterService countriesGetterService)
         {
-            _contactsService = contactsService;
-            _countriesService = countriesService;
+            _contactsAdderService = contactsAdderService;
+            _contactsGetterService = contactsGetterService;
+            _contactsUpdaterService = contactsUpdaterService;
+            _contactsSorterService = contactsSorterService;
+            _contactsDeleterService = contactsDeleterService;
+            _countriesGetterService = countriesGetterService;
         }
 
         [Route("/")]
@@ -48,8 +62,8 @@ namespace ContactsManager.Controllers
             //ViewBag.SortBy = sortBy;
             //ViewBag.SortOrder = sortOrder.ToString();
 
-            var filteredContacts = await _contactsService.GetFilteredContacts(searchBy, search);
-            var sortedContacts = await _contactsService.GetSortedContacts(filteredContacts, sortBy, sortOrder);
+            var filteredContacts = await _contactsGetterService.GetFilteredContacts(searchBy, search);
+            var sortedContacts = await _contactsSorterService.GetSortedContacts(filteredContacts, sortBy, sortOrder);
             return View(sortedContacts);
         }
 
@@ -59,7 +73,7 @@ namespace ContactsManager.Controllers
         [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = ["X-Create-Key", "MyValue"])]
         public async Task<IActionResult> Create()
         {
-            var countries = await _countriesService.GetCountries();
+            var countries = await _countriesGetterService.GetCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem()
             {
                 Text = country.Name,
@@ -90,7 +104,7 @@ namespace ContactsManager.Controllers
 
             //    return View(personRequest);
             //}
-            await _contactsService.AddContact(personRequest);
+            await _contactsAdderService.AddContact(personRequest);
 
             return RedirectToAction("Index", "Contacts");
         }
@@ -100,12 +114,12 @@ namespace ContactsManager.Controllers
         [TypeFilter(typeof(TokenResultFilter))]
         public async Task<IActionResult> Edit(Guid id)
         {
-            var person = await _contactsService.GetContact(id); 
+            var person = await _contactsGetterService.GetContact(id); 
             if (person == null)
             {
                 return RedirectToAction("Index");
             }
-            var countries = await _countriesService.GetCountries();
+            var countries = await _countriesGetterService.GetCountries();
             ViewBag.Countries = countries.Select(country => new SelectListItem()
             {
                 Text = country.Name,
@@ -119,7 +133,7 @@ namespace ContactsManager.Controllers
         [TypeFilter(typeof(TokenAuthorizationFilter))]
         public async Task<IActionResult> Edit(PersonUpdateRequest personRequest)
         {
-            var person = await _contactsService.GetContact(personRequest.Id);
+            var person = await _contactsGetterService.GetContact(personRequest.Id);
 
             if (person == null)
             {
@@ -140,7 +154,7 @@ namespace ContactsManager.Controllers
             //    e.ErrorMessage).ToList();
             //    return View();
             //}
-            await _contactsService.UpdateContact(personRequest);
+            await _contactsUpdaterService.UpdateContact(personRequest);
             return RedirectToAction("Index");
         }
 
@@ -148,7 +162,7 @@ namespace ContactsManager.Controllers
         [Route("[action]/{id}")]
         public async Task<IActionResult> Delete(Guid? id)
         {
-            var person = await _contactsService.GetContact(id);
+            var person = await _contactsGetterService.GetContact(id);
             if (person == null)
                 return RedirectToAction("Index");
 
@@ -159,11 +173,11 @@ namespace ContactsManager.Controllers
         [Route("[action]/{id}")]
         public async Task<IActionResult> Delete(PersonUpdateRequest personUpdateRequest)
         {
-            var person = await _contactsService.GetContact(personUpdateRequest.Id);
+            var person = await _contactsGetterService.GetContact(personUpdateRequest.Id);
             if (person == null)
                 return RedirectToAction("Index");
 
-            await _contactsService.DeleteContact(personUpdateRequest.Id);
+            await _contactsDeleterService.DeleteContact(personUpdateRequest.Id);
             return RedirectToAction("Index");
         }
     }

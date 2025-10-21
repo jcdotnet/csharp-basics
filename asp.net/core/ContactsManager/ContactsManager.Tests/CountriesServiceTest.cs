@@ -1,20 +1,18 @@
 ﻿using AutoFixture;
-using Azure.Core;
 using Entities;
-using EntityFrameworkCoreMock;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
 using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
-using System;
+
 namespace ContactsManager.Tests
 {
     public class CountriesServiceTest
     {      
-        private readonly ICountriesService _service;
+        private readonly ICountriesAdderService _adderService;
+        private readonly ICountriesGetterService _getterService;
         private readonly Mock<ICountriesRepository> _repositoryMock;
         private readonly ICountriesRepository _repository;
 
@@ -25,7 +23,8 @@ namespace ContactsManager.Tests
         {
             _repositoryMock = new Mock<ICountriesRepository>();
             _repository     = _repositoryMock.Object;
-            _service        = new CountriesService(_repository);
+            _adderService   = new CountriesAdderService(_repository);
+            _getterService  = new CountriesGetterService(_repository);
             _fixture        = new Fixture();
         }
 
@@ -41,7 +40,7 @@ namespace ContactsManager.Tests
             // Act
             var func = async () =>
             {
-                await _service.AddCountry(request);
+                await _adderService.AddCountry(request);
             };
             // Assert
             await func.Should().ThrowAsync<ArgumentNullException>();
@@ -62,7 +61,7 @@ namespace ContactsManager.Tests
             // Act
             var func = async () =>
             {
-                await _service.AddCountry(request);
+                await _adderService.AddCountry(request);
             };
 
             // Assert
@@ -87,14 +86,14 @@ namespace ContactsManager.Tests
                 .ReturnsAsync(null as Country);
             
             // Act
-            await _service.AddCountry(request1);
+            await _adderService.AddCountry(request1);
             var func = async () =>
             {
                 _repositoryMock.Setup(temp => temp.AddCountry(It.IsAny<Country>()))
                     .ReturnsAsync(country1);
                 _repositoryMock.Setup(temp => temp.GetCountryByName(It.IsAny<string>()))
                     .ReturnsAsync(country1);
-                await _service.AddCountry(request2);
+                await _adderService.AddCountry(request2);
             };
 
             // Assert
@@ -109,7 +108,7 @@ namespace ContactsManager.Tests
             CountryAddRequest request = _fixture.Create<CountryAddRequest>();
 
             // Act
-            CountryResponse? response = await _service.AddCountry(request);
+            CountryResponse? response = await _adderService.AddCountry(request);
 
             // Assert
             Assert.True(response.Id != Guid.Empty);
@@ -127,7 +126,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(temp => temp.GetCountries()).ReturnsAsync(emptyList);
 
             // Act
-            var getResponse = await _service.GetCountries();
+            var getResponse = await _getterService.GetCountries();
 
             // Assert
             getResponse.Should().BeEmpty();
@@ -145,7 +144,7 @@ namespace ContactsManager.Tests
             _repositoryMock.Setup(temp => temp.GetCountries()).ReturnsAsync(expectedList);
 
             // Act
-            var responseList = await _service.GetCountries();
+            var responseList = await _getterService.GetCountries();
 
             // Assert
             responseList.Should().BeEquivalentTo(expectedList);
@@ -165,7 +164,7 @@ namespace ContactsManager.Tests
                 .ReturnsAsync(null as Country);
 
             // Act
-            var response = await _service.GetCountry(id);
+            var response = await _getterService.GetCountry(id);
 
             // Assert
             response.Should().BeNull();
@@ -180,7 +179,7 @@ namespace ContactsManager.Tests
                 .ReturnsAsync(country);
 
             // Act
-            var getReponse = await _service.GetCountry(country.Id);
+            var getReponse = await _getterService.GetCountry(country.Id);
 
             // Assert
             getReponse.Should().Be(country.ToCountryResponse());

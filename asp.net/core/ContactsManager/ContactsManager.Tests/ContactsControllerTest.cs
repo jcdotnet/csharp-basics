@@ -6,31 +6,38 @@ using Moq;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ContactsManager.Tests
 {
     public class ContactsControllerTest
     {
-        private readonly IContactsService _contactsService;
-        private readonly ICountriesService _countriesService;
+        private readonly IContactsAdderService _contactsAdderService;
+        private readonly IContactsGetterService _contactsGetterService;
+        private readonly IContactsUpdaterService _contactsUpdaterService;
+        private readonly IContactsDeleterService _contactsDeleterService;
+        private readonly IContactsSorterService _contactsSorterService;
+        private readonly ICountriesGetterService _countriesService;
 
-        private readonly Mock<IContactsService> _contactsServiceMock;
-        private readonly Mock<ICountriesService> _countriesServiceMock;
+        private readonly Mock<IContactsAdderService> _contactsAdderServiceMock;
+        private readonly Mock<IContactsGetterService> _contactsGetterServiceMock;
+        private readonly Mock<IContactsUpdaterService> _contactsUpdaterServiceMock;
+        private readonly Mock<IContactsDeleterService> _contactsDeleterServiceMock;
+        private readonly Mock<IContactsSorterService> _contactsSorterServiceMock;
+        private readonly Mock<ICountriesGetterService> _countriesServiceMock;
 
         private readonly Fixture _fixture;
 
         public ContactsControllerTest()
         {
             _fixture = new Fixture();
-            _contactsServiceMock = new Mock<IContactsService>();
-            _countriesServiceMock = new Mock<ICountriesService>();
+            _contactsAdderServiceMock = new Mock<IContactsAdderService>();
+            _contactsGetterServiceMock = new Mock<IContactsGetterService>();
+            _contactsUpdaterServiceMock = new Mock<IContactsUpdaterService>();
+            _contactsDeleterServiceMock = new Mock<IContactsDeleterService>();
+            _contactsSorterServiceMock = new Mock<IContactsSorterService>();
+            _countriesServiceMock = new Mock<ICountriesGetterService>();
 
-            _contactsService = _contactsServiceMock.Object;
+            _contactsAdderService = _contactsAdderServiceMock.Object;
             _countriesService = _countriesServiceMock.Object;
         }
 
@@ -41,12 +48,13 @@ namespace ContactsManager.Tests
         {
             // Arrange
             var contactList = _fixture.Create<List<PersonResponse>>();
-            var controller = new ContactsController(_countriesService, _contactsService);
+            var controller = new ContactsController(_contactsAdderService, _contactsGetterService, 
+                _contactsUpdaterService, _contactsSorterService, _contactsDeleterService, _countriesService);
 
-            _contactsServiceMock.Setup(temp => temp.GetFilteredContacts(It.IsAny<string>(), It.IsAny<string>()))
+            _contactsGetterServiceMock.Setup(temp => temp.GetFilteredContacts(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(contactList);
 
-            _contactsServiceMock
+            _contactsSorterServiceMock
                 .Setup(temp => temp.GetSortedContacts(
                     It.IsAny<List<PersonResponse>>(), It.IsAny<string>(), It.IsAny<SortOrder>())
                 )
@@ -80,10 +88,11 @@ namespace ContactsManager.Tests
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
             _countriesServiceMock.Setup(temp => temp.GetCountries()).ReturnsAsync(countries);
-            _contactsServiceMock.Setup(temp => temp.AddContact(It.IsAny<PersonAddRequest>()))
+            _contactsAdderServiceMock.Setup(temp => temp.AddContact(It.IsAny<PersonAddRequest>()))
              .ReturnsAsync(personResponse);
 
-            var controller = new ContactsController(_countriesService, _contactsService);
+            var controller = new ContactsController(_contactsAdderService, _contactsGetterService,
+                _contactsUpdaterService, _contactsSorterService, _contactsDeleterService, _countriesService);
 
             //Act
             controller.ModelState.AddModelError("Name", "Person Name is required");
@@ -107,11 +116,12 @@ namespace ContactsManager.Tests
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
             _countriesServiceMock.Setup(temp => temp.GetCountries()).ReturnsAsync(countries);
-            _contactsServiceMock
+            _contactsAdderServiceMock
              .Setup(temp => temp.AddContact(It.IsAny<PersonAddRequest>()))
              .ReturnsAsync(personResponse);
 
-            var controller = new ContactsController(_countriesService, _contactsService);
+            var controller = new ContactsController(_contactsAdderService, _contactsGetterService,
+                 _contactsUpdaterService, _contactsSorterService, _contactsDeleterService, _countriesService);
 
             //Act
             IActionResult actionResult = await controller.Create(personAddRequest);

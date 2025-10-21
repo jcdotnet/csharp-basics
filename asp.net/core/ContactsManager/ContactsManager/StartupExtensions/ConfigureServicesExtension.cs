@@ -16,8 +16,13 @@ namespace ContactsManager.StartupExtensions
             services.AddControllersWithViews();
             services.AddScoped<ICountriesRepository, CountriesRepository>();
             services.AddScoped<IContactsRepository, ContactsRepository>();
-            services.AddScoped<ICountriesService, CountriesService>();
-            services.AddScoped<IContactsService, ContactsService>();
+            services.AddScoped<ICountriesAdderService, CountriesAdderService>();
+            services.AddScoped<ICountriesGetterService, CountriesGetterService>();
+            services.AddScoped<IContactsAdderService, ContactsAdderService>();
+            services.AddScoped<IContactsGetterService, ContactsGetterService>();
+            services.AddScoped<IContactsUpdaterService, ContactsUpdaterService>();
+            services.AddScoped<IContactsSorterService, ContactsSorterService>();
+            services.AddScoped<IContactsDeleterService, ContactsDeleterService>();
 
             services.AddDbContext<ApplicationDbContext>(options =>
             {

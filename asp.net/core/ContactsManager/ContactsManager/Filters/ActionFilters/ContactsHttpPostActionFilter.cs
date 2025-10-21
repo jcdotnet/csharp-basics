@@ -9,12 +9,12 @@ namespace ContactsManager.Filters.ActionFilters
 {
     public class ContactsHttpPostActionFilter : IAsyncActionFilter
     {
-        private readonly ICountriesService _countriesService;
+        private readonly ICountriesGetterService _countriesService;
         private readonly ILogger<ContactsListActionFilter> _logger;
 
 
         public ContactsHttpPostActionFilter(ILogger<ContactsListActionFilter> logger, 
-            ICountriesService countriesService)
+            ICountriesGetterService countriesService)
         {
             _logger = logger;
             _countriesService = countriesService;
