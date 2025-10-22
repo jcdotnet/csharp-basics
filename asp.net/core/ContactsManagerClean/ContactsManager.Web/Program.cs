@@ -15,6 +15,11 @@ if (builder.Environment.IsDevelopment())
     app.UseExceptionHandlingMiddleware();
 }
 
+app.UseHsts();
+app.UseHttpsRedirection();
+
+// app.UseAuthentication();
+// app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
 

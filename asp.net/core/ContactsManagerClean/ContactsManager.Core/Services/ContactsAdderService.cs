@@ -1,6 +1,6 @@
-﻿using ContactsManager.DTO;
+﻿using ContactsManager.Core.DTO;
 using ContactsManager.Helpers;
-using ContactsManager.Domain.Entities;
+using ContactsManager.Core.Entities;
 using RepositoryContracts;
 
 namespace Services

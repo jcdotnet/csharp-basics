@@ -1,4 +1,4 @@
-﻿using ContactsManager.Controllers;
+﻿using ContactsManager.Web.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;

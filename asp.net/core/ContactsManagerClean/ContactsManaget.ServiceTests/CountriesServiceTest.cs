@@ -1,6 +1,6 @@
 ﻿using AutoFixture;
-using ContactsManager.Domain.Entities;
-using ContactsManager.DTO;
+using ContactsManager.Core.DTO;
+using ContactsManager.Core.Entities;
 using FluentAssertions;
 using Moq;
 using RepositoryContracts;

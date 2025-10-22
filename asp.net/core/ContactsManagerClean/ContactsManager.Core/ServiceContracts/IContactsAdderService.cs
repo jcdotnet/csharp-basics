@@ -1,4 +1,4 @@
-﻿namespace ContactsManager.DTO
+﻿namespace ContactsManager.Core.DTO
 {
     /// <summary>
     /// Logic business for manipulating the Person Entity

@@ -1,8 +1,8 @@
 ﻿using ContactsManager.Enums;
-using ContactsManager.Domain.Entities;
+using ContactsManager.Core.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace ContactsManager.DTO
+namespace ContactsManager.Core.DTO
 {
     public class PersonAddRequest
     {

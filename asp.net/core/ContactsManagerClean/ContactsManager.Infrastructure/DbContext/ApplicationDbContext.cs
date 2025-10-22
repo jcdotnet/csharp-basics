@@ -1,11 +1,15 @@
-﻿using ContactsManager.Domain.Entities;
+﻿using ContactsManager.Core.Entities;
+using ContactsManager.Core.IdentityEntities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 namespace Entities
 {
-    public class ApplicationDbContext : DbContext
+    // Inheriting from IdentityDbContext instead of DbContext
+    // DbSets for identity entities are automatically created
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>
     {
 
         public ApplicationDbContext(DbContextOptions options): base(options) { }     

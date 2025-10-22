@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@functions{
+    public string GetActiveClass(string url) 
+    {
+        return ViewBag.CurrentUrl == url ? "nav-active" : "";
+    }
+}
+
+<!DOCTYPE html>
 
 <html>
 <head>
@@ -19,10 +26,28 @@
                 <div class="flex-1 pr search-box">
                     <div class="navbar account-links">
                         <ul>
-                            <li>
-                                <a asp-controller="Account" asp-action="Register">Register</a>
-                                <a asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li>
+                                    <i class="fa-solid fa-user"></i>
+                                    @User.Identity?.Name
+                                </li>
+                                <li>
+                                    <a asp-controller="Account" asp-action="Logout">Logout</a>
+                                </li>
+                            }
+                            else {
+                                <li>
+                                    <a asp-controller="Account" asp-action="Register"
+                                       class="@GetActiveClass("~/Account/Register")">
+                                       Register
+                                   </a>
+                                    <a asp-controller="Account" asp-action="Login"
+                                       class="@GetActiveClass("~/Account/Login")">
+                                        Login
+                                    </a>
+                                </li>
+                            }
                         </ul>
                     </div>
                 </div>

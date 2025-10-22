@@ -57,10 +57,19 @@
             color: #086581;
         }
 
-.nav-active {
-    background-color: #ececec;
+.nav-active:before {
+    content: "";
+    position: absolute;
+    left: 15px;
+    bottom: -2px;
+    height: 1px;
+    width: 50%;
+    border-bottom: 2px solid #626262;
 }
 
+.nav-active {
+    position: relative;
+}
 .page-content {
     min-height: 90vh;
     padding: 15px 20px;

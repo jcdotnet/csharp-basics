@@ -1,5 +1,5 @@
-﻿using ContactsManager.Controllers;
-using ContactsManager.DTO;
+﻿using ContactsManager.Core.DTO;
+using ContactsManager.Web.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace ContactsManager.Filters.ActionFilters

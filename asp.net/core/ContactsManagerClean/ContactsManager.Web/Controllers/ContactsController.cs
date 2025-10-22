@@ -1,4 +1,4 @@
-﻿using ContactsManager.DTO;
+﻿using ContactsManager.Core.DTO;
 using ContactsManager.Enums;
 using ContactsManager.Filters.ActionFilters;
 using ContactsManager.Filters.AuthorizationFilters;
@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ServiceContracts;
 
-namespace ContactsManager.Controllers
+namespace ContactsManager.Web.Controllers
 {
     [Route("contacts")]
     [TypeFilter(typeof(ResponseHeaderActionFilter), Arguments = ["X-Controller-Key", "MyValue"])]

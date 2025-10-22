@@ -1,4 +1,4 @@
-﻿using ContactsManager.DTO;
+﻿using ContactsManager.Core.DTO;
 
 namespace ServiceContracts
 {

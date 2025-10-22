@@ -1,5 +1,5 @@
-﻿using ContactsManager.Domain.Entities;
-using ContactsManager.DTO;
+﻿using ContactsManager.Core.Entities;
+using ContactsManager.Core.DTO;
 using RepositoryContracts;
 using ServiceContracts;
 
