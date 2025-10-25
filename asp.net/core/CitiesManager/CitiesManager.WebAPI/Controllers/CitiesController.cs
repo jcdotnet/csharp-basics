@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CitiesManager.WebAPI.Entities;
+using CitiesManager.Core.Entities;
+using CitiesManager.Infrastructure.DatabaseContext;
 
 namespace CitiesManager.WebAPI.Controllers
 {
@@ -16,6 +17,10 @@ namespace CitiesManager.WebAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="context"></param>
         public CitiesController(ApplicationDbContext context)
         {
             _context = context;

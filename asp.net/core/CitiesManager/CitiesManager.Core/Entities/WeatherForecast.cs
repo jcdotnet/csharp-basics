@@ -1,4 +1,4 @@
-namespace CitiesManager.WebAPI.Entities
+namespace CitiesManager.Core.Entities
 {
     public class WeatherForecast
     {

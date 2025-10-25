@@ -1,4 +1,4 @@
-using CitiesManager.WebAPI.Entities;
+using CitiesManager.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CitiesManager.WebAPI.Controllers
