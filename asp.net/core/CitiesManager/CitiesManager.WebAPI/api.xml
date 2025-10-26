@@ -4,6 +4,46 @@
         <name>CitiesManager.WebAPI</name>
     </assembly>
     <members>
+        <member name="T:CitiesManager.WebAPI.Controllers.AccountController">
+            <summary>
+            Account controller
+            </summary>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.#ctor(Microsoft.AspNetCore.Identity.UserManager{CitiesManager.Core.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.SignInManager{CitiesManager.Core.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.RoleManager{CitiesManager.Core.Identity.ApplicationRole})">
+            <summary>
+            
+            </summary>
+            <param name="userManager"></param>
+            <param name="signInManager"></param>
+            <param name="roleManager"></param>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.PostRegister(CitiesManager.Core.DTO.RegisterDto)">
+            <summary>
+            Register a user in the database
+            </summary>
+            <param name="userDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.PostLogin(CitiesManager.Core.DTO.LoginDto)">
+            <summary>
+            sign a user in
+            </summary>
+            <param name="userDto"></param>
+            <returns></returns>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.GetLogout">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.ValidateEmail(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="email"></param>
+            <returns></returns>
+        </member>
         <member name="T:CitiesManager.WebAPI.Controllers.CitiesController">
             <summary>
              Represents the Cities Manager API controller class
