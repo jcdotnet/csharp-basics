@@ -9,13 +9,14 @@
             Account controller
             </summary>
         </member>
-        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.#ctor(Microsoft.AspNetCore.Identity.UserManager{CitiesManager.Core.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.SignInManager{CitiesManager.Core.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.RoleManager{CitiesManager.Core.Identity.ApplicationRole})">
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.#ctor(Microsoft.AspNetCore.Identity.UserManager{CitiesManager.Core.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.SignInManager{CitiesManager.Core.Identity.ApplicationUser},Microsoft.AspNetCore.Identity.RoleManager{CitiesManager.Core.Identity.ApplicationRole},CitiesManager.Core.ServiceContracts.IJwtService)">
             <summary>
             
             </summary>
             <param name="userManager"></param>
             <param name="signInManager"></param>
             <param name="roleManager"></param>
+            <param name="jwtService"></param>
         </member>
         <member name="M:CitiesManager.WebAPI.Controllers.AccountController.PostRegister(CitiesManager.Core.DTO.RegisterDto)">
             <summary>
@@ -35,6 +36,13 @@
             <summary>
             
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.AccountController.GenerateNewAccessToken(CitiesManager.Core.DTO.TokenDto)">
+            <summary>
+            
+            </summary>
+            <param name="token"></param>
             <returns></returns>
         </member>
         <member name="M:CitiesManager.WebAPI.Controllers.AccountController.ValidateEmail(System.String)">
@@ -88,6 +96,17 @@
             Deletes a city from the database
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:CitiesManager.WebAPI.Controllers.DemoController">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:CitiesManager.WebAPI.Controllers.DemoController.GetActionMethod">
+            <summary>
+            
+            </summary>
             <returns></returns>
         </member>
     </members>

@@ -3,12 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CitiesManager.Core.Entities;
 using CitiesManager.Infrastructure.DatabaseContext;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CitiesManager.WebAPI.Controllers
 {
     /// <summary>
     ///  Represents the Cities Manager API controller class
     /// </summary>
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     [Produces("application/json")]

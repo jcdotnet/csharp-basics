@@ -1,9 +1,11 @@
 ﻿using CitiesManager.Core.DTO;
 using CitiesManager.Core.Identity;
+using CitiesManager.Core.ServiceContracts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace CitiesManager.WebAPI.Controllers
 {
@@ -18,6 +20,7 @@ namespace CitiesManager.WebAPI.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly RoleManager<ApplicationRole> _roleManager;
+        private readonly IJwtService _jwtService;
 
         /// <summary>
         /// 
@@ -25,14 +28,17 @@ namespace CitiesManager.WebAPI.Controllers
         /// <param name="userManager"></param>
         /// <param name="signInManager"></param>
         /// <param name="roleManager"></param>
+        /// <param name="jwtService"></param>
         public AccountController(
-            UserManager<ApplicationUser> userManager, 
-            SignInManager<ApplicationUser> signInManager, 
-            RoleManager<ApplicationRole> roleManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<ApplicationRole> roleManager,
+            IJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
+            _jwtService = jwtService;
         }
         /// <summary>
         /// Register a user in the database
@@ -63,7 +69,14 @@ namespace CitiesManager.WebAPI.Controllers
             {
                 await _signInManager.SignInAsync(appUser, isPersistent: false);
 
-                return Ok(appUser);
+                //return Ok(appUser);
+
+                var authenticationResponse = _jwtService.CreateJwtToken(appUser);
+                appUser.RefreshToken = authenticationResponse.RefreshToken;
+                appUser.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+                await _userManager.UpdateAsync(appUser);
+                
+                return Ok(authenticationResponse);
             }
             else
             {
@@ -96,7 +109,14 @@ namespace CitiesManager.WebAPI.Controllers
                 {
                     return NoContent();
                 }
-                return Ok(new { Name = appUser.Name, Email = appUser.Email});
+                // return Ok(new { Name = appUser.Name, Email = appUser.Email });
+                
+                var authenticationResponse = _jwtService.CreateJwtToken(appUser);
+                appUser.RefreshToken = authenticationResponse.RefreshToken;
+                appUser.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+                await _userManager.UpdateAsync(appUser);
+
+                return Ok(authenticationResponse);     
             }
             else
             {
@@ -116,6 +136,37 @@ namespace CitiesManager.WebAPI.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        [HttpPost("generate-new-jwt-token")]
+        public async Task<IActionResult> GenerateNewAccessToken(TokenDto token)
+        {
+            if (token == null) return BadRequest("Invalid client request");
+
+            ClaimsPrincipal? principal = _jwtService.GetPrincipalFromJwtToken(token.Token);
+            if (principal == null)
+            {
+                return BadRequest("Invalid token");
+            }
+
+            string? email = principal.FindFirstValue(ClaimTypes.Email);
+
+            ApplicationUser? user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null || user.RefreshToken != token.RefreshToken
+                || user.RefreshTokenExpiration <= DateTime.Now)
+            {
+                return BadRequest("Invalid refresh token");
+            }
+            var authenticationResponse = _jwtService.CreateJwtToken(user);
+            user.RefreshToken = authenticationResponse.RefreshToken;
+            user.RefreshTokenExpiration = authenticationResponse.RefreshTokenExpiration;
+            await _userManager.UpdateAsync(user);
+            return Ok(authenticationResponse);
+        }
 
         /// <summary>
         /// 
