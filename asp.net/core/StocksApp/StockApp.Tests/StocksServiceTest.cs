@@ -104,8 +104,8 @@ namespace StockApp.Tests
             });
         }
 
-        // requirement: When you supply buyOrderPrice as 10001 (as per the specification,
-        // maximum is 10000), it should throw ArgumentException.
+        // requirement: When you supply buyOrderPrice as 60001 (as per the specification,
+        // maximum is 60000), it should throw ArgumentException.
         [Fact]
         public void CreateBuyOrder_PriceGreaterThanMaximum_ToThrowArgumentException()
         {
@@ -116,7 +116,7 @@ namespace StockApp.Tests
                 StockSymbol = "MSFT",
                 Quantity = 1000,
                 OrderDate = DateTime.Now,
-                Price = 10001,
+                Price = 60001,
             };
 
             // Assert
@@ -289,7 +289,7 @@ namespace StockApp.Tests
                 StockSymbol = "MSFT",
                 Quantity = 1000,
                 OrderDate = DateTime.Now,
-                Price = 10001,
+                Price = 60001,
             };
 
             // Assert

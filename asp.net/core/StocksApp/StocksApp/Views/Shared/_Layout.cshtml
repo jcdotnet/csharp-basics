@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="StyleSheet.css" rel="stylesheet" />
+    <link href="~/StyleSheet.css" rel="stylesheet" />
 </head>
 <body>
     <div class="page-content">
@@ -17,9 +17,43 @@
                         Stocks
                     </h1>
                 </div>
+                <div class="flex-1 pr" id="search-box-div">
+
+                    <input type="search" class="search-text" placeholder="Search Stocks" name="SearchText" />
+                    <i class="fa-solid fa-gear"></i>
+
+                    <button class="button button-blue-back ml login-button">Login</button>
+                </div>
             </div>          
         </div>
+        <div class="navbar mb">
+            <ul>
+                @if (ViewBag.CurrentUrl == "~/Trade/Index")
+                {
+                    <li><a href="~/Trade/Index" class="nav-active">Trade</a></li>
+                }
+                else
+                {
+                    <li><a href="~/Trade/Index">Trade</a></li>
+                }
+
+                @if (ViewBag.CurrentUrl == "~/Trade/Orders")
+                {
+                    <li><a href="~/Trade/Orders" class="nav-active">Orders</a></li>
+                }
+                else
+                {
+                    <li><a href="~/Trade/Orders">Orders</a></li>
+                }
+            </ul>
+        </div>
+
         @RenderBody()
     </div>
+
+    <!--
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    @await RenderSectionAsync("scripts", required: false)
+    -->
 </body>
 </html>
