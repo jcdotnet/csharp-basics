@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApiDemo", "MinimalApiDemo\MinimalApiDemo.csproj", "{383101A3-414D-40CE-B8C8-A0A10861CB0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orders_ModelValidationDemo", "..\basics\Orders_ModelValidationDemo\Orders_ModelValidationDemo.csproj", "{CD36C5D1-5845-4FAA-AFCF-603C496E1718}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{383101A3-414D-40CE-B8C8-A0A10861CB0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{383101A3-414D-40CE-B8C8-A0A10861CB0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{383101A3-414D-40CE-B8C8-A0A10861CB0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{383101A3-414D-40CE-B8C8-A0A10861CB0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD36C5D1-5845-4FAA-AFCF-603C496E1718}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD36C5D1-5845-4FAA-AFCF-603C496E1718}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD36C5D1-5845-4FAA-AFCF-603C496E1718}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD36C5D1-5845-4FAA-AFCF-603C496E1718}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3A7ACEDE-4227-42DC-91AC-E976AFB35482}
+	EndGlobalSection
+EndGlobal
