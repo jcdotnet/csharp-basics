@@ -3,7 +3,7 @@ using StocksApp.Entities;
 
 namespace ServiceContracts.DTO
 {
-    public class BuyOrderResponse
+    public class BuyOrderResponse : IOrderResponse
     {
         public Guid Id { get; set; }
         public string StockSymbol { get; set; } = string.Empty;
@@ -17,6 +17,8 @@ namespace ServiceContracts.DTO
         public double Price { get; set; }
 
         public double TradeAmount { get; set; }
+
+        public OrderType TypeOfOrder => OrderType.BuyOrder;
 
         public override bool Equals(object? obj)
         {
