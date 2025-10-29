@@ -1,8 +1,12 @@
-﻿using Entities;
+﻿using AutoFixture;
+using Entities;
 using Microsoft.EntityFrameworkCore;
+using Moq;
+using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
+using StocksApp.Entities;
 
 namespace StockApp.Tests
 {
@@ -10,12 +14,20 @@ namespace StockApp.Tests
     {
         private readonly IStocksService _service;
 
+        private readonly Mock<IStocksRepository> _stocksRepositoryMock;
+        private readonly IStocksRepository _stocksRepository;
+
+        private readonly IFixture _fixture;
+
         #region constructor
         public StocksServiceTest()
         {
-            _service = new StocksService(
-                new StockMarketDbContext(new DbContextOptionsBuilder<StockMarketDbContext>().Options)
-            );
+            _fixture = new Fixture();
+
+            _stocksRepositoryMock = new Mock<IStocksRepository>();
+            _stocksRepository = _stocksRepositoryMock.Object;
+
+            _service = new StocksService(_stocksRepository);
         }
         #endregion
 
@@ -42,14 +54,13 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_QuantityIsZero_ToThrowArgumentException()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 0,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>()
+               .With(temp => temp.Quantity, (uint)0)
+               .Create();
+
+            // Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async() =>
@@ -65,14 +76,13 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_QuantityGreaterThanMaximum_ToThrowArgumentException()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 100001,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>()
+              .With(temp => temp.Quantity, (uint)100001)
+              .Create();
+
+            // Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -88,14 +98,13 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_PriceIsZero_ToThrowArgumentException()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 0,
-            };
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>()
+              .With(temp => temp.Price, 0)
+              .Create();
+
+            // Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -111,14 +120,13 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_PriceGreaterThanMaximum_ToThrowArgumentException()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 60001,
-            };
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>()
+              .With(temp => temp.Price, 60001)
+              .Create();
+
+            // Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -134,14 +142,13 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_StockSymbolNull_ToThrowArgumentException()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = null!, 
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>()
+              .With(temp => temp.StockSymbol, null as string)
+              .Create();
+
+            // Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
             // Assert
             await Assert.ThrowsAsync<ArgumentException>(async () =>
@@ -157,15 +164,14 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_DateOlderThanMinimum_ToThrowArgumentException()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = new DateTime(1999, 12, 31), // Convert.ToDateTime("1999-12-31")
-                Price = 1000,
-            };
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>()
+              .With(temp => temp.OrderDate, new DateTime(1999, 12, 31)) // Convert.ToDateTime("1999-12-31")
+              .Create();
 
+            // Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
+          
             // Assert
             await Assert.ThrowsAsync<ArgumentException>( async () =>
             {
@@ -180,29 +186,26 @@ namespace StockApp.Tests
         public async Task CreateBuyOrder_Valid_ToBeSuccessful()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
-            //BuyOrderResponse expected = buyOrderRequest.ToBuyOrder().ToBuyOrderResponse();
+            BuyOrderRequest? buyOrderRequest = _fixture.Build<BuyOrderRequest>().Create();
+
+            //Mock
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateBuyOrder(It.IsAny<BuyOrder>())).ReturnsAsync(buyOrder);
 
             // Act
             BuyOrderResponse response = await _service.CreateBuyOrder(buyOrderRequest);
-            //expected.Id = response.Id;
+            buyOrder.Id = response.Id;
+            BuyOrderResponse expected = buyOrder.ToBuyOrderResponse();
 
             // Assert
-            Assert.NotEqual(Guid.Empty, response.Id);
+            Assert.Equal(expected, response);
         }
 
         #endregion
 
         #region CreateSellOrder
 
-        // same requirements for CreateSellOrder
+        // same requirements for CreateSellOrder // to mock repository
         [Fact]
         public async Task CreatSellyOrder_Null_ToThrowArgumentNullException()
         {
@@ -347,20 +350,19 @@ namespace StockApp.Tests
         public async Task CreateSellOrder_Valid_ToBeSuccessful()
         {
             // Arrange
-            SellOrderRequest? sellOrderRequest = new SellOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
+            SellOrderRequest? sellOrderRequest = _fixture.Build<SellOrderRequest>().Create();
+
+            // Mock
+            SellOrder sellOrder = sellOrderRequest.ToSellOrder();
+            _stocksRepositoryMock.Setup(temp => temp.CreateSellOrder(It.IsAny<SellOrder>())).ReturnsAsync(sellOrder);
 
             // Act
             SellOrderResponse response = await _service.CreateSellOrder(sellOrderRequest);
 
             // Assert
-            Assert.NotEqual(Guid.Empty, response.Id);
+            sellOrder.Id = response.Id;
+            var expectedResponse = sellOrder.ToSellOrderResponse();
+            Assert.Equal(expectedResponse, response);        
         }
 
         #endregion
@@ -372,6 +374,11 @@ namespace StockApp.Tests
         public async Task GetBuyOrders_Default_ToBeEmpty()
         {
             // Arrange
+            List<BuyOrder> buyOrders = [];
+
+            //Mock
+            _stocksRepositoryMock.Setup(temp => temp.GetBuyOrders()).ReturnsAsync(buyOrders);
+
             // Act
             var response = await _service.GetBuyOrders();
 
@@ -385,39 +392,21 @@ namespace StockApp.Tests
         public async Task GetBuyOrders_AfterCreateBuyOrderCall_ToBeSuccessful()
         {
             // Arrange
-            BuyOrderRequest? buyOrderRequest1 = new BuyOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
-            BuyOrderRequest? buyOrderRequest2 = new BuyOrderRequest()
-            {
-                StockName = "Google",
-                StockSymbol = "GOOGL",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
+            List<BuyOrder> list = [
+                _fixture.Build<BuyOrder>().Create(),
+                _fixture.Build<BuyOrder>().Create()
+            ];
 
-            List<BuyOrderRequest> list = [buyOrderRequest1, buyOrderRequest2];
+            List<BuyOrderResponse> expectedList = list.Select(temp => temp.ToBuyOrderResponse()).ToList();
 
-            List<BuyOrderResponse> expectedList = new List<BuyOrderResponse>();
-            foreach (var order in list)
-            {
-                expectedList.Add(await _service.CreateBuyOrder(order));
-            }
+            //Mock
+            _stocksRepositoryMock.Setup(temp => temp.GetBuyOrders()).ReturnsAsync(list);
 
             // Act
             var responseList = await _service.GetBuyOrders();
 
             // Assert
-            foreach (var expected in expectedList)
-            {
-                Assert.Contains(expected, responseList);
-            }
+            Assert.Equivalent(expectedList, responseList);
         }
 
         #endregion
@@ -429,6 +418,11 @@ namespace StockApp.Tests
         public async Task GetSellOrders_Default_ToBeEmpty()
         {
             // Arrange
+            List<SellOrder> sellOrders = [];
+
+            //Mock
+            _stocksRepositoryMock.Setup(temp => temp.GetSellOrders()).ReturnsAsync(sellOrders);
+
             // Act
             var response = await _service.GetSellOrders();
 
@@ -442,39 +436,21 @@ namespace StockApp.Tests
         public async Task GetSellOrders_AfterCreateSellOrderCall_ToBeSuccessful()
         {
             // Arrange
-            SellOrderRequest? sellOrderRequest1 = new SellOrderRequest()
-            {
-                StockName = "Microsoft",
-                StockSymbol = "MSFT",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
-            SellOrderRequest? sellOrderRequest2 = new SellOrderRequest()
-            {
-                StockName = "Google",
-                StockSymbol = "GOOGL",
-                Quantity = 1000,
-                OrderDate = DateTime.Now,
-                Price = 1000,
-            };
+            List<SellOrder> list = [
+                _fixture.Build<SellOrder>().Create(),
+                _fixture.Build<SellOrder>().Create()
+            ];
 
-            List<SellOrderRequest> list = [sellOrderRequest1, sellOrderRequest2];
+            List<SellOrderResponse> expectedList = list.Select(temp => temp.ToSellOrderResponse()).ToList();
 
-            List<SellOrderResponse> expectedList = new List<SellOrderResponse>();
-            foreach (var order in list)
-            {
-                expectedList.Add(await _service.CreateSellOrder(order));
-            }
+            // Mock
+            _stocksRepositoryMock.Setup(temp => temp.GetSellOrders()).ReturnsAsync(list);
 
             // Act
             var responseList = await _service.GetSellOrders();
 
             // Assert
-            foreach (var expected in expectedList)
-            {
-                Assert.Contains(expected, responseList);
-            }
+            Assert.Equivalent(expectedList, responseList);
         }
 
         #endregion

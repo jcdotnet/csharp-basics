@@ -5,7 +5,7 @@ namespace StocksApp.Entities
     public class SellOrder
     {
         [Key]
-        public Guid SellOrderID { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public string StockSymbol { get; set; } = string.Empty;

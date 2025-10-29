@@ -27,19 +27,17 @@ namespace StocksApp.Controllers
             _tradingOptions = options;
         }
 
-        [Route("/")]
-        [Route("[action]")]
-        [Route("~/[controller]")]
-        public IActionResult Index()
+        [Route("[action]/{stockSymbol}")]
+        [Route("~/[controller]/{stockSymbol}")]
+        public async Task<IActionResult> Index(string stockSymbol)
         {
-            string? stockSymbol = _tradingOptions.Value.DefaultStockSymbol;
             if (string.IsNullOrEmpty(stockSymbol))
             {
                 stockSymbol = "MSFT";
             }
 
-            var companyProfielDictionary = _finnhubService.GetCompanyProfile(stockSymbol);           
-            var stockQuoteDictionary = _finnhubService.GetStockPriceQuote(stockSymbol);
+            var companyProfielDictionary = await _finnhubService.GetCompanyProfile(stockSymbol);           
+            var stockQuoteDictionary = await _finnhubService.GetStockPriceQuote(stockSymbol);
 
             StockTrade stockTrade = new StockTrade()
             {

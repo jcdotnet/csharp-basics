@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entities.Migrations
 {
     [DbContext(typeof(StockMarketDbContext))]
-    [Migration("20251029113845_Initial")]
+    [Migration("20251029180240_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -55,7 +55,7 @@ namespace Entities.Migrations
 
             modelBuilder.Entity("StocksApp.Entities.SellOrder", b =>
                 {
-                    b.Property<Guid>("SellOrderID")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
@@ -76,7 +76,7 @@ namespace Entities.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SellOrderID");
+                    b.HasKey("Id");
 
                     b.ToTable("SellOrders", (string)null);
                 });

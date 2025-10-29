@@ -43,7 +43,7 @@ namespace ServiceContracts.DTO
         public static SellOrderResponse ToSellOrderResponse(this SellOrder sellOrder)
         {
             return new SellOrderResponse() { 
-                Id = sellOrder.SellOrderID, 
+                Id = sellOrder.Id, 
                 StockSymbol = sellOrder.StockSymbol, 
                 StockName = sellOrder.StockName, 
                 Price = sellOrder.Price, 

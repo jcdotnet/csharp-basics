@@ -18,8 +18,8 @@
     <div class="page-content">
         <div class="container">
             <div id="top-bar" class="flex">
-                <div id="app-title" class="flex1">
-                    <h1 id="app-title" class="app-title">
+                <div id="app-title-div" class="flex1">
+                    <h1 class="app-title">
                         <i class="fa-solid fa-money-bill-trend-up"></i>
                         Stocks
                     </h1>
@@ -36,7 +36,10 @@
         <div class="navbar mb">
             <ul>
                 <li>
-                    <a asp-controller="Trade" asp-action="Index" class="@GetActiveClass("~/Trade/Index")">Trade</a>
+                    <a asp-controller="Stocks" asp-action="Explore" class="@GetActiveClass("~/Explore")">Explore</a>
+                </li>
+                <li>
+                    <a asp-controller="Trade" asp-action="Index" asp-route-stockSymbol="MSFT" class="@GetActiveClass("~/Trade/Index")">Trade</a>
                 </li>
                 <li>
                     <a asp-controller="Trade" asp-action="Orders" class="@GetActiveClass("~/Trade/Orders")">Orders</a>

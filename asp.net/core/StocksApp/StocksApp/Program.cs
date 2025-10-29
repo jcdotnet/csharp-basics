@@ -1,10 +1,12 @@
-// assignment from the ASP.NET core course by Harsha Vardhan
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repositories;
+using RepositoryContracts;
 using ServiceContracts;
 using Services;
 using StocksApp;
 
+// assignment from the ASP.NET core course by Harsha Vardhan
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
@@ -14,6 +16,8 @@ builder.Services.AddTransient<IFinnhubService, FinnhubService>();
 // we need a singleon service so the list values persist after requests
 // update: not using lists anymore, using database & DbContext instead!
 builder.Services.AddTransient<IStocksService, StocksService>();
+builder.Services.AddTransient<IStocksRepository, StocksRepository>();
+builder.Services.AddTransient<IFinnhubRepository, FinnhubRepository>();
 
 builder.Services.AddDbContext<StockMarketDbContext>(options =>
 {
@@ -24,9 +28,14 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
-Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
+// do not enable Rotativa in test environment
+if (builder.Environment.IsEnvironment("Test") == false)
+    Rotativa.AspNetCore.RotativaConfiguration.Setup("wwwroot", wkhtmltopdfRelativePath: "Rotativa");
+
 
 app.UseStaticFiles();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { } // added for integration testing

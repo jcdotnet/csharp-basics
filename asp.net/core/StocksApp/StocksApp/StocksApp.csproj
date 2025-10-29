@@ -28,4 +28,8 @@
     <Folder Include="wwwroot\Rotativa\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="StockApp.Tests" />
+  </ItemGroup>
+
 </Project>

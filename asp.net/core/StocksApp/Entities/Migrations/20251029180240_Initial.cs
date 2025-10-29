@@ -31,7 +31,7 @@ namespace Entities.Migrations
                 name: "SellOrders",
                 columns: table => new
                 {
-                    SellOrderID = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StockSymbol = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     StockName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -40,7 +40,7 @@ namespace Entities.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SellOrders", x => x.SellOrderID);
+                    table.PrimaryKey("PK_SellOrders", x => x.Id);
                 });
         }
 
