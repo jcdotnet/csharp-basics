@@ -1,4 +1,6 @@
-﻿//Create a WebSocket to perform duplex (back-and-forth) communication with server
+﻿// Create a WebSocket to perform duplex (back-and-forth) communication with the server
+// https://finnhub.io/docs/api/websocket-trades
+
 const token = document.querySelector("#FinnhubToken").value;
 const socket = new WebSocket(`wss://ws.finnhub.io?token=${token}`);
 var stockSymbol = document.getElementById("StockSymbol").value; //get symbol from input hidden
