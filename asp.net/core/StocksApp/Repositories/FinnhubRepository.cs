@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.Extensions.Configuration;
 using RepositoryContracts;
+using System;
 using System.Text.Json;
 
 namespace Repositories
@@ -10,7 +12,10 @@ namespace Repositories
     public class FinnhubRepository : IFinnhubRepository
     {
         // dependencies
-        private readonly IConfiguration _configuration; // in order to get the finnhub token
+        // Iconfiguration: in order to get the finnhub token / API Key
+        // the API key is stored as user secret for development environment
+        // it is stored as environment variables for production environment
+        private readonly IConfiguration _configuration; 
         // the IHttpClientFactory will create a HttpClient object for us (factory pattern) 
         private readonly IHttpClientFactory _httpClientFactory;
        

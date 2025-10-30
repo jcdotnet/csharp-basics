@@ -5,6 +5,7 @@ using RepositoryContracts;
 using ServiceContracts;
 using Services;
 using StocksApp;
+using StocksApp.Middleware;
 
 // assignment from the ASP.NET core course by Harsha Vardhan
 var builder = WebApplication.CreateBuilder(args);
@@ -26,7 +27,19 @@ builder.Services.AddDbContext<StockMarketDbContext>(options =>
 
 builder.Services.AddHttpClient();
 
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
 var app = builder.Build();
+
+if (builder.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseMiddleware<ExceptionHandlingMiddleware>();
+}
 
 // do not enable Rotativa in test environment
 if (builder.Environment.IsEnvironment("Test") == false)
