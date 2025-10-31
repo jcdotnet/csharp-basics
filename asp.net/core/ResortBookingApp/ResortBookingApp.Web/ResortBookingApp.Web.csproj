@@ -15,7 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ResortBookingApp.Application\ResortBookingApp.Application.csproj" />
     <ProjectReference Include="..\ResortBookingApp.Infrastructure\ResortBookingApp.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModels\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>

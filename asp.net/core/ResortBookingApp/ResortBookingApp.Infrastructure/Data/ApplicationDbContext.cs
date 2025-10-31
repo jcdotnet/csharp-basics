@@ -6,6 +6,7 @@ namespace ResortBookingApp.Infrastructure.Data
     public class ApplicationDbContext : DbContext
     {
         public DbSet<Villa> Villas { get; set; }
+        public DbSet<VillaNumber> VillaNumbers { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -51,6 +52,54 @@ namespace ResortBookingApp.Infrastructure.Data
                     SquareMeters = 70,
                 }
             );
+            modelBuilder.Entity<VillaNumber>().HasData(
+                new VillaNumber
+                {
+                    Number = 101,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Number = 102,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Number = 103,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Number = 104,
+                    VillaId = 1,
+                },
+                new VillaNumber
+                {
+                    Number = 201,
+                    VillaId = 2,
+                },
+                new VillaNumber
+                {
+                    Number = 202,
+                    VillaId = 2,
+                },
+                new VillaNumber
+                {
+                    Number = 203,
+                    VillaId = 2,
+                },
+                new VillaNumber
+                {
+                    Number = 301,
+                    VillaId = 3,
+                },
+                new VillaNumber
+                {
+                    Number = 302,
+                    VillaId = 3,
+                }
+            );
+
         }
     }
 }
