@@ -7,18 +7,18 @@ namespace ResortBookingApp.Application.Services
 {
     public class VillaService : IVillaService
     {
-        private IVillaRepository _repository;
+        private IUnitOfWork _unitOfWork;
 
-        public VillaService(IVillaRepository repository)
+        public VillaService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<VillaResponse> AddVilla(VillaAddRequest? villaAddRequest)
         {
             if (villaAddRequest is not null)
             {
-                var villa = await _repository.AddAsync(villaAddRequest.ToVilla());
+                var villa = await _unitOfWork.Villa.AddAsync(villaAddRequest.ToVilla());
                
                 return villa.ToVillaResponse();
             }
@@ -27,7 +27,7 @@ namespace ResortBookingApp.Application.Services
 
         public async Task<VillaResponse?> GetVilla(int? villaId)
         {
-            Villa? villa = await _repository.GetAsync(v => v.Id == villaId);
+            Villa? villa = await _unitOfWork.Villa.GetAsync(v => v.Id == villaId);
 
             if (villa is null) return null;
 
@@ -36,7 +36,7 @@ namespace ResortBookingApp.Application.Services
 
         public async Task<List<VillaResponse>> GetVillas()
         {
-            var villas = await _repository.GetAllAsync();
+            var villas = await _unitOfWork.Villa.GetAllAsync();
 
             return villas.Select(v => v.ToVillaResponse()).ToList();
         }
@@ -48,7 +48,7 @@ namespace ResortBookingApp.Application.Services
                 throw new ArgumentNullException(nameof(villaUpdateRequest));
             }
             var villa = villaUpdateRequest.ToVilla();
-            await _repository.UpdateAsync(villa);
+            await _unitOfWork.Villa.UpdateAsync(villa);
             return villa.ToVillaResponse();
         }
 
@@ -56,11 +56,11 @@ namespace ResortBookingApp.Application.Services
         {
             if (villaId is null) throw new ArgumentNullException(nameof(villaId));
 
-            Villa? villa = await _repository.GetAsync(v => v.Id == villaId);
+            Villa? villa = await _unitOfWork.Villa.GetAsync(v => v.Id == villaId);
 
             if (villa is null) { return false; }
 
-            await _repository.RemoveAsync(villa);
+            await _unitOfWork.Villa.RemoveAsync(villa);
             return true;
         }
     }

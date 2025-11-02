@@ -6,18 +6,18 @@ namespace ResortBookingApp.Application.Services
 {
     public class VillaNumberService : IVillaNumberService
     {
-        private IVillaNumberRepository _repository;
+        private IUnitOfWork _unitOfWork;
 
-        public VillaNumberService(IVillaNumberRepository repository)
+        public VillaNumberService(IUnitOfWork unitOfWork)
         {
-            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<VillaNumberResponse> AddVillaNumber(VillaNumberAddRequest? addRequest)
         {
             if (addRequest is not null)
             {
-                var villaNumber = await _repository.AddAsync(addRequest.ToVillaNumber());
+                var villaNumber = await _unitOfWork.VillaNumber.AddAsync(addRequest.ToVillaNumber());
                 return villaNumber.ToVillaNumberResponse();
             }
             throw new ArgumentNullException(nameof(addRequest));
@@ -25,13 +25,13 @@ namespace ResortBookingApp.Application.Services
 
         public async Task<List<VillaNumberResponse>> GetVillaNumbers()
         {
-            return (await _repository.GetAllAsync(null, "Villa"))
+            return (await _unitOfWork.VillaNumber.GetAllAsync(includeProperties: "Villa"))
                 .Select(v => v.ToVillaNumberResponse()).ToList();
         }
 
         public async Task<VillaNumberResponse?> GetVillaNumber(int? number)
         {
-            var villaNumber = await _repository.GetAsync(v => v.Number == number, "Villa");
+            var villaNumber = await _unitOfWork.VillaNumber.GetAsync(v => v.Number == number, "Villa");
 
             if (villaNumber is null) return null;
 
@@ -43,7 +43,7 @@ namespace ResortBookingApp.Application.Services
             if (updateRequest is null) throw new ArgumentNullException(nameof(updateRequest));
             
             var villaNumber = updateRequest.ToVillaNumber();
-            await _repository.UpdateAsync(villaNumber);
+            await _unitOfWork.VillaNumber.UpdateAsync(villaNumber);
 
             return villaNumber.ToVillaNumberResponse();
         }
@@ -52,11 +52,11 @@ namespace ResortBookingApp.Application.Services
         {
             if (number is null) throw new ArgumentNullException(nameof(number));
 
-            var villaNumber = await _repository.GetAsync(v => v.Number == number, "Villa");
+            var villaNumber = await _unitOfWork.VillaNumber.GetAsync(v => v.Number == number, "Villa");
 
             if (villaNumber is null) { return false; }
 
-            await _repository.RemoveAsync(villaNumber);
+            await _unitOfWork.VillaNumber.RemoveAsync(villaNumber);
             return true;
         }
 
@@ -64,7 +64,7 @@ namespace ResortBookingApp.Application.Services
         {
             if (number is null) throw new ArgumentNullException(nameof(number));
 
-            return await _repository.AnyAsync(v => v.Number == number);
+            return await _unitOfWork.VillaNumber.AnyAsync(v => v.Number == number);
         }
     }
 }
