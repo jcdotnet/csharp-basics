@@ -7,10 +7,12 @@ namespace ResortBookingApp.Web.Controllers
     public class VillasController : Controller
     {
         private readonly IVillaService _service;
+        private readonly IWebHostEnvironment _environment;
 
-        public VillasController(IVillaService service)
+        public VillasController(IVillaService service, IWebHostEnvironment environment)
         {
             _service = service;
+            _environment = environment;
         }
 
         public async Task<IActionResult> Index()
@@ -33,6 +35,21 @@ namespace ResortBookingApp.Web.Controllers
             }
             if (ModelState.IsValid)
             {
+                // save image
+                if (villa.Image != null)
+                {
+                    string fileName = Guid.NewGuid() + Path.GetExtension(villa.Image.FileName);
+                    string imageDir = Path.Combine(_environment.WebRootPath, @"images\villas");
+                    string imagePath = Path.Combine(imageDir, fileName);
+
+                    using var fileStream = new FileStream(imagePath, FileMode.Create);
+                    villa.Image.CopyTo(fileStream);
+                    villa.ImageUrl = @"\images\villas\" + fileName;
+                } else
+                {
+                    villa.ImageUrl = "https://placehold.co/600x400";
+                }
+                // add villa to the databasa
                 _service.AddVilla(villa);
                 TempData["success"] = "The villa has been created successfully.";
                 return RedirectToAction("Index");
@@ -58,6 +75,33 @@ namespace ResortBookingApp.Web.Controllers
         {
             if (ModelState.IsValid)
             {
+                // save image and remove old one (if any)
+                if (villa.Image != null)
+                {
+                    string fileName = Guid.NewGuid() + Path.GetExtension(villa.Image.FileName);
+                    string imageDir = Path.Combine(_environment.WebRootPath, @"images\villas");
+                    string imagePath = Path.Combine(imageDir, fileName);
+
+                    if (!string.IsNullOrEmpty(villa.ImageUrl))
+                    {
+                        string olgImagePath = Path.Combine(
+                            _environment.WebRootPath, 
+                            villa.ImageUrl.TrimStart('\\')
+                        );
+                        if (System.IO.File.Exists(olgImagePath))
+                        {
+                            System.IO.File.Delete(olgImagePath);
+                        }
+                    }
+                    using var fileStream = new FileStream(imagePath, FileMode.Create);
+                    villa.Image.CopyTo(fileStream);
+                    villa.ImageUrl = @"\images\villas\" + fileName;
+                }
+                else
+                {
+                    villa.ImageUrl = "https://placehold.co/600x400";
+                }
+                // update villa
                 _service.UpdateVilla(villa);
                 TempData["success"] = "The villa has been updated successfully.";
                 return RedirectToAction("Index");
@@ -84,6 +128,18 @@ namespace ResortBookingApp.Web.Controllers
             {
                 TempData["error"] = "Failed to delete the villa.";
                 return View(villa);
+            }
+            // delete image file from the server
+            if (!string.IsNullOrEmpty(villa.ImageUrl))
+            {
+                string olgImagePath = Path.Combine(
+                    _environment.WebRootPath,
+                    villa.ImageUrl.TrimStart('\\')
+                );
+                if (System.IO.File.Exists(olgImagePath))
+                {
+                    System.IO.File.Delete(olgImagePath);
+                }
             }
             TempData["success"] = "The villa has been deleted successfully.";
             return RedirectToAction("Index");

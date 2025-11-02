@@ -1,4 +1,5 @@
-﻿using ResortBookingApp.Domain.Entities;
+﻿using Microsoft.AspNetCore.Http;
+using ResortBookingApp.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ResortBookingApp.Application.DTO
@@ -20,6 +21,8 @@ namespace ResortBookingApp.Application.DTO
 
         [Range(1, 10)]
         public int Occupancy { get; set; }
+
+        public IFormFile? Image { get; set; }
 
         [Display(Name = "Image Url")]
         public string? ImageUrl { get; set; }
