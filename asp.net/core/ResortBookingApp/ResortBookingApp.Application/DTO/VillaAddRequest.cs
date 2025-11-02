@@ -1,8 +1,5 @@
 ﻿using ResortBookingApp.Domain.Entities;
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Net;
-using System.Reflection;
 
 namespace ResortBookingApp.Application.DTO
 {

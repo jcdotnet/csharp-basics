@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using ResortBookingApp.Application.RepositoryContracts;
 using ResortBookingApp.Application.ServiceContracts;
 using ResortBookingApp.Application.Services;
 using ResortBookingApp.Infrastructure.Data;
+using ResortBookingApp.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+builder.Services.AddTransient<IVillaRepository, VillaRepository>();
+builder.Services.AddTransient<IVillaNumberRepository, VillaNumberRepository>();
 builder.Services.AddTransient<IVillaService, VillaService>();
 builder.Services.AddTransient<IVillaNumberService, VillaNumberService>();
 

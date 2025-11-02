@@ -1,5 +1,4 @@
-﻿
-using ResortBookingApp.Domain.Entities;
+﻿using ResortBookingApp.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ResortBookingApp.Application.DTO

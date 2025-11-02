@@ -1,26 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ResortBookingApp.Application.DTO;
+﻿using ResortBookingApp.Application.DTO;
+using ResortBookingApp.Application.RepositoryContracts;
 using ResortBookingApp.Application.ServiceContracts;
-using ResortBookingApp.Infrastructure.Data;
 
 namespace ResortBookingApp.Application.Services
 {
     public class VillaNumberService : IVillaNumberService
     {
-        private readonly ApplicationDbContext _db;
+        private IVillaNumberRepository _repository;
 
-        public VillaNumberService(ApplicationDbContext db)
+        public VillaNumberService(IVillaNumberRepository repository)
         {
-            _db = db; 
+            _repository = repository;
         }
 
         public async Task<VillaNumberResponse> AddVillaNumber(VillaNumberAddRequest? addRequest)
         {
             if (addRequest is not null)
             {
-                var villaNumber = addRequest.ToVillaNumber();
-                _db.VillaNumbers.Add(villaNumber);
-                await _db.SaveChangesAsync();
+                var villaNumber = await _repository.AddAsync(addRequest.ToVillaNumber());
                 return villaNumber.ToVillaNumberResponse();
             }
             throw new ArgumentNullException(nameof(addRequest));
@@ -28,14 +25,13 @@ namespace ResortBookingApp.Application.Services
 
         public async Task<List<VillaNumberResponse>> GetVillaNumbers()
         {
-            return await _db.VillaNumbers.Include(v=> v.Villa)
-                .Select(v => v.ToVillaNumberResponse()).ToListAsync();
+            return (await _repository.GetAllAsync(null, "Villa"))
+                .Select(v => v.ToVillaNumberResponse()).ToList();
         }
 
         public async Task<VillaNumberResponse?> GetVillaNumber(int? number)
         {
-            var villaNumber = await _db.VillaNumbers.Include(v => v.Villa).
-                FirstOrDefaultAsync(v => v.Number == number);
+            var villaNumber = await _repository.GetAsync(v => v.Number == number, "Villa");
 
             if (villaNumber is null) return null;
 
@@ -44,13 +40,11 @@ namespace ResortBookingApp.Application.Services
 
         public async Task<VillaNumberResponse> UpdateVillaNumber(VillaNumberUpdateRequest? updateRequest)
         {
-            if (updateRequest is null)
-            {
-                throw new ArgumentNullException(nameof(updateRequest));
-            }
+            if (updateRequest is null) throw new ArgumentNullException(nameof(updateRequest));
+            
             var villaNumber = updateRequest.ToVillaNumber();
-            _db.VillaNumbers.Update(villaNumber);
-            await _db.SaveChangesAsync();
+            await _repository.UpdateAsync(villaNumber);
+
             return villaNumber.ToVillaNumberResponse();
         }
 
@@ -58,12 +52,11 @@ namespace ResortBookingApp.Application.Services
         {
             if (number is null) throw new ArgumentNullException(nameof(number));
 
-            var villaNumber = await _db.VillaNumbers.FirstOrDefaultAsync(v => v.Number == number);
+            var villaNumber = await _repository.GetAsync(v => v.Number == number, "Villa");
 
             if (villaNumber is null) { return false; }
 
-            _db.VillaNumbers.Remove(villaNumber);
-            await _db.SaveChangesAsync();
+            await _repository.RemoveAsync(villaNumber);
             return true;
         }
 
@@ -71,7 +64,7 @@ namespace ResortBookingApp.Application.Services
         {
             if (number is null) throw new ArgumentNullException(nameof(number));
 
-            return await _db.VillaNumbers.AnyAsync(v => v.Number == number);
+            return await _repository.AnyAsync(v => v.Number == number);
         }
     }
 }
