@@ -6,7 +6,7 @@ namespace ResortBookingApp.Application.DTO
 {
     public class VillaAddRequest
     {
-        [MaxLength(50)]
+        [MaxLength(50)] 
         public required string Name { get; set; }
 
         public string? Description { get; set; }

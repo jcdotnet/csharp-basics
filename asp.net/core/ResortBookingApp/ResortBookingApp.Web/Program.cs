@@ -14,6 +14,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddTransient<IAmenityService, AmenityService>();
 builder.Services.AddTransient<IVillaService, VillaService>();
 builder.Services.AddTransient<IVillaNumberService, VillaNumberService>();
 

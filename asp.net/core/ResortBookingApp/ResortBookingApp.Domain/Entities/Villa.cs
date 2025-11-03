@@ -3,6 +3,9 @@
     public class Villa
     {
         public  int Id { get; set; }
+
+        //[MaxLength(50)] // if we want the name type to be nvarchar(50)
+        // instead of varchar(max) in the database // highly recommended
         public required string Name { get; set; }
         public string? Description { get; set; }
         public double Price { get; set; }
