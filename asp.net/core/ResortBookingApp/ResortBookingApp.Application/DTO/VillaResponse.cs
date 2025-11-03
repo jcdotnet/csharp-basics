@@ -1,4 +1,5 @@
-﻿using ResortBookingApp.Domain.Entities;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using ResortBookingApp.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
 
 namespace ResortBookingApp.Application.DTO
@@ -16,6 +17,9 @@ namespace ResortBookingApp.Application.DTO
 
         [Display(Name = "Image Url")]
         public string? ImageUrl { get; set; }
+
+        [ValidateNever]
+        public IEnumerable<Amenity>? Amenities { get; set; } // navigation property
 
         public VillaUpdateRequest ToVillaUpdateRequest()
         {
@@ -44,7 +48,8 @@ namespace ResortBookingApp.Application.DTO
                 Price = villa.Price,
                 SquareMeters = villa.SquareMeters,
                 Occupancy = villa.Occupancy,
-                ImageUrl = villa.ImageUrl
+                ImageUrl = villa.ImageUrl,
+                Amenities = villa.Amenities,
             };
         }
     }

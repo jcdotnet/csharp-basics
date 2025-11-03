@@ -36,7 +36,7 @@ namespace ResortBookingApp.Application.Services
 
         public async Task<List<VillaResponse>> GetVillas()
         {
-            var villas = await _unitOfWork.Villa.GetAllAsync();
+            var villas = await _unitOfWork.Villa.GetAllAsync(includeProperties: "Amenities");
 
             return villas.Select(v => v.ToVillaResponse()).ToList();
         }

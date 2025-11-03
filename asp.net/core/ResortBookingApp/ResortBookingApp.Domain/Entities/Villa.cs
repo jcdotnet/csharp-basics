@@ -15,5 +15,7 @@
         public DateTime? CreatedDate { get; set; }
         public DateTime? UpdatedDate { get; set; }
 
+        public IEnumerable<Amenity>? Amenities { get; set; } // navigation property
+
     }
 }

@@ -1,19 +1,29 @@
 using Microsoft.AspNetCore.Mvc;
+using ResortBookingApp.Application.ServiceContracts;
+using ResortBookingApp.Web.Models;
 
 namespace ResortBookingApp.Web.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IVillaService _villaService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IVillaService villaService)
         {
             _logger = logger;
+            _villaService = villaService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            HomeViewModel model = new()
+            {
+                VillasList = await _villaService.GetVillas(),
+                CheckInDate = DateOnly.FromDateTime(DateTime.Now),
+                Nights = 1
+            };
+            return View(model);
         }
 
         public IActionResult Privacy()
