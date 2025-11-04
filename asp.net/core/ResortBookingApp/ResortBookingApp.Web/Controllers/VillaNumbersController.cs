@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using ResortBookingApp.Application.DTO;
 using ResortBookingApp.Application.ServiceContracts;
+using ResortBookingApp.Application.Utility;
 
 namespace ResortBookingApp.Web.Controllers
 {
+    [Authorize(Roles = SD.RoleAdmin)]
     public class VillaNumbersController : Controller
     {
         private readonly IVillaService _villaService;

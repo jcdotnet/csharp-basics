@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResortBookingApp.Application.RepositoryContracts;
 using ResortBookingApp.Application.ServiceContracts;
 using ResortBookingApp.Application.Services;
+using ResortBookingApp.Domain.Entities;
 using ResortBookingApp.Infrastructure.Data;
 using ResortBookingApp.Infrastructure.Repositories;
 
@@ -13,6 +15,15 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+//builder.Services.ConfigureApplicationCookie(option =>
+//{
+//    option.AccessDeniedPath = "/Account/AccessDenied";
+//    option.LoginPath = "/Account/Login";
+//});
+
 builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IAmenityService, AmenityService>();
 builder.Services.AddTransient<IVillaService, VillaService>();
