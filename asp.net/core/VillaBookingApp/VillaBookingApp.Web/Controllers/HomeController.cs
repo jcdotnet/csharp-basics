@@ -14,7 +14,6 @@ namespace VillaBookingApp.Web.Controllers
             _logger = logger;
             _villaService = villaService;
         }
-
         public async Task<IActionResult> Index()
         {
             HomeViewModel model = new()
@@ -24,6 +23,26 @@ namespace VillaBookingApp.Web.Controllers
                 Nights = 1
             };
             return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetVillasByDate(int nights, DateOnly checkInDate)
+        {
+            var villasList = await _villaService.GetVillas();
+            foreach (var villa in villasList)
+            {
+                if (villa.Id % 2 == 0)
+                {
+                    villa.IsAvailable = false; // to change later
+                }
+            }
+            HomeViewModel model = new()
+            {
+                VillasList = villasList,
+                CheckInDate = checkInDate,
+                Nights = nights
+            };
+            return PartialView("_VillasListPartial", model); //View(model);
         }
 
         public IActionResult Privacy()

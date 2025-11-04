@@ -18,6 +18,8 @@ namespace VillaBookingApp.Application.DTO
         [Display(Name = "Image Url")]
         public string? ImageUrl { get; set; }
 
+        public bool IsAvailable { get; set; } = true;
+
         [ValidateNever]
         public IEnumerable<Amenity>? Amenities { get; set; } // navigation property
 
