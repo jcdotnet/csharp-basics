@@ -10,6 +10,7 @@ namespace VillaBookingApp.Infrastructure.Data
         public DbSet<VillaNumber> VillaNumbers { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Booking> Bookings { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

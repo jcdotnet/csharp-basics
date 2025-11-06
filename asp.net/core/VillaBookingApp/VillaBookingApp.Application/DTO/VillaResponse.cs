@@ -23,6 +23,20 @@ namespace VillaBookingApp.Application.DTO
         [ValidateNever]
         public IEnumerable<Amenity>? Amenities { get; set; } // navigation property
 
+        public Villa ToVilla()
+        {
+            return new Villa()
+            {
+                Id = Id,
+                Name = Name,
+                Description = Description,
+                Price = Price,
+                SquareMeters = SquareMeters,
+                Occupancy = Occupancy,
+                ImageUrl = ImageUrl,
+                Amenities = Amenities
+            };
+        }
         public VillaUpdateRequest ToVillaUpdateRequest()
         {
             return new VillaUpdateRequest()

@@ -71,6 +71,7 @@
                 checkInDate: $("#CheckInDate").val(),
                 nights: $("#Nights").val()
             };
+            console.log(objData);
             $.ajax({
                 type: "POST",
                 data:objData,

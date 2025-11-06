@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using VillaBookingApp.Application.RepositoryContracts;
 using VillaBookingApp.Application.ServiceContracts;
 using VillaBookingApp.Application.Services;
@@ -24,12 +25,15 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
 //    option.LoginPath = "/Account/Login";
 //});
 
-builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddTransient<IAmenityService, AmenityService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddTransient<IVillaService, VillaService>();
 builder.Services.AddTransient<IVillaNumberService, VillaNumberService>();
 
 var app = builder.Build();
+
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

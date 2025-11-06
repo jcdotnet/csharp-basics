@@ -27,7 +27,7 @@ namespace VillaBookingApp.Application.Services
 
         public async Task<VillaResponse?> GetVilla(int? villaId)
         {
-            Villa? villa = await _unitOfWork.Villa.GetAsync(v => v.Id == villaId);
+            Villa? villa = await _unitOfWork.Villa.GetAsync(v => v.Id == villaId, "Amenities");
 
             if (villa is null) return null;
 

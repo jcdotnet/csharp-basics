@@ -3,6 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace VillaBookingApp.Domain.Entities
 {
+    /// <summary>
+    /// Available room numbers in a villa
+    /// </summary>
     public class VillaNumber
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
