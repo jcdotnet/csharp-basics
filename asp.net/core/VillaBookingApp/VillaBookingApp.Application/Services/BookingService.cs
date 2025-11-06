@@ -18,7 +18,7 @@ namespace VillaBookingApp.Application.Services
         public async Task<BookingResponse> AddBookingAsync(FinalizeBooking? booking)
         {
             if (booking is null) throw new ArgumentNullException(nameof(booking));
-            
+
             var fromDb = await _unitOfWork.Booking.AddAsync(booking.ToBooking());
             return fromDb.ToBookingResponse();
         }
@@ -34,7 +34,6 @@ namespace VillaBookingApp.Application.Services
 
         public async Task<IEnumerable<BookingResponse>> GetBookedVillas()
         {
-
             var fromDb = await _unitOfWork.Booking.GetAllAsync(
                 b => b.Status == SD.StatusApproved || b.Status == SD.StatusCheckedIn,
                 includeProperties: "User,Villa"
@@ -67,8 +66,10 @@ namespace VillaBookingApp.Application.Services
             {
                 fromDb = await _unitOfWork.Booking.GetAllAsync(b => b.Status == status, "User,Villa");
             } else {
-                fromDb = await _unitOfWork.Booking.GetAllAsync(b => b.UserId == userId & b.Status == status,
-                   includeProperties: "User,Villa");
+                fromDb = await _unitOfWork.Booking.GetAllAsync(
+                    b => b.UserId == userId && b.Status == status,
+                    includeProperties: "User,Villa"
+                );
             }
 
             return fromDb.Select(b => b.ToBookingResponse());
@@ -92,7 +93,7 @@ namespace VillaBookingApp.Application.Services
             string sessionId, 
             string paymentIntentId)
         {
-            var fromDb = await _unitOfWork.Booking.GetAsync(b => b.Id == bookingId);
+            var fromDb = await _unitOfWork.Booking.GetAsync(b => b.Id == bookingId, tracked: true);
             if (fromDb == null) throw new ArgumentException("Invalid booking Id");
             if (!string.IsNullOrEmpty(sessionId))
             {
@@ -104,10 +105,6 @@ namespace VillaBookingApp.Application.Services
                 fromDb.PaymentDate = DateTime.Now;
                 fromDb.IsPaymentSuccessful = true;
             }
-            // updated service lifetime to avoid InvalidOperation exception here below
-            // The instance of entity type 'Booking' cannot be tracked because another
-            // instance with the same key value for {'Id'} is already being tracked...
-            //await _unitOfWork.Booking.UpdateAsync(booking); // it's not that, later
             await _unitOfWork.SaveAsync();
         }
     }

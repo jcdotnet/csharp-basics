@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Stripe.Checkout;
 using System.Security.Claims;
 using VillaBookingApp.Application.DTO;
@@ -76,7 +75,7 @@ namespace VillaBookingApp.Web.Controllers
 
             var bookingResponse = await _bookingService.AddBookingAsync(booking);
 
-            // redirecting to the booking confirmation page after payment
+            // redirecting to the booking confirmation // going to payment instead
             //return RedirectToAction(nameof(BookingConfirmation), new { BookingId = bookingResponse.Id });
 
             // stripe
@@ -119,13 +118,13 @@ namespace VillaBookingApp.Web.Controllers
             var fromDb = await _bookingService.GetBookingAsync(bookingId);
             if(fromDb?.Status == SD.StatusPending)
             {
-                //var service = new SessionService();
-                //Session session = service.Get(fromDb.StripeSessionId); // session id not stored in the DB (to go over this)
-                //if (session.PaymentStatus == "paid")
-                //{
-                //    await _bookingService.UpdateStatusAsync(fromDb.Id, SD.StatusApproved);
-                //    await _bookingService.UpdateStripePaymentAsync(fromDb.Id, session.Id, session.PaymentIntentId);
-                //}
+                var service = new SessionService();
+                Session session = service.Get(fromDb.StripeSessionId);
+                if (session.PaymentStatus == "paid")
+                {
+                    await _bookingService.UpdateStatusAsync(fromDb.Id, SD.StatusApproved);
+                    await _bookingService.UpdateStripePaymentAsync(fromDb.Id, session.Id, session.PaymentIntentId);
+                }
             }
             return View(bookingId);
         }

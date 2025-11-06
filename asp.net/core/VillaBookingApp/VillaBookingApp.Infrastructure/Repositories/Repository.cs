@@ -20,6 +20,7 @@ namespace VillaBookingApp.Infrastructure.Repositories
         {
             _dbSet.Add(entity);
             await _db.SaveChangesAsync();
+            //if (!tracked) _db.Entry(entity).State = EntityState.Detached;
             return entity;
         }
 

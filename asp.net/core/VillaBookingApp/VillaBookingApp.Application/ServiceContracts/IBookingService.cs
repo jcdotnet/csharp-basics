@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using VillaBookingApp.Application.DTO;
+﻿using VillaBookingApp.Application.DTO;
 
 namespace VillaBookingApp.Application.ServiceContracts
 {
