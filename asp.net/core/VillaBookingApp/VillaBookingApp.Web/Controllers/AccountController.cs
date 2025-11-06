@@ -46,6 +46,11 @@ namespace VillaBookingApp.Web.Controllers
                 );
                 if (result.Succeeded)
                 {
+                    var user = await _userManager.FindByEmailAsync(login.Email);
+                    if (user !=null && await _userManager.IsInRoleAsync(user,SD.RoleAdmin))
+                    {
+                        return RedirectToAction("Index", "Admin");
+                    }
                     if (!string.IsNullOrEmpty(login.RedirectUrl))
                     {
                         return LocalRedirect(login.RedirectUrl);

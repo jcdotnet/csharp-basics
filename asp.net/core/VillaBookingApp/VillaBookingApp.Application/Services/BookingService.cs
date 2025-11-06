@@ -23,6 +23,15 @@ namespace VillaBookingApp.Application.Services
             return fromDb.ToBookingResponse();
         }
 
+        public async Task<IEnumerable<BookingResponse>> GetActiveBookingsAsync()
+        {
+            var fromDb = await _unitOfWork.Booking.GetAllAsync(
+                b => b.Status != SD.StatusPending || b.Status != SD.StatusCancelled, 
+                includeProperties: "User,Villa"
+            );
+            return fromDb.Select(b => b.ToBookingResponse());
+        }
+
         public async Task<IEnumerable<BookingResponse>> GetBookedVillas()
         {
 
@@ -47,14 +56,6 @@ namespace VillaBookingApp.Application.Services
         public async Task<IEnumerable<BookingResponse>> GetBookingsAsync()
         {
             var fromDb = await _unitOfWork.Booking.GetAllAsync(includeProperties: "User,Villa");
-
-            return fromDb.Select(b => b.ToBookingResponse());
-        }
-
-        public async Task<IEnumerable<BookingResponse>> GetBookingsAsync(string? userId)
-        {
-            var fromDb = await _unitOfWork.Booking.GetAllAsync(b => b.UserId == userId,
-                includeProperties: "User,Villa");
 
             return fromDb.Select(b => b.ToBookingResponse());
         }

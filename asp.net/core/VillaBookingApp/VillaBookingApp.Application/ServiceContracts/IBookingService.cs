@@ -1,4 +1,5 @@
-﻿using VillaBookingApp.Application.DTO;
+﻿using System.Linq.Expressions;
+using VillaBookingApp.Application.DTO;
 
 namespace VillaBookingApp.Application.ServiceContracts
 {
@@ -6,11 +7,11 @@ namespace VillaBookingApp.Application.ServiceContracts
     {
         Task<BookingResponse> AddBookingAsync(FinalizeBooking? booking);
 
+        Task<IEnumerable<BookingResponse>> GetActiveBookingsAsync();
         Task<IEnumerable<BookingResponse>> GetBookedVillas();
         Task<BookingResponse?> GetBookingAsync(int? bookingId);
 
         Task<IEnumerable<BookingResponse>> GetBookingsAsync();
-        Task<IEnumerable<BookingResponse>> GetBookingsAsync(string? userId);
         Task<IEnumerable<BookingResponse>> GetBookingsAsync(string? userId, string? status);
 
         Task UpdateStatusAsync(int bookingId, string bookingStatus);
