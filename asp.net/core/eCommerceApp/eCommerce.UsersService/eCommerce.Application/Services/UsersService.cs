@@ -17,6 +17,14 @@ namespace eCommerce.Application.Services
             _mapper = mapper;
         }
 
+        public async Task<UserDto?> GetUser(Guid userId)
+        {
+            ApplicationUser? fromRepo = await _usersRepository.GetUserByUserId(userId);
+
+            // mapping from ApplicationUser to UserDto (automapper)
+            return _mapper.Map<UserDto>(fromRepo); 
+        }
+
         public async Task<AuthenticationResponse?> Login(LoginRequest loginRequest)
         {
             ApplicationUser? fromRepo = await _usersRepository.GetUserByEmailAndPassword(

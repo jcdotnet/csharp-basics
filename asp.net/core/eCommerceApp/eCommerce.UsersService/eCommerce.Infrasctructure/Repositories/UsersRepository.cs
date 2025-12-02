@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using eCommerce.Application.DTO;
 using eCommerce.Application.RepositoryContracts;
 using eCommerce.Domain.Entities;
 using eCommerce.Infrastructure.Data;
@@ -39,6 +38,16 @@ namespace eCommerce.Infrastructure.Repositories
             var param = new { Email = email, Password = password };
             var user = await _db.DbConnection.QueryFirstOrDefaultAsync<ApplicationUser>(query, param);
             return user;
+        }
+
+        public async Task<ApplicationUser?> GetUserByUserId(Guid? userId)
+        {
+            string query = @"SELECT * FROM public.""Users"" WHERE ""UserId""=@UserId";
+            var param = new { UserId = userId };
+
+            using var connection = _db.DbConnection;
+            return await connection.QueryFirstOrDefaultAsync<ApplicationUser>(query, param);
+
         }
     }
 }
