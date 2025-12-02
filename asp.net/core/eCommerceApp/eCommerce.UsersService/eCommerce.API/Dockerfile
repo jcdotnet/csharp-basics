@@ -27,4 +27,9 @@ RUN dotnet publish "./eCommerce.API.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV POSTGRES_HOST=localhost
+ENV POSTGRES_PORT=5432
+ENV POSTGRES_DATABASE=eCommerceUsers
+ENV POSTGRES_USERNAME=postgres
+ENV POSTGRES_PASSWORD=admin
 ENTRYPOINT ["dotnet", "eCommerce.API.dll"]
