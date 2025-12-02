@@ -21,6 +21,7 @@ namespace eCommerce.API.Endpoints
                 async (IProductsService service, Guid ProductId) =>
             {
                 var product = await service.GetProduct(product => product.ProductId == ProductId);
+                if (product == null) return Results.NotFound();
                 return Results.Ok(product);
             });
 
