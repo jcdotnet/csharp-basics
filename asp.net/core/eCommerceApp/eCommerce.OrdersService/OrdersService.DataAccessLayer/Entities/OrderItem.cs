@@ -1,0 +1,23 @@
+﻿using MongoDB.Bson.Serialization.Attributes;
+
+namespace OrdersService.DataAccessLayer.Entities
+{
+    public class OrderItem
+    {
+        [BsonId]
+        public Guid _id { get; set; }
+
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
+        public Guid ProductId { get; set; }
+
+        [BsonRepresentation(MongoDB.Bson.BsonType.Double)]
+        public decimal UnitPrice {  get; set; }
+
+        [BsonRepresentation(MongoDB.Bson.BsonType.Int32)]
+        public int Quantity { get; set; }
+
+        // total price = UnitPrice x Quantity
+        [BsonRepresentation(MongoDB.Bson.BsonType.Double)]
+        public decimal TotalPrice { get; set; }
+    }
+}
