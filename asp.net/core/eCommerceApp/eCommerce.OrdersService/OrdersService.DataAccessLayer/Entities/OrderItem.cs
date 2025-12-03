@@ -5,6 +5,7 @@ namespace OrdersService.DataAccessLayer.Entities
     public class OrderItem
     {
         [BsonId]
+        [BsonRepresentation(MongoDB.Bson.BsonType.String)]
         public Guid _id { get; set; }
 
         [BsonRepresentation(MongoDB.Bson.BsonType.String)]
