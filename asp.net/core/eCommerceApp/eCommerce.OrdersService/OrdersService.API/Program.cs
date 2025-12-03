@@ -23,7 +23,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
 {  
-    client.BaseAddress = new Uri($"https://{builder.Configuration["UsersMicroserviceName"]}:" +
+    client.BaseAddress = new Uri($"http://{builder.Configuration["UsersMicroserviceName"]}:" +
         $"{builder.Configuration["UsersMicroservicePort"]}");
         // we can also read env variables with Environment.GetEnvironmentVariable
 });

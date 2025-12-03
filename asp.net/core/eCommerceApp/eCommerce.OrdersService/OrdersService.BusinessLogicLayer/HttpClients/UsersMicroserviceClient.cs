@@ -15,7 +15,7 @@ namespace OrdersService.BusinessLogicLayer.HttpClients
 
         public async Task<UserDto?> GetUser(Guid userId)
         {
-            HttpResponseMessage response =  await _httpClient.GetAsync($"api/users/{userId}");
+            HttpResponseMessage response =  await _httpClient.GetAsync($"/api/users/{userId}");
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
