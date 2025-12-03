@@ -18,6 +18,7 @@ namespace OrdersService.BusinessLogicLayer.Services
         private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator;
         private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator;
         private readonly UsersMicroserviceClient _usersMicroserviceClient;
+        private readonly ProductsMicroserviceClient _productsMicroserviceClient;
 
         public OrdersService(IOrdersRepository repository,
             IMapper mapper,
@@ -25,7 +26,8 @@ namespace OrdersService.BusinessLogicLayer.Services
             IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
             IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
             IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
-            UsersMicroserviceClient usersMicroserviceClient)
+            UsersMicroserviceClient usersMicroserviceClient,
+            ProductsMicroserviceClient productsMicroserviceClient)
         {
             _repository = repository;
             _mapper = mapper;
@@ -34,6 +36,7 @@ namespace OrdersService.BusinessLogicLayer.Services
             _orderUpdateRequestValidator = orderUpdateRequestValidator;
             _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
             _usersMicroserviceClient = usersMicroserviceClient;
+            _productsMicroserviceClient = productsMicroserviceClient;
         }
 
         public async Task<OrderResponse?> AddOrder(OrderAddRequest orderAddRequest)
@@ -56,6 +59,8 @@ namespace OrdersService.BusinessLogicLayer.Services
                         throw new ArgumentException(string.Join(',',
                             validationResult.Errors.Select(e => e.ErrorMessage)));
                     }
+                    var product = await _productsMicroserviceClient.GetProduct(orderItem.ProductId);
+                    if (product == null) throw new ArgumentException("Invalid Product");
                 }
             }
 
@@ -92,7 +97,26 @@ namespace OrdersService.BusinessLogicLayer.Services
         public async Task<List<OrderResponse?>> GetOrders()
         {
             var fromRepo = await _repository.GetOrders();
-            return _mapper.Map<IEnumerable<OrderResponse?>>(fromRepo).ToList();
+            var orders = _mapper.Map<IEnumerable<OrderResponse?>>(fromRepo);
+
+            // loading ProductName and Category for each OrderItem
+            // TO-DO: same for the remaining endpoints
+            foreach (var order in orders)
+            {
+                if (order is null) continue;
+                if (order.OrderItems != null)
+                {
+                    foreach (var orderItem in order.OrderItems)
+                    {
+                        if (orderItem is null) continue;
+                        var product = await _productsMicroserviceClient.GetProduct(orderItem.ProductId);
+                        if (product is null) continue;
+                        _mapper.Map<ProductDto, OrderItemResponse>(product, orderItem);
+                    }
+                }
+
+            }
+            return orders.ToList();
         }
 
         public async Task<List<OrderResponse?>> GetOrders(FilterDefinition<Order> filter)
@@ -122,6 +146,8 @@ namespace OrdersService.BusinessLogicLayer.Services
                         throw new ArgumentException(string.Join(',',
                             validationResult.Errors.Select(e => e.ErrorMessage)));
                     }
+                    var product = await _productsMicroserviceClient.GetProduct(orderItem.ProductId);
+                    if (product == null) throw new ArgumentException("Invalid Product");
                 }
             }
 
