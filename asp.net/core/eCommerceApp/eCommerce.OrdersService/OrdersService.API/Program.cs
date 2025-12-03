@@ -1,5 +1,6 @@
 using OrdersService.API.Middleware;
 using OrdersService.BusinessLogicLayer;
+using OrdersService.BusinessLogicLayer.HttpClients;
 using OrdersService.DataAccessLayer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,8 +17,15 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(builder =>
     {
         builder.WithOrigins("http://localhost:4200") // Angular app
-        .AllowAnyMethod().AllowAnyHeader();    
+        .AllowAnyMethod().AllowAnyHeader();
     });
+});
+
+builder.Services.AddHttpClient<UsersMicroserviceClient>(client =>
+{  
+    client.BaseAddress = new Uri($"https://{builder.Configuration["UsersMicroserviceName"]}:" +
+        $"{builder.Configuration["UsersMicroservicePort"]}");
+        // we can also read env variables with Environment.GetEnvironmentVariable
 });
     
 var app = builder.Build();

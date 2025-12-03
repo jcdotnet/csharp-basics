@@ -2,6 +2,7 @@
 using FluentValidation;
 using MongoDB.Driver;
 using OrdersService.BusinessLogicLayer.DTO;
+using OrdersService.BusinessLogicLayer.HttpClients;
 using OrdersService.BusinessLogicLayer.ServiceContracts;
 using OrdersService.DataAccessLayer.Entities;
 using OrdersService.DataAccessLayer.RepositoryContracts;
@@ -16,13 +17,15 @@ namespace OrdersService.BusinessLogicLayer.Services
         private readonly IValidator<OrderItemAddRequest> _orderItemAddRequestValidator;
         private readonly IValidator<OrderUpdateRequest> _orderUpdateRequestValidator;
         private readonly IValidator<OrderItemUpdateRequest> _orderItemUpdateRequestValidator;
+        private readonly UsersMicroserviceClient _usersMicroserviceClient;
 
         public OrdersService(IOrdersRepository repository,
             IMapper mapper,
             IValidator<OrderAddRequest> orderAddRequestValidator,
             IValidator<OrderItemAddRequest> orderItemAddRequestValidator,
             IValidator<OrderUpdateRequest> orderUpdateRequestValidator,
-            IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator)
+            IValidator<OrderItemUpdateRequest> orderItemUpdateRequestValidator,
+            UsersMicroserviceClient usersMicroserviceClient)
         {
             _repository = repository;
             _mapper = mapper;
@@ -30,6 +33,7 @@ namespace OrdersService.BusinessLogicLayer.Services
             _orderItemAddRequestValidator = orderItemAddRequestValidator;
             _orderUpdateRequestValidator = orderUpdateRequestValidator;
             _orderItemUpdateRequestValidator = orderItemUpdateRequestValidator;
+            _usersMicroserviceClient = usersMicroserviceClient;
         }
 
         public async Task<OrderResponse?> AddOrder(OrderAddRequest orderAddRequest)
@@ -55,7 +59,9 @@ namespace OrdersService.BusinessLogicLayer.Services
                 }
             }
 
-            // TO-DO: add logic for checking if UserId exists in Users
+            var user = await _usersMicroserviceClient.GetUser(orderAddRequest.UserId);
+            if (user == null) throw new ArgumentException("Invalid User");
+
             var order = _mapper.Map<Order>(orderAddRequest);
             foreach (var orderItem in order.OrderItems)
             {
@@ -119,7 +125,9 @@ namespace OrdersService.BusinessLogicLayer.Services
                 }
             }
 
-            // TO-DO: add logic for checking if UserId exists in Users
+            var user = await _usersMicroserviceClient.GetUser(orderUpdateRequest.UserId);
+            if (user == null) throw new ArgumentException("Invalid User");
+
             var order = _mapper.Map<Order>(orderUpdateRequest);
             foreach (var orderItem in order.OrderItems)
             {
