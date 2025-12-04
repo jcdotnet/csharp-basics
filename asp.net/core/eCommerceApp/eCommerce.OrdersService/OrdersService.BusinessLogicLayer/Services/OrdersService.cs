@@ -99,8 +99,6 @@ namespace OrdersService.BusinessLogicLayer.Services
             var fromRepo = await _repository.GetOrders();
             var orders = _mapper.Map<IEnumerable<OrderResponse?>>(fromRepo);
 
-            // loading ProductName and Category for each OrderItem
-            // TO-DO: same for the remaining endpoints
             foreach (var order in orders)
             {
                 if (order is null) continue;
@@ -108,13 +106,23 @@ namespace OrdersService.BusinessLogicLayer.Services
                 {
                     foreach (var orderItem in order.OrderItems)
                     {
+                        // loading ProductName and Category for each OrderItem
+                        // TO-DO: same for the remaining endpoints
                         if (orderItem is null) continue;
                         var product = await _productsMicroserviceClient.GetProduct(orderItem.ProductId);
                         if (product is null) continue;
+                        // maps existing object (does not create new object)
                         _mapper.Map<ProductDto, OrderItemResponse>(product, orderItem);
                     }
                 }
-
+                // loading UserName and Email for each Order
+                // TO-DO: same for the remaining endpoints
+                var user = await _usersMicroserviceClient.GetUser(order.UserId);
+                if (user != null)
+                {
+                    // maps existing object (does not create new object)
+                    _mapper.Map<UserDto, OrderResponse>(user, order);
+                }
             }
             return orders.ToList();
         }
