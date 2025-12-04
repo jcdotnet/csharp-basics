@@ -13,6 +13,13 @@ namespace OrdersService.BusinessLogicLayer
             services.AddValidatorsFromAssemblyContaining<OrderAddRequestValidator>();
             services.AddAutoMapper(conf => { }, typeof(OrderAddRequestToOrder).Assembly);
             services.AddScoped<IOrdersService, Services.OrdersService>();
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                //options.Configuration = $"redis:6379";
+                options.Configuration = $"{Environment.GetEnvironmentVariable("REDIS_HOST")}:" +
+                    $"{Environment.GetEnvironmentVariable("REDIS_PORT")}";
+            });
             return services;
         }
     }
