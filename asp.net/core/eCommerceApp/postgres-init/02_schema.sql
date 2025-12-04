@@ -1,4 +1,5 @@
-﻿CREATE TABLE public."Users"
+-- Create the table if it does not exist
+CREATE TABLE public."Users"
 (
     "UserId" uuid NOT NULL,
     "UserName" character varying(50) COLLATE pg_catalog."default" NOT NULL,
@@ -8,6 +9,7 @@
     CONSTRAINT "Users_pkey" PRIMARY KEY ("UserId")
 );
 
+-- Sample data for insertion
 INSERT INTO public."Users" ("UserId", "Email", "UserName", "Gender", "Password")
 VALUES 
 ('c32f8b42-60e6-4c02-90a7-9143ab37189f', 'john@email.com', 'John Doe', 'Male', 'John123!'),
