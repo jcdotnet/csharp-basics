@@ -13,7 +13,7 @@ namespace OrdersService.BusinessLogicLayer.Mappers
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
             .ForMember(dest => dest.OrderDate, opt => opt.MapFrom(src => src.OrderDate))
             .ForMember(dest => dest.OrderItems, opt => opt.MapFrom(src => src.OrderItems))
-            .ForMember(dest => dest.TotalAmount, opt => opt.Ignore());
+            .ForMember(dest => dest.TotalAmount, opt => opt.MapFrom(src => src.TotalAmount));
         }
     }
 }
