@@ -33,7 +33,7 @@ namespace OrdersService.API.Controllers
             return await _service.GetOrder(filter);
         }
 
-        // GET api/orders/search/productId/{productId}
+        // GET api/orders/search/product/{productId}
         [HttpGet("search/product/{productId}")]
         public async Task<IEnumerable<OrderResponse?>> GetByProductId(Guid productId)
         {

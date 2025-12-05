@@ -93,6 +93,15 @@ services:
       - ../redis-cache:/data
     networks:
       - ecommerce-network
+  apigateway:
+    image: apigateway:latest
+    build:
+      context: .
+      dockerfile: OrdersService.ApiGateway/Dockerfile
+    ports: 
+      - "4000:8080"
+    networks:
+      - ecommerce-network
 networks:
   orders-mongodb-network:
     driver: bridge
