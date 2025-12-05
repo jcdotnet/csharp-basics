@@ -26,7 +26,7 @@ namespace OrdersService.BusinessLogicLayer.HttpClients
                 return fromCache; // returns user from cache
             }
 
-            HttpResponseMessage response =  await _httpClient.GetAsync($"/api/users/{userId}");
+            HttpResponseMessage response =  await _httpClient.GetAsync($"/gateway/users/{userId}");
             if (!response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == System.Net.HttpStatusCode.NotFound)

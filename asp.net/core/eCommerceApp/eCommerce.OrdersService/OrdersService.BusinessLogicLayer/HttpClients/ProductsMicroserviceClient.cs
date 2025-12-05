@@ -27,7 +27,7 @@ namespace OrdersService.BusinessLogicLayer.HttpClients
             }
 
             HttpResponseMessage response = await _httpClient.GetAsync(
-                $"/api/products/search/product-id/{productId}"
+                $"/gateway/products/search/product-id/{productId}"
             );
             if (!response.IsSuccessStatusCode)
             {
