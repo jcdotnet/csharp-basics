@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using OrdersService.BusinessLogicLayer.Mappers;
+using OrdersService.BusinessLogicLayer.RabbitMQ;
 using OrdersService.BusinessLogicLayer.ServiceContracts;
 using OrdersService.BusinessLogicLayer.Validators;
 
@@ -20,6 +21,10 @@ namespace OrdersService.BusinessLogicLayer
                 options.Configuration = $"{Environment.GetEnvironmentVariable("REDIS_HOST")}:" +
                     $"{Environment.GetEnvironmentVariable("REDIS_PORT")}";
             });
+            services.AddTransient<IRabbitMQProductNameUpdateConsumer, RabbitMQProductNameUpdateConsumer>();
+            services.AddTransient<IRabbitMQProductDeletionConsumer, RabbitMQProductDeletionConsumer>();
+            services.AddHostedService<RabbitMQProductNameUpdateHostedService>();
+            services.AddHostedService<RabbitMQProductDeletionHostedService>();
             return services;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using BusinessLogicLayer.Mappers;
+using BusinessLogicLayer.RabbitMQ;
 using BusinessLogicLayer.ServiceContracts;
 using BusinessLogicLayer.Services;
 using BusinessLogicLayer.Validators;
@@ -14,6 +15,7 @@ namespace BusinessLogicLayer
             services.AddAutoMapper(cfg => { }, typeof(ProductAddRequestToProduct).Assembly);
             services.AddValidatorsFromAssemblyContaining<ProductAddRequestValidator>();
             services.AddScoped<IProductsService, ProductsService>();
+            services.AddTransient<IRabbitMQPublisher, RabbitMQPublisher>();
             return services;
         }
     }
