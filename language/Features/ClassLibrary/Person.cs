@@ -1,25 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClassLibrary
+﻿namespace ClassLibrary
 {
-    public class Person(string firstName, string lastName, int age) // primary constructor
+    public partial class Person(string firstName, string lastName, int age) // primary constructor (C# 12)
     {
         public string FirstName { get; set; } = firstName;
         public string LastName { get; set; } = lastName;
         public int Age { get; set; } = age;
         public string Gender { get; set; } = "Female";
 
-        public void Deconstruct(out Person person, out int? age, out string? gender) // tuple matching
-        {
-            person = this;
-            age = Age;
-            gender = Gender;
-        }
+        // partial property (introduced in C# 13) declaration
+        public partial string Address { get; set; }
 
-        public override string ToString() => $"{FirstName} {LastName} - {Age}";
+        // partial indexer (introduced in C# 13) declaration
+        public partial string this[int index] { get; }
     }
 }

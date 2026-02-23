@@ -14,3 +14,11 @@ if (!result.IsValid)
 {
     foreach (var error in result.Errors) Console.WriteLine(error);
 }
+
+Console.WriteLine();
+
+// feat :: partial properties and indexers
+var person = new Person("John", "Doe", 20);
+person.Address = "123 Main Street, Anytown, US 12345";
+Console.WriteLine(person);
+Console.WriteLine($"Value from indexer: {person[0]}");
